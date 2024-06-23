@@ -23,13 +23,33 @@ int string_length(char buffer[]) {
 Array *array_new(int size) {
   Array *array = malloc(sizeof(Array));
   //printf("*array memory allocated\n");
-  array->values = malloc(sizeof(int) * size);
+  int *values = malloc(sizeof(int) * size);
   //printf("*array->values memory allocated\n");
 
   array->size = size;
   array->count = 0;
-  array->values = NULL;
+  array->values = values;
   //printf("*array initialised\n");
 
   return array;
+}
+
+char* array_to_str(Array *array) {
+  char* buffer = malloc(sizeof(char) * 256);
+  sprintf(
+    buffer,
+    "size = %d\ncount = %d\n",
+    array->size,
+    array->count
+  ); 
+  return buffer;
+}
+
+int array_add(Array *array, int value) {
+  if (array->count < array->size) {
+   array->values[array->count] = value;
+    array->count++;
+    return 0;
+  }
+  return 1;
 }

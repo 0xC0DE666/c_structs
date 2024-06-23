@@ -10,3 +10,5 @@ typedef struct Array {
 } Array;
 
 Array *array_new(int size);
+char* array_to_str(Array *array);
+int array_add(Array *array, int value);

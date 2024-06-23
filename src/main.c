@@ -9,16 +9,15 @@
 
 int main() {
   Array *array = array_new(10);
-  printf("array addr = %p\n", array);
-  printf("size addr = %p\n", &array->size);
-  printf("count addr = %p\n", &array->count);
-  printf("values addr = %p\n", &array->values);
-  
 
-  int *values = array->values;
-  values[0] = 99;
-  printf("%d\n", values[0]);
+  for (int i = 0; i < array->size + 100; ++i) {
+    array_add(array, i + 1);
+  }
+  printf("%s\n", array_to_str(array));
+
+  for (int i = 0; i < array->count; ++i) {
+    printf("%d\n", array->values[i]);
+  }
+
   return 0;
 }
-
-
