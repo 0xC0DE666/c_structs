@@ -20,22 +20,22 @@ int string_length(char buffer[]) {
   return i;
 }
 
-Array *array_new(int size) {
-  Array *array = malloc(sizeof(Array));
+Array* array_new(int size) {
+  Array* array = malloc(sizeof(Array));
   //printf("*array memory allocated\n");
-  int *values = malloc(sizeof(int) * size);
+  Element* elements = malloc(sizeof(Element) * size);
   //printf("*array->values memory allocated\n");
 
   array->size = size;
   array->count = 0;
-  array->values = values;
+  array->elements = elements;
   //printf("*array initialised\n");
 
   return array;
 }
 
-char* array_to_str(Array *array) {
-  char* buffer = malloc(sizeof(char) * 256);
+char* array_to_str(Array* array) {
+  char* buffer = malloc(sizeof(char)*  256);
   sprintf(
     buffer,
     "size = %d\ncount = %d\n",
@@ -45,9 +45,10 @@ char* array_to_str(Array *array) {
   return buffer;
 }
 
-int array_add(Array *array, int value) {
+int array_add(Array* array, void* value) {
   if (array->count < array->size) {
-   array->values[array->count] = value;
+    Element new = {array->count, value};
+    array->elements[array->count] = new;
     array->count++;
     return 0;
   }
