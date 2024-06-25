@@ -22,14 +22,21 @@ int string_length(char buffer[]) {
 
 Array* array_new(int size) {
   Array* array = malloc(sizeof(Array));
-  //printf("*array memory allocated\n");
+
+  if (array == NULL) {
+    return NULL;
+  }
+
   Element* elements = malloc(sizeof(Element) * size);
-  //printf("*array->values memory allocated\n");
+
+  if (elements == NULL) {
+    free(array);
+    return NULL;
+  }
 
   array->size = size;
   array->count = 0;
   array->elements = elements;
-  //printf("*array initialised\n");
 
   return array;
 }
@@ -47,8 +54,8 @@ char* array_to_str(Array* array) {
 
 int array_add(Array* array, void* value) {
   if (array->count < array->size) {
-    Element new = {array->count, value};
-    array->elements[array->count] = new;
+    array->elements[array->count].index = array->count;
+    array->elements[array->count].value = value;
     array->count++;
     return 0;
   }
