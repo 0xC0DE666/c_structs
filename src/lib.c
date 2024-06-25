@@ -42,22 +42,26 @@ Array* array_new(int size) {
 }
 
 char* array_to_str(Array* array) {
-  char* buffer = malloc(sizeof(char)*  256);
+  char* buffer = malloc(sizeof(char) *  256);
+
   sprintf(
     buffer,
     "size = %d\ncount = %d\n",
     array->size,
     array->count
   ); 
+
   return buffer;
 }
 
 int array_add(Array* array, void* value) {
-  if (array->count < array->size) {
-    array->elements[array->count].index = array->count;
-    array->elements[array->count].value = value;
-    array->count++;
-    return 0;
+  if (array->count >= array->size) {
+    return 1;
   }
-  return 1;
+
+  array->elements[array->count].index = array->count;
+  array->elements[array->count].value = value;
+  array->count++;
+
+  return 0;
 }
