@@ -28,14 +28,14 @@ int main() {
   // printf("print end\n");
 
   Array* array = array_new(10);
-  printf("%s\n", array_to_str(array));
+  printf("%s\n", array_to_string(array));
 
   for (int i = 0; i < array->size; ++i) {
     int v[10];
     v[i] = (i + 1) * 10;
     array_add(array, &v[i]);
   }
-  printf("%s\n", array_to_str(array));
+  printf("%s\n", array_to_string(array));
 
   for (int i = 0; i < array->count; ++i) {
     Element el = array->elements[i];

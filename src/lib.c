@@ -41,7 +41,7 @@ Array* array_new(int size) {
   return array;
 }
 
-char* array_to_str(Array* array) {
+char* array_to_string(Array* array) {
   char* buffer = malloc(sizeof(char) *  256);
 
   sprintf(
@@ -64,4 +64,12 @@ int array_add(Array* array, void* value) {
   array->count++;
 
   return 0;
+}
+
+void* array_get(Array* array, int index) {
+  if (index < 0 || index >= array->count) {
+    return NULL;
+  }
+
+  return array->elements[index].value;
 }

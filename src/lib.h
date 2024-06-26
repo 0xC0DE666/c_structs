@@ -15,5 +15,6 @@ typedef struct Array {
 } Array;
 
 Array* array_new(int size);
-char* array_to_str(Array *array);
+char* array_to_string(Array *array);
 int array_add(Array *array, void* value);
+void* array_get(Array* array, int index);
