@@ -52,11 +52,12 @@ Test(array_add, _2) {
   Array* array = array_new(5);
 
   for (int i = 0; i < array->size; ++i) {
-    char values[] = {'a', 'b', 'c', 'd', 'e'};
-    array_add(array, &values[i]);
+    char* values[] = {"one", "two", "three", "four", "five"};
+    array_add(array, values[i]);
 
     cr_assert_eq(array->count, i + 1);
-    cr_assert_eq(*(char*)array->elements[i].value, values[i]);
+    char* str = (char*)array->elements[i].value;
+    cr_assert_eq(strcmp(str, values[i]), 0);
   }
 }
 
