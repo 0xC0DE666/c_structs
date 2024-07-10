@@ -73,3 +73,23 @@ void* array_get(Array* array, int index) {
 
   return array->elements[index].value;
 }
+
+void* array_remove(Array* array, int index) {
+  if (index < 0 || index >= array->count) {
+    return NULL;
+  }
+
+  Element* removed = (array->elements + index);
+
+  for (int i = index; i < array->count; i++) {
+    if (i < array->count - 1) {
+      array->elements[i] = array->elements[i + 1];
+      array->elements[i].index = i;
+    } else {
+      // array->elements[i] = {};
+    }
+  }
+  array->count--;
+
+  return removed->value;
+}
