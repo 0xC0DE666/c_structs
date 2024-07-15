@@ -11,7 +11,7 @@ typedef struct Element {
 typedef struct Array {
   int size;
   int length;
-  Element *elements;
+  Element **elements;
 } Array;
 
 Array *array_new(int size);
