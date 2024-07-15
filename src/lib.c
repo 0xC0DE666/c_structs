@@ -41,30 +41,38 @@ Array *array_new(int size) {
   return array;
 }
 
-// char *array_to_string(Array *array) {
-//   char *buffer = malloc(sizeof(char) *  256);
-// 
-//   sprintf(
-//     buffer,
-//     "size = %d\nlength = %d\n",
-//     array->size,
-//     array->length
-//   ); 
-// 
-//   return buffer;
-// }
-// 
-// int array_add(Array *array, void *value) {
-//   if (array->length >= array->size) {
-//     return 1;
-//   }
-// 
-//   array->elements[array->length].index = array->length;
-//   array->elements[array->length].value = value;
-//   array->length++;
-// 
-//   return 0;
-// }
+char *array_to_string(Array *array) {
+  char *buffer = malloc(sizeof(char) *  256);
+
+  sprintf(
+    buffer,
+    "size = %d\nlength = %d\n",
+    array->size,
+    array->length
+  ); 
+
+  return buffer;
+}
+
+int array_add(Array *array, void *value) {
+  if (array->length >= array->size) {
+    return 1;
+  }
+
+  Element *e = malloc(sizeof(Element));
+
+  if (e == NULL) {
+    return 1;
+  }
+
+  e->index = array->length;
+  e->value = value;
+
+  array->elements[array->length] = e;
+  array->length++;
+
+  return 0;
+}
 // 
 // void *array_get(Array *array, int index) {
 //   if (index < 0 || index >= array->length) {
