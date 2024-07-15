@@ -20,14 +20,14 @@ int string_length(char buffer[]) {
   return i;
 }
 
-Array* array_new(int size) {
-  Array* array = malloc(sizeof(Array));
+Array *array_new(int size) {
+  Array *array = malloc(sizeof(Array));
 
   if (array == NULL) {
     return NULL;
   }
 
-  Element* elements = malloc(sizeof(Element) * size);
+  Element *elements = malloc(sizeof(Element) * size);
 
   if (elements == NULL) {
     free(array);
@@ -35,61 +35,61 @@ Array* array_new(int size) {
   }
 
   array->size = size;
-  array->count = 0;
+  array->length = 0;
   array->elements = elements;
 
   return array;
 }
 
-char* array_to_string(Array* array) {
-  char* buffer = malloc(sizeof(char) *  256);
+char *array_to_string(Array *array) {
+  char *buffer = malloc(sizeof(char) *  256);
 
   sprintf(
     buffer,
-    "size = %d\ncount = %d\n",
+    "size = %d\nlength = %d\n",
     array->size,
-    array->count
+    array->length
   ); 
 
   return buffer;
 }
 
-int array_add(Array* array, void* value) {
-  if (array->count >= array->size) {
+int array_add(Array *array, void *value) {
+  if (array->length >= array->size) {
     return 1;
   }
 
-  array->elements[array->count].index = array->count;
-  array->elements[array->count].value = value;
-  array->count++;
+  array->elements[array->length].index = array->length;
+  array->elements[array->length].value = value;
+  array->length++;
 
   return 0;
 }
 
-void* array_get(Array* array, int index) {
-  if (index < 0 || index >= array->count) {
+void *array_get(Array *array, int index) {
+  if (index < 0 || index >= array->length) {
     return NULL;
   }
 
   return array->elements[index].value;
 }
 
-void* array_remove(Array* array, int index) {
-  if (index < 0 || index >= array->count) {
+void *array_remove(Array *array, int index) {
+  if (index < 0 || index >= array->length) {
     return NULL;
   }
 
-  Element* removed = (array->elements + index);
+  Element *removed = (array->elements + index);
 
-  for (int i = index; i < array->count; i++) {
-    if (i < array->count - 1) {
+  for (int i = index; i < array->length; i++) {
+    if (i < array->length - 1) {
       array->elements[i] = array->elements[i + 1];
       array->elements[i].index = i;
     } else {
-      // array->elements[i] = {};
+      array->elements[i] = (Element){};
     }
   }
-  array->count--;
+  array->length--;
 
   return removed->value;
 }
