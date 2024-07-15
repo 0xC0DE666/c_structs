@@ -113,7 +113,8 @@ Test(array_get, _1) {
     array_add(array, &values[i]);
 
     cr_assert_eq(array->length, i + 1);
-    cr_assert_eq(*(int*)array_get(array, i), (i + 1) * 10);
+    int *n = (int *)array_get(array, i);
+    cr_assert_eq(*n, (i + 1) * 10);
   }
 }
 
@@ -125,7 +126,7 @@ Test(array_get, _2) {
     array_add(array, values[i]);
 
     cr_assert_eq(array->length, i + 1);
-    char *str = (char*)array_get(array, i);
+    char *str = (char *)array_get(array, i);
     cr_assert_eq(strcmp(str, values[i]), 0);
   }
 }
@@ -145,9 +146,9 @@ Test(array_get, _3) {
     array_add(array, &values[i]);
 
     cr_assert_eq(array->length, i + 1);
-    Point p = *(Point*)array_get(array, i);
-    cr_assert_eq(p.x, values[i].x);
-    cr_assert_eq(p.y, values[i].y);
+    Point *p = (Point *)array_get(array, i);
+    cr_assert_eq(p->x, values[i].x);
+    cr_assert_eq(p->y, values[i].y);
   }
 }
 
