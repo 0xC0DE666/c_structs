@@ -20,21 +20,21 @@ int string_length(char buffer[]) {
   return i;
 }
 
-Array *array_new(int size) {
+Array *array_new(int capacity) {
   Array *array = malloc(sizeof(Array));
 
   if (array == NULL) {
     return NULL;
   }
 
-  Element **elements = malloc(size * sizeof(Element *));
+  Element **elements = malloc(capacity * sizeof(Element *));
 
   if (elements == NULL) {
     free(array);
     return NULL;
   }
 
-  array->size = size;
+  array->capacity = capacity;
   array->length = 0;
   array->elements = elements;
 
@@ -46,8 +46,8 @@ char *array_to_string(Array *array) {
 
   sprintf(
     buffer,
-    "size = %d\nlength = %d\n",
-    array->size,
+    "capacity = %d\nlength = %d\n",
+    array->capacity,
     array->length
   ); 
 
@@ -55,7 +55,7 @@ char *array_to_string(Array *array) {
 }
 
 int array_add(Array *array, void *value) {
-  if (array->length >= array->size) {
+  if (array->length >= array->capacity) {
     return 1;
   }
 
