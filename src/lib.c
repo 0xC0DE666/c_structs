@@ -73,15 +73,15 @@ int array_add(Array *array, void *value) {
 
   return 0;
 }
-// 
-// void *array_get(Array *array, int index) {
-//   if (index < 0 || index >= array->length) {
-//     return NULL;
-//   }
-// 
-//   return array->elements[index].value;
-// }
-// 
+
+void *array_get(Array *array, int index) {
+  if (index < 0 || index >= array->length) {
+    return NULL;
+  }
+
+  return array->elements[index]->value;
+}
+
 // void *array_remove(Array *array, int index) {
 //   if (index < 0 || index >= array->length) {
 //     return NULL;
