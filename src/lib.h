@@ -1,8 +1,5 @@
 #include <stdbool.h>
 
-int read_line(char buffer[], int capacity);
-int string_length(char buffer[]);
-
 typedef struct Element {
   int index;
   void *value;
