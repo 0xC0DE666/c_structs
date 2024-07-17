@@ -1,18 +1,23 @@
 #include <stdbool.h>
 
-typedef struct Element {
-  int index;
-  void *value;
-} Element;
+#ifndef LIB_H
+#define LIB_H
 
-typedef struct Array {
-  int capacity;
-  int length;
-  Element **elements;
-} Array;
+  typedef struct Element {
+    int index;
+    void *value;
+  } Element;
 
-Array *array_new(int capacity);
-char *array_to_string(Array *array);
-int array_add(Array *array, void *value);
-void *array_get(Array *array, int index);
-void *array_remove(Array *array, int index);
+  typedef struct Array {
+    int capacity;
+    int length;
+    Element **elements;
+  } Array;
+
+  Array *array_new(int capacity);
+  char *array_to_string(Array *array);
+  int array_add(Array *array, void *value);
+  void *array_get(Array *array, int index);
+  void *array_remove(Array *array, int index);
+
+#endif
