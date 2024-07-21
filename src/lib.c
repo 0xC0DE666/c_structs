@@ -85,8 +85,19 @@ void *array_remove(Array *array, int index) {
   return removed->value;
 }
 
+int array_clear(Array *array) {
+  for (int i = 0; i < array->capacity; i++) {
+    if (array->elements[i] != NULL) {
+      free(array->elements[i]);
+      array->elements[i] = NULL;
+    }
+  }
+  array->length = 0;
+  return 0;
+}
+
 void array_free(Array **array) {
-  for (int i = 0; i < (*array)->length; ++i) {
+  for (int i = 0; i < (*array)->capacity; ++i) {
     if ((*array)->elements[i] != NULL) {
       free((*array)->elements[i]);
       (*array)->elements[i] = NULL;

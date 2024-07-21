@@ -239,6 +239,27 @@ Test(array_remove, _4) {
 }
 
 // ####################
+// array_clear
+// ####################
+Test(array_clear, _1) {
+  Array *array = array_new(5);
+  int values[array->capacity];
+
+  for (int i = 0; i < array->capacity; ++i) {
+    values[i] = (i + 1) * 10;
+    array_add(array, &values[i]);
+    cr_assert_eq(array->length, i + 1);
+  }
+
+  array_clear(array);
+
+  cr_assert_eq(array->length, 0);
+  for (int i = 0; i < array->capacity; ++i) {
+    cr_assert_eq(array->elements[i], NULL);
+  }
+}
+
+// ####################
 // array_free
 // ####################
 Test(array_free, _1) {
