@@ -19,5 +19,6 @@
   int array_add(Array *array, void *value);
   void *array_get(Array *array, int index);
   void *array_remove(Array *array, int index);
+  void array_free(Array **array);
 
 #endif

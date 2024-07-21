@@ -8,11 +8,15 @@
  */
 
 int main() {
-  Array *array = array_new(5);
-  int v = 10;
-  array_add(array, &v);
-  int *x = (int *)array->elements[0]->value;
-  printf("x = %d\n", *x);
-  
+  Array *array = array_new(10);
+  int numbers[] = {1,2,3};
+  array_add(array, &numbers[0]);
+  array_add(array, &numbers[1]);
+  array_add(array, &numbers[2]);
+  printf("%p\n", &array);
+  array_free(&array);
+  printf("%p\n", array);
+  // printf("%p\n", array);
+
   return 0;
 }

@@ -84,3 +84,16 @@ void *array_remove(Array *array, int index) {
 
   return removed->value;
 }
+
+void array_free(Array **array) {
+  for (int i = 0; i < (*array)->length; ++i) {
+    if ((*array)->elements[i] != NULL) {
+      free((*array)->elements[i]);
+      (*array)->elements[i] = NULL;
+    }
+  }
+  free((*array)->elements);
+  (*array)->elements = NULL;
+  free((*array));
+  (*array) = NULL;
+}
