@@ -284,6 +284,12 @@ Test(array_clear, _1) {
     cr_assert_eq(array->elements[i], NULL);
   }
 
+  int idx = 0;
+  array_add(array, &values[idx]);
+  int* v = array_get(array, idx);
+
+  cr_assert_eq(*v, values[idx]);
+
   array_free(&array);
 }
 
