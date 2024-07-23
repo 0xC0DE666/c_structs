@@ -3,14 +3,14 @@
 
 #include "lib.h"
 
-Array *array_new(int capacity) {
-  Array *array = malloc(sizeof(Array));
+Array* array_new(int capacity) {
+  Array* array = malloc(sizeof(Array));
 
   if (array == NULL) {
     return NULL;
   }
 
-  Element **elements = malloc(capacity * sizeof(Element *));
+  Element** elements = malloc(capacity * sizeof(Element*));
 
   if (elements == NULL) {
     free(array);
@@ -21,11 +21,15 @@ Array *array_new(int capacity) {
   array->length = 0;
   array->elements = elements;
 
+  for (int i = 0; i < capacity; ++i) {
+    array->elements[i] = NULL;
+  }
+
   return array;
 }
 
-char *array_to_string(Array *array) {
-  char *buffer = malloc(sizeof(char) *  256);
+char* array_to_string(Array* array) {
+  char* buffer = malloc(sizeof(char) * 256);
 
   sprintf(
     buffer,
@@ -37,12 +41,12 @@ char *array_to_string(Array *array) {
   return buffer;
 }
 
-int array_add(Array *array, void *value) {
+int array_add(Array* array, void* value) {
   if (array->length >= array->capacity) {
     return 1;
   }
 
-  Element *e = malloc(sizeof(Element));
+  Element* e = malloc(sizeof(Element));
 
   if (e == NULL) {
     return 1;
@@ -57,7 +61,7 @@ int array_add(Array *array, void *value) {
   return 0;
 }
 
-void *array_get(Array *array, int index) {
+void* array_get(Array* array, int index) {
   if (index < 0 || index >= array->length) {
     return NULL;
   }
@@ -65,19 +69,19 @@ void *array_get(Array *array, int index) {
   return array->elements[index]->value;
 }
 
-void *array_remove(Array *array, int index) {
+void* array_remove(Array* array, int index) {
   if (index < 0 || index >= array->length) {
     return NULL;
   }
 
-  Element *removed = array->elements[index];
+  Element* removed = array->elements[index];
 
   for (int i = index; i < array->length; i++) {
     if (i < array->length - 1) {
       array->elements[i] = array->elements[i + 1];
       array->elements[i]->index = i;
     } else {
-      array->elements[i] = (Element *)NULL;
+      array->elements[i] = NULL;
     }
   }
   array->length--;
@@ -85,7 +89,7 @@ void *array_remove(Array *array, int index) {
   return removed->value;
 }
 
-int array_clear(Array *array) {
+int array_clear(Array* array) {
   for (int i = 0; i < array->capacity; i++) {
     if (array->elements[i] != NULL) {
       free(array->elements[i]);
@@ -93,18 +97,22 @@ int array_clear(Array *array) {
     }
   }
   array->length = 0;
+
   return 0;
 }
 
-void array_free(Array **array) {
+void array_free(Array** array) {
   for (int i = 0; i < (*array)->capacity; ++i) {
-    if ((*array)->elements[i] != NULL) {
-      free((*array)->elements[i]);
-      (*array)->elements[i] = NULL;
+    if ((*array)->elements[i] == NULL) {
+      continue;
     }
+    free((*array)->elements[i]);
+    (*array)->elements[i] = NULL;
   }
+
   free((*array)->elements);
   (*array)->elements = NULL;
-  free((*array));
-  (*array) = NULL;
+
+  free(*array);
+  *array = NULL;
 }
