@@ -164,8 +164,8 @@ Test(array_get, _4) {
 
     if (i >= 5) {
       cr_assert_eq(res, 1);
-      cr_assert_eq(array_get(array, i), NULL);
       cr_assert_eq(array->length, 5);
+      cr_assert_eq(array_get(array, i), NULL);
     }
   }
 
