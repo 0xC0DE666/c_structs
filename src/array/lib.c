@@ -10,7 +10,7 @@ Array* array_new(int capacity) {
     return NULL;
   }
 
-  Element** elements = malloc(capacity * sizeof(Element*));
+  void** elements = malloc(capacity * sizeof(void*));
 
   if (elements == NULL) {
     free(array);
@@ -26,6 +26,18 @@ Array* array_new(int capacity) {
   }
 
   return array;
+}
+
+void array_free(Array** array) {
+  for (int i = 0; i < (*array)->capacity; ++i) {
+    (*array)->elements[i] = NULL;
+  }
+
+  free((*array)->elements);
+  (*array)->elements = NULL;
+
+  free(*array);
+  *array = NULL;
 }
 
 char* array_to_string(Array* array) {
@@ -46,16 +58,7 @@ int array_add(Array* array, void* value) {
     return 1;
   }
 
-  Element* e = malloc(sizeof(Element));
-
-  if (e == NULL) {
-    return 1;
-  }
-
-  e->index = array->size;
-  e->value = value;
-
-  array->elements[array->size] = e;
+  array->elements[array->size] = value;
   array->size++;
 
   return 0;
@@ -66,7 +69,7 @@ void* array_get(Array* array, int index) {
     return NULL;
   }
 
-  return array->elements[index]->value;
+  return array->elements[index];
 }
 
 void* array_remove(Array* array, int index) {
@@ -74,45 +77,25 @@ void* array_remove(Array* array, int index) {
     return NULL;
   }
 
-  Element* removed = array->elements[index];
+  void* removed = array->elements[index];
 
   for (int i = index; i < array->size; i++) {
     if (i < array->size - 1) {
       array->elements[i] = array->elements[i + 1];
-      array->elements[i]->index = i;
     } else {
       array->elements[i] = NULL;
     }
   }
   array->size--;
 
-  return removed->value;
+  return removed;
 }
 
 int array_clear(Array* array) {
   for (int i = 0; i < array->capacity; i++) {
-    if (array->elements[i] != NULL) {
-      free(array->elements[i]);
-      array->elements[i] = NULL;
-    }
+    array->elements[i] = NULL;
   }
   array->size = 0;
 
   return 0;
-}
-
-void array_free(Array** array) {
-  for (int i = 0; i < (*array)->capacity; ++i) {
-    if ((*array)->elements[i] == NULL) {
-      continue;
-    }
-    free((*array)->elements[i]);
-    (*array)->elements[i] = NULL;
-  }
-
-  free((*array)->elements);
-  (*array)->elements = NULL;
-
-  free(*array);
-  *array = NULL;
 }

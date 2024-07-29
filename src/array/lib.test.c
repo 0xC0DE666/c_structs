@@ -52,7 +52,7 @@ Test(array_add, _1) {
     values[i] = (i + 1) * 10;
     array_add(array, &values[i]);
 
-    int* n = (int*)array->elements[i]->value;
+    int* n = (int*) array->elements[i];
     cr_assert_eq(array->size, i + 1);
     cr_assert_eq(*n, (i + 1) * 10);
   }
@@ -67,7 +67,7 @@ Test(array_add, _2) {
   for (int i = 0; i < array->capacity; ++i) {
     array_add(array, values[i]);
 
-    char* str = (char*)array->elements[i]->value;
+    char* str = (char*) array->elements[i];
     cr_assert_eq(array->size, i + 1);
     cr_assert_eq(strcmp(str, values[i]), 0);
   }
@@ -89,7 +89,7 @@ Test(array_add, _3) {
     values[i].x = (i + 1) * 10;
     array_add(array, &values[i]);
 
-    Point* p = (Point*)array->elements[i]->value;
+    Point* p = (Point*) array->elements[i];
     cr_assert_eq(array->size, i + 1);
     cr_assert_eq(p->x, values[i].x);
     cr_assert_eq(p->y, values[i].y);
@@ -127,7 +127,7 @@ Test(array_get, _1) {
     array_add(array, &values[i]);
 
     cr_assert_eq(array->size, i + 1);
-    int* n = (int*)array_get(array, i);
+    int* n = (int*) array_get(array, i);
     cr_assert_eq(*n, (i + 1) * 10);
   }
 
@@ -142,7 +142,7 @@ Test(array_get, _2) {
     array_add(array, values[i]);
 
     cr_assert_eq(array->size, i + 1);
-    char* str = (char*)array_get(array, i);
+    char* str = (char*) array_get(array, i);
     cr_assert_eq(strcmp(str, values[i]), 0);
   }
 
@@ -164,7 +164,7 @@ Test(array_get, _3) {
     array_add(array, &values[i]);
 
     cr_assert_eq(array->size, i + 1);
-    Point* p = (Point*)array_get(array, i);
+    Point* p = (Point*) array_get(array, i);
     cr_assert_eq(p->x, values[i].x);
     cr_assert_eq(p->y, values[i].y);
   }
@@ -205,7 +205,7 @@ Test(array_remove, _1) {
 
   int x = 1;
   for (int i = array->capacity - 1; i >= 0; --i) {
-    int* n = (int*)array_remove(array, i);
+    int* n = (int*) array_remove(array, i);
     cr_assert_eq(array_get(array, i), NULL);
     cr_assert_eq(*n, (i + 1) * 10);
     cr_assert_eq(array->size, array->capacity - x++);
@@ -225,7 +225,7 @@ Test(array_remove, _2) {
 
   int x = 1;
   for (int i = array->capacity - 1; i >= 0; --i) {
-    char* str = (char*)array_remove(array, i);
+    char* str = (char*) array_remove(array, i);
     cr_assert_eq(array_get(array, i), NULL);
     cr_assert_eq(strcmp(str, values[i]), 0);
     cr_assert_eq(array->size, array->capacity - x++);
@@ -252,7 +252,7 @@ Test(array_remove, _3) {
 
   int x = 1;
   for (int i = array->capacity - 1; i >= 0; --i) {
-    Point* p = (Point*)array_remove(array, i);
+    Point* p = (Point*) array_remove(array, i);
     cr_assert_eq(array_get(array, i), NULL);
     cr_assert_eq(p->x, values[i].x);
     cr_assert_eq(p->y, values[i].y);

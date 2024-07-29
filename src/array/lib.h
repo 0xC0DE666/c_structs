@@ -3,15 +3,10 @@
 #ifndef LIB_H
 #define LIB_H
 
-  typedef struct Element {
-    int index;
-    void* value;
-  } Element;
-
   typedef struct Array {
     int capacity;
     int size;
-    Element** elements;
+    void** elements;
   } Array;
 
   Array* array_new(int capacity);
