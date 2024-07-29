@@ -1,1 +1,1 @@
-Implement a basic array.
+Generic data structures implemnted in C.

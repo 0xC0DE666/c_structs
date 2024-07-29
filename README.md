@@ -1,1 +1,1 @@
-Basic generic array implemented in C.
+Generic data structures implemnted in C.

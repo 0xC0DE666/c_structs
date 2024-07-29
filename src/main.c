@@ -6,7 +6,7 @@
 #include "./matrix/lib.h"
 
 /*
- * Implement a basic array.
+ * Generic data structures implemnted in C.
  */
 
 void matrix_fun() {
