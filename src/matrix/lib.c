@@ -96,25 +96,19 @@ void* matrix_get(Matrix* matrix, Position* position) {
   return row[position->column];
 }
 
-// void* matrix_remove(Matrix* matrix, int index) {
-//   if (index < 0 || index >= matrix->length) {
-//     return NULL;
-//   }
-// 
-//   Element* removed = matrix->elements[index];
-// 
-//   for (int i = index; i < matrix->length; i++) {
-//     if (i < matrix->length - 1) {
-//       matrix->elements[i] = matrix->elements[i + 1];
-//       matrix->elements[i]->index = i;
-//     } else {
-//       matrix->elements[i] = NULL;
-//     }
-//   }
-//   matrix->length--;
-// 
-//   return removed->value;
-// }
+void* matrix_remove(Matrix* matrix, Position* position) {
+  if (position->row >= matrix->rows || position->column >= matrix->columns) {
+    return NULL;
+  }
+
+  void** row = matrix->elements[position->row];
+  void* removed = row[position->column];
+
+  row[position->column] = NULL;
+  matrix->size--;
+
+  return removed;
+}
 // 
 // int matrix_clear(Matrix* matrix) {
 //   for (int i = 0; i < matrix->capacity; i++) {

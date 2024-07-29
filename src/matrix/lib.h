@@ -21,7 +21,7 @@
   char* matrix_to_string(Matrix* matrix);
   int matrix_add(Matrix* matrix, Position* position, void* value);
   void* matrix_get(Matrix* matrix, Position* position);
-  void* matrix_remove(Matrix* matrix, int index);
+  void* matrix_remove(Matrix* matrix, Position* position);
   int matrix_clear(Matrix* matrix);
 
 #endif
