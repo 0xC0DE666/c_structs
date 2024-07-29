@@ -45,10 +45,6 @@ Matrix* matrix_new(int rows, int columns) {
 void matrix_free(Matrix** matrix) {
   for (int r = 0; r < (*matrix)->rows; ++r) {
     void** row = (*matrix)->elements[r];
-    for (int c = 0; c < (*matrix)->rows; ++c) {
-      free(row[c]);
-      row[c] = NULL;
-    }
     free(row);
     row = NULL;
   }
@@ -73,34 +69,33 @@ void matrix_free(Matrix** matrix) {
 //   return buffer;
 // }
 // 
-// int matrix_add(Matrix* matrix, void* value) {
-//   if (matrix->length >= matrix->capacity) {
-//     return 1;
-//   }
-// 
-//   Element* e = malloc(sizeof(Element));
-// 
-//   if (e == NULL) {
-//     return 1;
-//   }
-// 
-//   e->index = matrix->length;
-//   e->value = value;
-// 
-//   matrix->elements[matrix->length] = e;
-//   matrix->length++;
-// 
-//   return 0;
-// }
-// 
-// void* matrix_get(Matrix* matrix, int index) {
-//   if (index < 0 || index >= matrix->length) {
-//     return NULL;
-//   }
-// 
-//   return matrix->elements[index]->value;
-// }
-// 
+
+int matrix_add(Matrix* matrix, Position* position, void* value) {
+  if (matrix->size >= matrix->capacity) {
+    return 1;
+  }
+
+  if (position->row >= matrix->rows || position->column >= matrix->columns) {
+    return 1;
+  }
+
+  void** row = matrix->elements[position->row];
+  row[position->column] = value;
+
+  matrix->size++;
+
+  return 0;
+}
+
+void* matrix_get(Matrix* matrix, Position* position) {
+  if (position->row >= matrix->rows || position->column >= matrix->columns) {
+    return NULL;
+  }
+
+  void** row = matrix->elements[position->row];
+  return row[position->column];
+}
+
 // void* matrix_remove(Matrix* matrix, int index) {
 //   if (index < 0 || index >= matrix->length) {
 //     return NULL;
