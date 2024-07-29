@@ -109,15 +109,17 @@ void* matrix_remove(Matrix* matrix, Position* position) {
 
   return removed;
 }
-// 
-// int matrix_clear(Matrix* matrix) {
-//   for (int i = 0; i < matrix->capacity; i++) {
-//     if (matrix->elements[i] != NULL) {
-//       free(matrix->elements[i]);
-//       matrix->elements[i] = NULL;
-//     }
-//   }
-//   matrix->length = 0;
-// 
-//   return 0;
-// }
+
+int matrix_clear(Matrix* matrix) {
+  for (int r = 0; r < matrix->rows; r++) {
+    void** row = matrix->elements[r];
+    for (int c = 0; c < matrix->columns; c++) {
+      if (row[c] != NULL) {
+        row[c] = NULL;
+      }
+    }
+  }
+  matrix->size = 0;
+
+  return 0;
+}
