@@ -10,7 +10,7 @@
 
   typedef struct Array {
     int capacity;
-    int length;
+    int size;
     Element** elements;
   } Array;
 

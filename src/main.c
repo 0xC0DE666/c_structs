@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "./array/lib.h"
+#include "./matrix/lib.h"
 
 /*
  * Implement a basic array.

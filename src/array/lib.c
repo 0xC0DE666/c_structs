@@ -18,7 +18,7 @@ Array* array_new(int capacity) {
   }
 
   array->capacity = capacity;
-  array->length = 0;
+  array->size = 0;
   array->elements = elements;
 
   for (int i = 0; i < capacity; ++i) {
@@ -33,16 +33,16 @@ char* array_to_string(Array* array) {
 
   sprintf(
     buffer,
-    "capacity = %d\nlength = %d\n",
+    "capacity = %d\nsize = %d\n",
     array->capacity,
-    array->length
+    array->size
   ); 
 
   return buffer;
 }
 
 int array_add(Array* array, void* value) {
-  if (array->length >= array->capacity) {
+  if (array->size >= array->capacity) {
     return 1;
   }
 
@@ -52,17 +52,17 @@ int array_add(Array* array, void* value) {
     return 1;
   }
 
-  e->index = array->length;
+  e->index = array->size;
   e->value = value;
 
-  array->elements[array->length] = e;
-  array->length++;
+  array->elements[array->size] = e;
+  array->size++;
 
   return 0;
 }
 
 void* array_get(Array* array, int index) {
-  if (index < 0 || index >= array->length) {
+  if (index < 0 || index >= array->size) {
     return NULL;
   }
 
@@ -70,21 +70,21 @@ void* array_get(Array* array, int index) {
 }
 
 void* array_remove(Array* array, int index) {
-  if (index < 0 || index >= array->length) {
+  if (index < 0 || index >= array->size) {
     return NULL;
   }
 
   Element* removed = array->elements[index];
 
-  for (int i = index; i < array->length; i++) {
-    if (i < array->length - 1) {
+  for (int i = index; i < array->size; i++) {
+    if (i < array->size - 1) {
       array->elements[i] = array->elements[i + 1];
       array->elements[i]->index = i;
     } else {
       array->elements[i] = NULL;
     }
   }
-  array->length--;
+  array->size--;
 
   return removed->value;
 }
@@ -96,7 +96,7 @@ int array_clear(Array* array) {
       array->elements[i] = NULL;
     }
   }
-  array->length = 0;
+  array->size = 0;
 
   return 0;
 }
