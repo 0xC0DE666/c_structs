@@ -10,8 +10,11 @@
   } Array;
 
   Array* array_new(int capacity);
-  char* array_to_string(Array* array);
-  int array_add(Array* array, void* value);
+  // char* array_to_string(Array* array);
+  int array_append(Array* array, void* value);
+  int array_prepend(Array* array, void* value);
+  int array_insert(Array* array, int index, void* value);
+
   void* array_get(Array* array, int index);
   void* array_remove(Array* array, int index);
   int array_clear(Array* array);

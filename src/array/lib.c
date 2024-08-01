@@ -53,7 +53,7 @@ char* array_to_string(Array* array) {
   return buffer;
 }
 
-int array_add(Array* array, void* value) {
+int array_append(Array* array, void* value) {
   if (array->size >= array->capacity) {
     return 1;
   }
