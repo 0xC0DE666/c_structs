@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "lib.h"
 
@@ -65,7 +66,7 @@ int array_append(Array* array, void* value) {
 }
 
 void* array_get(Array* array, int index) {
-  if (index < 0 || index >= array->size) {
+  if (array_index_valid(array, index) == false) {
     return NULL;
   }
 
@@ -98,4 +99,11 @@ int array_clear(Array* array) {
   array->size = 0;
 
   return 0;
+}
+
+bool array_index_valid(Array* array, int index) {
+  if (index < 0 || index >= array->capacity) {
+    return false;
+  }
+  return true;
 }

@@ -449,6 +449,8 @@ Test(matrix_position_valid, _1) {
 
   bool result = matrix_position_valid(matrix, &position);
   cr_assert_eq(result, false);
+
+  matrix_free(&matrix);
 }
 
 Test(matrix_position_valid, _2) {
@@ -457,4 +459,6 @@ Test(matrix_position_valid, _2) {
 
   bool result = matrix_position_valid(matrix, &position);
   cr_assert_eq(result, true);
+
+  matrix_free(&matrix);
 }

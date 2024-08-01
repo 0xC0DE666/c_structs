@@ -19,5 +19,6 @@
   void* array_remove(Array* array, int index);
   int array_clear(Array* array);
   void array_free(Array** array);
+  bool array_index_valid(Array* array, int index);
 
 #endif

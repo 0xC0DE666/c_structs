@@ -310,3 +310,26 @@ Test(array_clear, _1) {
 
   array_free(&array);
 }
+
+// ####################
+// array_index_valid
+// ####################
+Test(array_index_valid, _1) {
+  Array* array = array_new(5);
+  int index = 5;
+
+  bool result = array_index_valid(array, index);
+  cr_assert_eq(result, false);
+
+  array_free(&array);
+}
+
+Test(array_index_valid, _2) {
+  Array* array = array_new(5);
+  int index = 3;
+
+  bool result = array_index_valid(array, index);
+  cr_assert_eq(result, true);
+
+  array_free(&array);
+}
