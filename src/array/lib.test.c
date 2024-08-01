@@ -116,6 +116,127 @@ Test(array_append, _4) {
 }
 
 // ####################
+// array_prepend
+// ####################
+Test(array_prepend, _1) {
+  Array* array = array_new(5);
+  int values[array->capacity];
+
+  for (int i = 0; i < array->capacity; ++i) {
+    values[i] = (i + 1) * 10;
+    array_prepend(array, &values[i]);
+
+    int* n = (int*) array->elements[0];
+    cr_assert_eq(array->size, i + 1);
+    cr_assert_eq(*n, (i + 1) * 10);
+  }
+
+  int a = array->size - 1, b = 0;
+  for (int i = 0; i < array->size; ++i) {
+    int* n = (int*) array->elements[a];
+    cr_assert_eq(*n, values[b]);
+    --a; ++b;
+  }
+  
+  array_free(&array);
+}
+
+// Test(array_prepend, _2) {
+//   Array* array = array_new(5);
+//   char* values[] = {"one", "two", "three", "four", "five"};
+// 
+//   for (int i = 0; i < array->capacity; ++i) {
+//     array_prepend(array, values[i]);
+// 
+//     char* str = (char*) array->elements[i];
+//     cr_assert_eq(array->size, i + 1);
+//     cr_assert_eq(strcmp(str, values[i]), 0);
+//   }
+// 
+//   array_free(&array);
+// }
+// 
+// Test(array_prepend, _3) {
+//   typedef struct {
+//     int x;
+//     int y;
+//   } Point;
+// 
+//   Array* array = array_new(5);
+//   Point values[array->capacity];
+// 
+//   for (int i = 0; i < array->capacity; ++i) {
+//     values[i].x = i;
+//     values[i].x = (i + 1) * 10;
+//     array_prepend(array, &values[i]);
+// 
+//     Point* p = (Point*) array->elements[i];
+//     cr_assert_eq(array->size, i + 1);
+//     cr_assert_eq(p->x, values[i].x);
+//     cr_assert_eq(p->y, values[i].y);
+//   }
+// 
+//   array_free(&array);
+// }
+// 
+// Test(array_prepend, _4) {
+//   Array* array = array_new(5);
+//   int values[array->capacity * 2];
+// 
+//   for (int i = 0; i < array->capacity * 2; ++i) {
+//     values[i] = (i + 1) * 10;
+//     int res = array_prepend(array, &values[i]);
+// 
+//     if (i >= 5) {
+//       cr_assert_eq(res, 1);
+//       cr_assert_eq(array->size, 5);
+//     }
+//   }
+// 
+//   array_free(&array);
+// }
+// 
+// Test(array_append, _3) {
+//   typedef struct {
+//     int x;
+//     int y;
+//   } Point;
+// 
+//   Array* array = array_new(5);
+//   Point values[array->capacity];
+// 
+//   for (int i = 0; i < array->capacity; ++i) {
+//     values[i].x = i;
+//     values[i].x = (i + 1) * 10;
+//     array_append(array, &values[i]);
+// 
+//     Point* p = (Point*) array->elements[i];
+//     cr_assert_eq(array->size, i + 1);
+//     cr_assert_eq(p->x, values[i].x);
+//     cr_assert_eq(p->y, values[i].y);
+//   }
+// 
+//   array_free(&array);
+// }
+// 
+// Test(array_append, _4) {
+//   Array* array = array_new(5);
+//   int values[array->capacity * 2];
+// 
+//   for (int i = 0; i < array->capacity * 2; ++i) {
+//     values[i] = (i + 1) * 10;
+//     int res = array_append(array, &values[i]);
+// 
+//     if (i >= 5) {
+//       cr_assert_eq(res, 1);
+//       cr_assert_eq(array->size, 5);
+//     }
+//   }
+// 
+//   array_free(&array);
+// }
+
+// ####################
 // array_get
 // ####################
 Test(array_get, _1) {

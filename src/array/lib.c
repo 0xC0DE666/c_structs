@@ -41,18 +41,18 @@ void array_free(Array** array) {
   *array = NULL;
 }
 
-char* array_to_string(Array* array) {
-  char* buffer = malloc(sizeof(char) * 256);
-
-  sprintf(
-    buffer,
-    "capacity = %d\nsize = %d\n",
-    array->capacity,
-    array->size
-  ); 
-
-  return buffer;
-}
+// char* array_to_string(Array* array) {
+//   char* buffer = malloc(sizeof(char) * 256);
+// 
+//   sprintf(
+//     buffer,
+//     "capacity = %d\nsize = %d\n",
+//     array->capacity,
+//     array->size
+//   ); 
+// 
+//   return buffer;
+// }
 
 int array_append(Array* array, void* value) {
   if (array->size >= array->capacity) {
@@ -60,6 +60,25 @@ int array_append(Array* array, void* value) {
   }
 
   array->elements[array->size] = value;
+  array->size++;
+
+  return 0;
+}
+
+int array_prepend(Array* array, void* value) {
+  if (array->size >= array->capacity) {
+    return 1;
+  }
+
+  if (array->size == 0) {
+    return array_append(array, value);
+  }
+
+  for (int i = array->size; i >= 1; --i) {
+    array->elements[i] = array->elements[i - 1];
+  }
+
+  array->elements[0] = value;
   array->size++;
 
   return 0;
