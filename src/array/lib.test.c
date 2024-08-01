@@ -20,6 +20,10 @@ Test(array_new, _1) {
   cr_assert_eq(array->size, 0);
   cr_assert_eq(array->elements == NULL, false);
 
+  for (int i = 0; i < array->size; ++i) {
+    cr_assert_eq(array->elements[i], NULL);
+  }
+
   array_free(&array);
 }
 
