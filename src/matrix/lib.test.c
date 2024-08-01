@@ -11,6 +11,17 @@
 #include "lib.h"
 
 // ####################
+// position_new
+// ####################
+Test(position_new, _j) {
+  Position position = position_new(3, 3);
+
+  cr_assert_eq(position.row, 3);
+  cr_assert_eq(position.column, 3);
+}
+
+
+// ####################
 // matrix_new
 // ####################
 Test(matrix_new, _1) {
@@ -429,3 +440,21 @@ Test(matrix_clear, _1) {
   matrix_free(&matrix);
 }
 
+// ####################
+// matrix_position_valid
+// ####################
+Test(matrix_position_valid, _1) {
+  Matrix* matrix = matrix_new(5, 6);
+  Position position = position_new(6, 8);
+
+  bool result = matrix_position_valid(matrix, &position);
+  cr_assert_eq(result, false);
+}
+
+Test(matrix_position_valid, _2) {
+  Matrix* matrix = matrix_new(5, 6);
+  Position position = position_new(1, 1);
+
+  bool result = matrix_position_valid(matrix, &position);
+  cr_assert_eq(result, true);
+}

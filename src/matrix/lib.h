@@ -8,6 +8,8 @@
     int column;
   } Position;
 
+  Position position_new(int row, int column);
+
   typedef struct Matrix {
     int rows;
     int columns;
@@ -23,5 +25,6 @@
   void* matrix_get(Matrix* matrix, Position* position);
   void* matrix_remove(Matrix* matrix, Position* position);
   int matrix_clear(Matrix* matrix);
+  bool matrix_position_valid(Matrix* matrix, Position* position);
 
 #endif

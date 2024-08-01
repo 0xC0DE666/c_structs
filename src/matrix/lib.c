@@ -1,7 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "lib.h"
+
+Position position_new(int row, int column) {
+  return (Position) {row, column};
+}
 
 Matrix* matrix_new(int rows, int columns) {
   Matrix* matrix = malloc(sizeof(Matrix));
@@ -75,7 +80,7 @@ int matrix_add(Matrix* matrix, Position* position, void* value) {
     return 1;
   }
 
-  if (position->row >= matrix->rows || position->column >= matrix->columns) {
+  if (matrix_position_valid(matrix, position) == false) {
     return 1;
   }
 
@@ -88,7 +93,7 @@ int matrix_add(Matrix* matrix, Position* position, void* value) {
 }
 
 void* matrix_get(Matrix* matrix, Position* position) {
-  if (position->row >= matrix->rows || position->column >= matrix->columns) {
+  if (matrix_position_valid(matrix, position) == false) {
     return NULL;
   }
 
@@ -97,7 +102,7 @@ void* matrix_get(Matrix* matrix, Position* position) {
 }
 
 void* matrix_remove(Matrix* matrix, Position* position) {
-  if (position->row >= matrix->rows || position->column >= matrix->columns) {
+  if (matrix_position_valid(matrix, position) == false) {
     return NULL;
   }
 
@@ -122,4 +127,11 @@ int matrix_clear(Matrix* matrix) {
   matrix->size = 0;
 
   return 0;
+}
+
+bool matrix_position_valid(Matrix* matrix, Position* position) {
+  if (position->row < 0 || position->row >= matrix->rows || position->column < 0 || position->column >= matrix->columns) {
+    return false;
+  }
+  return true;
 }
