@@ -235,6 +235,63 @@ Test(array_prepend, _4) {
 }
 
 // ####################
+// array_insert
+// ####################
+// Test(array_insert, _1) {
+//   Array* array = array_new(5);
+//   int values[array->capacity * 2];
+// 
+//   for (int i = 0; i < array->capacity * 2; ++i) {
+//     values[i] = (i + 1) * 10;
+//     int res = array_insert(array, &values[i]);
+// 
+// 
+//     if (i < array->capacity) {
+//       int* n = (int*) array->elements[0];
+//       cr_assert_eq(array->size, i + 1);
+//       cr_assert_eq(*n, values[i]);
+//     }
+// 
+//     if (i >= array->capacity) {
+//       cr_assert_eq(res, 1);
+//       cr_assert_eq(array->size, array->capacity);
+//     }
+//   }
+// 
+//   int a = array->size - 1, b = 0;
+//   for (int i = 0; i < array->size; ++i) {
+//     int* n = (int*) array->elements[a];
+//     cr_assert_eq(*n, values[b]);
+//     --a; ++b;
+//   }
+// 
+//   array_free(&array);
+// }
+// 
+// Test(array_insert, _2) {
+//   Array* array = array_new(5);
+//   int values[array->capacity];
+// 
+//   for (int i = 0; i < array->capacity; ++i) {
+//     values[i] = (i + 1) * 10;
+//     array_insert(array, &values[i]);
+// 
+//     int* n = (int*) array->elements[0];
+//     cr_assert_eq(array->size, i + 1);
+//     cr_assert_eq(*n, values[i]);
+//   }
+// 
+//   int a = array->size - 1, b = 0;
+//   for (int i = 0; i < array->size; ++i) {
+//     int* n = (int*) array->elements[a];
+//     cr_assert_eq(*n, values[b]);
+//     --a; ++b;
+//   }
+//   
+//   array_free(&array);
+// }
+
+// ####################
 // array_get
 // ####################
 Test(array_get, _1) {

@@ -37,11 +37,20 @@ void matrix_fun() {
 }
 
 int main() {
- int*** matrix =  malloc(3 * sizeof(void*)); 
- int x = 10;
- matrix[0][1] = &x;
+  Array* arr = array_new(5);
+  int values[arr->capacity];
 
- printf("%d\n", *matrix[0][1]);
+  for (int i = 0; i < arr->capacity - 1; ++i) {
+    values[i] = i + 1;
+    array_append(arr, &values[i]);
+  }
+  values[4] = 10;
+  array_insert(arr, 10, &values[4]);
+
+  for (int i = 0; i < arr->size; ++i) {
+    int* x = (int*) array_get(arr, i);
+    printf("%d %d\n", i, *x);
+  }
 
   return 0;
 }

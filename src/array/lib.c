@@ -70,15 +70,25 @@ int array_prepend(Array* array, void* value) {
     return 1;
   }
 
-  if (array->size == 0) {
-    return array_append(array, value);
-  }
-
   for (int i = array->size; i >= 1; --i) {
     array->elements[i] = array->elements[i - 1];
   }
 
   array->elements[0] = value;
+  array->size++;
+
+  return 0;
+}
+
+int array_insert(Array* array, int index, void* value) {
+  if (index < 0 || index > array->size) {
+    return 1;
+  }
+
+  for (int i = array->size; i >= index; --i) {
+    array->elements[i] = array->elements[i - 1];
+  }
+  array->elements[index] = value;
   array->size++;
 
   return 0;
