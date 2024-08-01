@@ -314,6 +314,26 @@ Test(array_get, _4) {
 // ####################
 Test(array_remove, _1) {
   Array* array = array_new(5);
+  int values[array->capacity * 2];
+
+  for (int i = 0; i < array->capacity * 2; ++i) {
+    values[i] = (i + 1) * 10;
+    array_append(array, &values[i]);
+  }
+
+  for (int i = array->capacity - 1; i >= 0; --i) {
+    if (i >= array->capacity) {
+      void* val = array_remove(array, i);
+      cr_assert_eq(val, NULL);
+      cr_assert_eq(array->size, 5);
+    }
+  }
+
+  array_free(&array);
+}
+
+Test(array_remove, _2) {
+  Array* array = array_new(5);
   int values[array->capacity];
 
   for (int i = 0; i < array->capacity; ++i) {
@@ -333,7 +353,7 @@ Test(array_remove, _1) {
   array_free(&array);
 }
 
-Test(array_remove, _2) {
+Test(array_remove, _3) {
   Array* array = array_new(5);
   char* values[] = {"one", "two", "three", "four", "five"};
 
@@ -353,7 +373,7 @@ Test(array_remove, _2) {
   array_free(&array);
 }
 
-Test(array_remove, _3) {
+Test(array_remove, _4) {
   typedef struct {
     int x;
     int y;
@@ -376,26 +396,6 @@ Test(array_remove, _3) {
     cr_assert_eq(p->x, values[i].x);
     cr_assert_eq(p->y, values[i].y);
     cr_assert_eq(array->size, array->capacity - x++);
-  }
-
-  array_free(&array);
-}
-
-Test(array_remove, _4) {
-  Array* array = array_new(5);
-  int values[array->capacity * 2];
-
-  for (int i = 0; i < array->capacity * 2; ++i) {
-    values[i] = (i + 1) * 10;
-    array_append(array, &values[i]);
-  }
-
-  for (int i = array->capacity - 1; i >= 0; --i) {
-    if (i >= 5) {
-      void* val = array_remove(array, i);
-      cr_assert_eq(val, NULL);
-      cr_assert_eq(array->size, 5);
-    }
   }
 
   array_free(&array);

@@ -3,7 +3,7 @@
 #ifndef LIB_H
 #define LIB_H
 
-  typedef struct {
+  typedef struct Position {
     int row;
     int column;
   } Position;
