@@ -112,8 +112,7 @@ Test(array_append, _4) {
   Point values[array->capacity];
 
   for (int i = 0; i < array->capacity; ++i) {
-    values[i].x = i;
-    values[i].x = (i + 1) * 10;
+    values[i] = (Point) {i, i + 2};
     array_append(array, &values[i]);
 
     Point* p = (Point*) array->elements[i];
@@ -215,6 +214,7 @@ Test(array_prepend, _4) {
   Point values[array->capacity];
 
   for (int i = 0; i < array->capacity; ++i) {
+    values[i] = (Point) {i, i + 2};
     array_prepend(array, &values[i]);
 
     Point* p = (Point*) array->elements[0];
@@ -270,28 +270,87 @@ Test(array_insert, _1) {
   array_free(&array);
 }
 
-// Test(array_insert, _2) {
-//   Array* array = array_new(5);
-//   int values[array->capacity];
-// 
-//   for (int i = 0; i < array->capacity; ++i) {
-//     values[i] = (i + 1) * 10;
-//     array_insert(array, &values[i]);
-// 
-//     int* n = (int*) array->elements[0];
-//     cr_assert_eq(array->size, i + 1);
-//     cr_assert_eq(*n, values[i]);
-//   }
-// 
-//   int a = array->size - 1, b = 0;
-//   for (int i = 0; i < array->size; ++i) {
-//     int* n = (int*) array->elements[a];
-//     cr_assert_eq(*n, values[b]);
-//     --a; ++b;
-//   }
-//   
-//   array_free(&array);
-// }
+Test(array_insert, _2) {
+  Array* array = array_new(5);
+  int values[array->capacity];
+
+  int idx = 1;
+  int total_inserts = 4;
+  for (int i = 0; i < total_inserts; ++i) {
+    values[i] = (i + 1) * 10;
+    int res = array_insert(array, idx, &values[i]);
+
+    int* n = (int*) array->elements[idx];
+    cr_assert_eq(array->size, i + 1);
+    cr_assert_eq(*n, values[i]);
+  }
+
+  int a = idx, b = total_inserts - 1;
+  for (int i = 0; i < total_inserts; ++i) {
+    int* n = (int*) array->elements[a];
+    cr_assert_eq(*n, values[b]);
+    ++a; --b;
+  }
+
+  array_free(&array);
+}
+
+Test(array_insert, _3) {
+  Array* array = array_new(5);
+  char* values[] = {"one", "two", "three", "four", "five"};
+
+  int idx = 1;
+  int total_inserts = 4;
+  for (int i = 0; i < total_inserts; ++i) {
+    int res = array_insert(array, idx, values[i]);
+
+    char* str = (char*) array->elements[idx];
+    cr_assert_eq(array->size, i + 1);
+    cr_assert_eq(strcmp(str, values[i]), 0);
+  }
+
+  int a = idx, b = total_inserts - 1;
+  for (int i = 0; i < total_inserts; ++i) {
+    char* str = (char*) array->elements[a];
+    cr_assert_eq(strcmp(str, values[b]), 0);
+    ++a; --b;
+  }
+
+  array_free(&array);
+}
+
+Test(array_insert, _4) {
+  typedef struct {
+    int x;
+    int y;
+  } Point;
+
+  Array* array = array_new(5);
+  Point values[array->capacity];
+
+  int idx = 1;
+  int total_inserts = 4;
+  for (int i = 0; i < total_inserts; ++i) {
+    values[i] = (Point) {i, i + 2};
+    array_insert(array, idx, &values[i]);
+
+    Point* p = (Point*) array->elements[idx];
+    cr_assert_eq(array->size, i + 1);
+    cr_assert_eq(p->x, values[i].x);
+    cr_assert_eq(p->y, values[i].y);
+  }
+
+  int a = idx, b = total_inserts - 1;
+  for (int i = 0; i < total_inserts; ++i) {
+    Point* p = (Point*) array->elements[a];
+    cr_assert_eq(p->x, values[b].x);
+    cr_assert_eq(p->y, values[b].y);
+    ++a; --b;
+  }
+
+  array_free(&array);
+}
+
 
 // ####################
 // array_get
@@ -337,8 +396,7 @@ Test(array_get, _3) {
 
   for (int i = 0; i < array->capacity; ++i) {
     Point values[array->capacity];
-    values[i].x = i;
-    values[i].x = (i + 1) * 10;
+    values[i] = (Point) {i, i + 2};
     array_append(array, &values[i]);
 
     cr_assert_eq(array->size, i + 1);
@@ -442,8 +500,7 @@ Test(array_remove, _4) {
   Point values[array->capacity];
 
   for (int i = 0; i < array->capacity; ++i) {
-    values[i].x = i;
-    values[i].x = (i + 1) * 10;
+    values[i] = (Point) {i, i + 2};
     array_append(array, &values[i]);
     cr_assert_eq(array->size, i + 1);
   }
