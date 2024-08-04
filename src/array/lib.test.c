@@ -237,37 +237,39 @@ Test(array_prepend, _4) {
 // ####################
 // array_insert
 // ####################
-// Test(array_insert, _1) {
-//   Array* array = array_new(5);
-//   int values[array->capacity * 2];
-// 
-//   for (int i = 0; i < array->capacity * 2; ++i) {
-//     values[i] = (i + 1) * 10;
-//     int res = array_insert(array, &values[i]);
-// 
-// 
-//     if (i < array->capacity) {
-//       int* n = (int*) array->elements[0];
-//       cr_assert_eq(array->size, i + 1);
-//       cr_assert_eq(*n, values[i]);
-//     }
-// 
-//     if (i >= array->capacity) {
-//       cr_assert_eq(res, 1);
-//       cr_assert_eq(array->size, array->capacity);
-//     }
-//   }
-// 
-//   int a = array->size - 1, b = 0;
-//   for (int i = 0; i < array->size; ++i) {
-//     int* n = (int*) array->elements[a];
-//     cr_assert_eq(*n, values[b]);
-//     --a; ++b;
-//   }
-// 
-//   array_free(&array);
-// }
-// 
+Test(array_insert, _1) {
+  Array* array = array_new(5);
+  int values[array->capacity * 2];
+
+  int idx = 2;
+  int total_inserts = 3;
+  for (int i = 0; i < array->capacity * 2; ++i) {
+    values[i] = (i + 1) * 10;
+    int res = array_insert(array, idx, &values[i]);
+
+
+    if (i < total_inserts) {
+      int* n = (int*) array->elements[idx];
+      cr_assert_eq(array->size, i + 1);
+      cr_assert_eq(*n, values[i]);
+    }
+
+    if (i >= array->capacity) {
+      cr_assert_eq(res, 1);
+      cr_assert_eq(array->size, total_inserts);
+    }
+  }
+
+  int a = idx, b = idx;
+  for (int i = 0; i < total_inserts; ++i) {
+    int* n = (int*) array->elements[a];
+    cr_assert_eq(*n, values[b]);
+    ++a; --b;
+  }
+
+  array_free(&array);
+}
+
 // Test(array_insert, _2) {
 //   Array* array = array_new(5);
 //   int values[array->capacity];
@@ -505,6 +507,29 @@ Test(array_index_valid, _2) {
   int index = 3;
 
   bool result = array_index_valid(array, index);
+  cr_assert_eq(result, true);
+
+  array_free(&array);
+}
+
+// ####################
+// array_has_capacity
+// ####################
+Test(array_has_capacity, _1) {
+  Array* array = array_new(1);
+  int x = 10;
+  array_append(array, &x);
+
+  bool result = array_has_capacity(array);
+  cr_assert_eq(result, false);
+
+  array_free(&array);
+}
+
+Test(array_has_capacity, _2) {
+  Array* array = array_new(1);
+
+  bool result = array_has_capacity(array);
   cr_assert_eq(result, true);
 
   array_free(&array);

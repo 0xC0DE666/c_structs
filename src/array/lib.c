@@ -55,7 +55,7 @@ void array_free(Array** array) {
 // }
 
 int array_append(Array* array, void* value) {
-  if (array->size >= array->capacity) {
+  if (!array_has_capacity(array)) {
     return 1;
   }
 
@@ -66,7 +66,7 @@ int array_append(Array* array, void* value) {
 }
 
 int array_prepend(Array* array, void* value) {
-  if (array->size >= array->capacity) {
+  if (!array_has_capacity(array)) {
     return 1;
   }
 
@@ -81,11 +81,27 @@ int array_prepend(Array* array, void* value) {
 }
 
 int array_insert(Array* array, int index, void* value) {
-  if (index < 0 || index > array->size) {
+  if (!array_has_capacity(array)) {
     return 1;
   }
 
-  for (int i = array->size; i >= index; --i) {
+  if (!array_index_valid(array, index)) {
+    return 1;
+  }
+
+  bool open_spot = false;
+  for (int i = index; i < array->capacity; ++i) {
+    if (array->elements[i] == NULL) {
+      open_spot = true;
+      break;
+    }
+  }
+
+  if (!open_spot) {
+    return 1;
+  }
+
+  for (int i = array->capacity - 1; i >= index; --i) {
     array->elements[i] = array->elements[i - 1];
   }
   array->elements[index] = value;
@@ -95,7 +111,7 @@ int array_insert(Array* array, int index, void* value) {
 }
 
 void* array_get(Array* array, int index) {
-  if (array_index_valid(array, index) == false) {
+  if (!array_index_valid(array, index)) {
     return NULL;
   }
 
@@ -131,8 +147,9 @@ int array_clear(Array* array) {
 }
 
 bool array_index_valid(Array* array, int index) {
-  if (index < 0 || index >= array->capacity) {
-    return false;
-  }
-  return true;
+  return index >= 0 && index <= array->capacity - 1;
+}
+
+bool array_has_capacity(Array* array) {
+  return array->size < array->capacity;
 }

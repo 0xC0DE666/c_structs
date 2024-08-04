@@ -20,5 +20,6 @@
   void* array_remove(Array* array, int index);
   int array_clear(Array* array);
   bool array_index_valid(Array* array, int index);
+  bool array_has_capacity(Array* array);
 
 #endif
