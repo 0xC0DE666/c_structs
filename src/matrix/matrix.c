@@ -15,25 +15,25 @@ Matrix* matrix_new(int rows, int columns) {
     return NULL;
   }
 
-  void** elements =  malloc(rows * sizeof(void*)); 
+  void** ptr_rows =  malloc(rows * sizeof(void*));
 
-  if (elements == NULL) {
+  if (ptr_rows == NULL) {
     free(matrix);
     return NULL;
   }
 
-  for (int a = 0; a < rows; ++a) {
-    elements[a] = malloc(columns * sizeof(void*));
+  void** ptr_columns = malloc(rows * columns * sizeof(void*));
 
-    if (elements[a] == NULL) {
-      for (int b = 0; b <= a; ++b) {
-        free(elements[b]);
-      }
-      free(matrix);
-      return NULL;
-    }
+  if (ptr_columns == NULL) {
+    free(matrix);
+    free(ptr_rows);
+    return NULL;
+  }
 
-    void ** row = elements[a];
+  for (int r = 0; r < rows; ++r) {
+    ptr_rows[r] = ptr_columns + (r * columns);
+
+    void** row = ptr_rows[r];
     for (int c = 0; c < columns; ++c) {
       row[c] = NULL;
     }
@@ -42,17 +42,14 @@ Matrix* matrix_new(int rows, int columns) {
   matrix->capacity = rows * columns;
   matrix->rows = rows;
   matrix->columns = columns;
-  matrix->elements = elements;
+  matrix->elements = ptr_rows;
 
   return matrix;
 }
 
 void matrix_free(Matrix** matrix) {
-  for (int r = 0; r < (*matrix)->rows; ++r) {
-    void** row = (*matrix)->elements[r];
-    free(row);
-    row = NULL;
-  }
+  free((*matrix)->elements[0]);
+  (*matrix)->elements[0] = NULL;
 
   free((*matrix)->elements);
   (*matrix)->elements = NULL;
