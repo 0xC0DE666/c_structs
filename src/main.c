@@ -55,7 +55,7 @@ void array_fun() {
 
 int main() {
   Matrix* trix = matrix_new(3, 3);
-  int values[9];
+  Position values[9];
 
   int i = 0;
   for (int r = 0; r < 3; ++r) {
@@ -63,9 +63,8 @@ int main() {
     printf("row %d -> %p\n", r, row);
 
     for (int c = 0; c < 3; ++c) {
-      values[i] = (r + 1) * c;
-      Position p = {r,c};
-      matrix_add(trix, &p, &values[i]);
+      values[i] = position_new(r, c);
+      matrix_add(trix, &values[i], &values[i]);
 
       void** col = row[c];
       printf("elements[%d][%d] -> %p\n", r, c, col);
