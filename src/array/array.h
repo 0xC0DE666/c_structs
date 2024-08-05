@@ -1,7 +1,7 @@
 #include <stdbool.h>
 
-#ifndef LIB_H
-#define LIB_H
+#ifndef ARRAY_H
+#define ARRAY_H
 
   typedef struct Array {
     int capacity;

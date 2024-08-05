@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include "lib.h"
+#include "matrix.h"
 
 Position position_new(int row, int column) {
   return (Position) {row, column};

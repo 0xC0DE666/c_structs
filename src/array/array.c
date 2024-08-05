@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include "lib.h"
+#include "array.h"
 
 Array* array_new(int capacity) {
   Array* array = malloc(sizeof(Array));

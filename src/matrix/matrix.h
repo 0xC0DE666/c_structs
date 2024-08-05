@@ -1,7 +1,7 @@
 #include <stdbool.h>
 
-#ifndef LIB_H
-#define LIB_H
+#ifndef MATRIX_H
+#define MATRIX_H
 
   typedef struct Position {
     int row;
