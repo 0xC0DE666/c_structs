@@ -1,5 +1,5 @@
 CC = gcc
-C_FLAGS = -std=c99 -O2 -g -Wall -Wextra
+C_FLAGS = -g -Wall -Wextra
 
 SRC_D = ./src
 OBJ_D = ./obj
@@ -7,6 +7,14 @@ BIN_D = ./bin
 
 # all: clean array.o array.so array_test.o array_test matrix.o matrix.so matrix_test.o matrix_test lib.o lib.so lib_test main.o main;
 all: clean array.o array.so array_test.o array_test matrix.o matrix.so matrix_test.o matrix_test lib_test main.o main;
+
+#------------------------------
+# RELEASE
+#------------------------------
+
+release: C_FLAGS = -std=c99 -O2 -g -DNDDEBUG -Wall -Wextra
+release: clean;
+release: clean array.o array.so array_test.o array_test matrix.o matrix.so matrix_test.o matrix_test lib_test main.o main;
 
 #------------------------------
 # MAIN
