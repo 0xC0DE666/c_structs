@@ -3,7 +3,6 @@
 #include <stdlib.h>
 
 #include <string.h>
-#include <limits.h>
 
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
@@ -122,7 +121,7 @@ Test(matrix_add, _3) {
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
       Position p = {r, c};
-      int res = matrix_add(matrix, &p, values[i]);
+      matrix_add(matrix, &p, values[i]);
 
       void** row = matrix->elements[r];
       char* v = (char*) row[c];
@@ -150,7 +149,7 @@ Test(matrix_add, _4) {
       values[i].x = i;
       values[i].x = (i + 1) * 10;
       Position p = {r, c};
-      int res = matrix_add(matrix, &p, &values[i]);
+      matrix_add(matrix, &p, &values[i]);
 
       void** row = matrix->elements[r];
       Point* v = (Point*) row[c];
@@ -168,6 +167,27 @@ Test(matrix_add, _4) {
 // matrix_get
 // ####################
 Test(matrix_get, _1) {
+  Matrix* matrix = matrix_new(5, 5);
+  int values[matrix->capacity * 2];
+
+  int i = 0;
+  for (int r = 0; r < matrix->capacity * 2; ++r) {
+    for (int c = 0; c < matrix->capacity * 2; ++c) {
+      values[i] = (i + 1) * 10;
+      Position p = {r, c};
+      int res = matrix_add(matrix, &p, &values[i]);
+
+      if (i >= 26) {
+        cr_assert_eq(res, 1);
+        cr_assert_eq(matrix->size, 25);
+      }
+    }
+  }
+
+  matrix_free(&matrix);
+}
+
+Test(matrix_get, _2) {
   Matrix* matrix = matrix_new(5, 2);
   int values[matrix->capacity];
 
@@ -188,7 +208,7 @@ Test(matrix_get, _1) {
   matrix_free(&matrix);
 }
 
-Test(matrix_get, _2) {
+Test(matrix_get, _3) {
   Matrix* matrix = matrix_new(1, 5);
   char* values[] = {"one", "two", "three", "four", "five"};
 
@@ -196,9 +216,8 @@ Test(matrix_get, _2) {
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
       Position p = {r, c};
-      int res = matrix_add(matrix, &p, values[i]);
+      matrix_add(matrix, &p, values[i]);
 
-      void** row = matrix->elements[r];
       char* v = (char*) matrix_get(matrix, &p);
       cr_assert_eq(matrix->size, i + 1);
       cr_assert_eq(strcmp(v, values[i]), 0);
@@ -209,7 +228,7 @@ Test(matrix_get, _2) {
   matrix_free(&matrix);
 }
 
-Test(matrix_get, _3) {
+Test(matrix_get, _4) {
   typedef struct {
     int x;
     int y;
@@ -224,9 +243,8 @@ Test(matrix_get, _3) {
       values[i].x = i;
       values[i].x = (i + 1) * 10;
       Position p = {r, c};
-      int res = matrix_add(matrix, &p, &values[i]);
+      matrix_add(matrix, &p, &values[i]);
 
-      void** row = matrix->elements[r];
       Point* v = (Point*) matrix_get(matrix, &p);
       cr_assert_eq(matrix->size, i + 1);
       cr_assert_eq(v->x, values[i].x);
@@ -238,26 +256,6 @@ Test(matrix_get, _3) {
   matrix_free(&matrix);
 }
 
-Test(matrix_get, _4) {
-  Matrix* matrix = matrix_new(5, 5);
-  int values[matrix->capacity * 2];
-
-  int i = 0;
-  for (int r = 0; r < matrix->capacity * 2; ++r) {
-    for (int c = 0; c < matrix->capacity * 2; ++c) {
-      values[i] = (i + 1) * 10;
-      Position p = {r, c};
-      int res = matrix_add(matrix, &p, &values[i]);
-
-      if (i >= 26) {
-        cr_assert_eq(res, 1);
-        cr_assert_eq(matrix->size, 25);
-      }
-    }
-  }
-
-  matrix_free(&matrix);
-}
 
 // ####################
 // matrix_remove

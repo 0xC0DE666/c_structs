@@ -3,7 +3,6 @@
 #include <stdlib.h>
 
 #include <string.h>
-#include <limits.h>
 
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
@@ -278,7 +277,7 @@ Test(array_insert, _2) {
   int total_inserts = 4;
   for (int i = 0; i < total_inserts; ++i) {
     values[i] = (i + 1) * 10;
-    int res = array_insert(array, idx, &values[i]);
+    array_insert(array, idx, &values[i]);
 
     int* n = (int*) array->elements[idx];
     cr_assert_eq(array->size, i + 1);
@@ -302,7 +301,7 @@ Test(array_insert, _3) {
   int idx = 1;
   int total_inserts = 4;
   for (int i = 0; i < total_inserts; ++i) {
-    int res = array_insert(array, idx, values[i]);
+    array_insert(array, idx, values[i]);
 
     char* str = (char*) array->elements[idx];
     cr_assert_eq(array->size, i + 1);
@@ -357,6 +356,24 @@ Test(array_insert, _4) {
 // ####################
 Test(array_get, _1) {
   Array* array = array_new(5);
+  int values[array->capacity * 2];
+
+  for (int i = 0; i < array->capacity * 2; ++i) {
+    values[i] = (i + 1) * 10;
+    int res = array_append(array, &values[i]);
+
+    if (i >= 5) {
+      cr_assert_eq(res, 1);
+      cr_assert_eq(array->size, 5);
+      cr_assert_eq(array_get(array, i), NULL);
+    }
+  }
+
+  array_free(&array);
+}
+
+Test(array_get, _2) {
+  Array* array = array_new(5);
     int values[array->capacity];
 
   for (int i = 0; i < array->capacity; ++i) {
@@ -371,7 +388,7 @@ Test(array_get, _1) {
   array_free(&array);
 }
 
-Test(array_get, _2) {
+Test(array_get, _3) {
   Array* array = array_new(5);
   char* values[] = {"one", "two", "three", "four", "five"};
 
@@ -386,7 +403,7 @@ Test(array_get, _2) {
   array_free(&array);
 }
 
-Test(array_get, _3) {
+Test(array_get, _4) {
   typedef struct {
     int x;
     int y;
@@ -408,23 +425,6 @@ Test(array_get, _3) {
   array_free(&array);
 }
 
-Test(array_get, _4) {
-  Array* array = array_new(5);
-  int values[array->capacity * 2];
-
-  for (int i = 0; i < array->capacity * 2; ++i) {
-    values[i] = (i + 1) * 10;
-    int res = array_append(array, &values[i]);
-
-    if (i >= 5) {
-      cr_assert_eq(res, 1);
-      cr_assert_eq(array->size, 5);
-      cr_assert_eq(array_get(array, i), NULL);
-    }
-  }
-
-  array_free(&array);
-}
 
 // ####################
 // array_remove

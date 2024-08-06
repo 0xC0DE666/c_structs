@@ -1,8 +1,5 @@
 # directories
-bin/
-out/
+bin/*
+out/*
 
 # executables
-app
-test
-*.out
