@@ -36,6 +36,7 @@ libc_structs.so: array.o matrix.o
 libc_structs_test: array.o array_test.o matrix.o matrix_test.o;
 	$(CC) $(C_FLAGS) -lcriterion -o $(BIN_D)/$@ $(OBJ_D)/array.o $(OBJ_D)/array_test.o $(OBJ_D)/matrix.o $(OBJ_D)/matrix_test.o;
 
+
 #------------------------------
 # MAIN
 #------------------------------
