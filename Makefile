@@ -53,14 +53,16 @@ lib_test: array.o array_test.o matrix.o matrix_test.o;
 # LIB ARRAY
 #------------------------------
 
-array.o:
-	$(CC) $(C_FLAGS) -c -o $(OBJ_D)/$@ $(SRC_D)/array/array.c;
+ARRAY_D = $(SRC_D)/array
 
-array.so:
-	$(CC) $(C_FLAGS) -fPIC -shared -o $(OBJ_D)/$@ $(SRC_D)/array/array.c;
+array.o:
+	$(CC) $(C_FLAGS) -c -o $(OBJ_D)/$@ $(ARRAY_D)/array.c;
+
+array.so: array.o
+	$(CC) $(C_FLAGS) -fPIC -shared -o $(OBJ_D)/$@ $(OBJ_D)/array.o;
 
 array_test.o: array.o;
-	$(CC) $(C_FLAGS) -c -o $(OBJ_D)/$@ $(SRC_D)/array/array_test.c;
+	$(CC) $(C_FLAGS) -c -o $(OBJ_D)/$@ $(ARRAY_D)/array_test.c;
 
 array_test: array.o array_test.o;
 	$(CC) $(C_FLAGS) -lcriterion -o $(BIN_D)/$@ $(OBJ_D)/array.o $(OBJ_D)/array_test.o;
@@ -69,14 +71,17 @@ array_test: array.o array_test.o;
 #------------------------------
 # LIB MATRIX
 #------------------------------
-matrix.o:
-	$(CC) $(C_FLAGS) -c -o $(OBJ_D)/$@ $(SRC_D)/matrix/matrix.c;
 
-matrix.so:
-	$(CC) $(C_FLAGS) -fPIC -shared -o $(OBJ_D)/$@ $(SRC_D)/matrix/matrix.c;
+MATRIX_D = $(SRC_D)/matrix
+
+matrix.o:
+	$(CC) $(C_FLAGS) -c -o $(OBJ_D)/$@ $(MATRIX_D)/matrix.c;
+
+matrix.so: matrix.o
+	$(CC) $(C_FLAGS) -fPIC -shared -o $(OBJ_D)/$@ $(OBJ_D)/matrix.o;
 
 matrix_test.o: matrix.o;
-	$(CC) $(C_FLAGS) -c -o $(OBJ_D)/$@ $(SRC_D)/matrix/matrix_test.c;
+	$(CC) $(C_FLAGS) -c -o $(OBJ_D)/$@ $(MATRIX_D)/matrix_test.c;
 
 matrix_test: matrix.o matrix_test.o;
 	$(CC) $(C_FLAGS) -lcriterion -o $(BIN_D)/$@ $(OBJ_D)/matrix.o $(OBJ_D)/matrix_test.o;
