@@ -29,7 +29,7 @@ Array* array_new(int capacity) {
   return array;
 }
 
-void array_free(Array** array) {
+void array_free(Array** const array) {
   for (int i = 0; i < (*array)->capacity; ++i) {
     (*array)->elements[i] = NULL;
   }
@@ -54,7 +54,7 @@ void array_free(Array** array) {
 //   return buffer;
 // }
 
-int array_append(Array* array, void* value) {
+int array_append(Array* const array, void* const value) {
   if (!array_has_capacity(array)) {
     return 1;
   }
@@ -65,7 +65,7 @@ int array_append(Array* array, void* value) {
   return 0;
 }
 
-int array_prepend(Array* array, void* value) {
+int array_prepend(Array* const array, void* const value) {
   if (!array_has_capacity(array)) {
     return 1;
   }
@@ -80,7 +80,7 @@ int array_prepend(Array* array, void* value) {
   return 0;
 }
 
-int array_insert(Array* array, int index, void* value) {
+int array_insert(Array* const array, int index, void* const value) {
   if (!array_has_capacity(array)) {
     return 1;
   }
@@ -110,7 +110,7 @@ int array_insert(Array* array, int index, void* value) {
   return 0;
 }
 
-void* array_get(Array* array, int index) {
+void* array_get(Array* const array, int index) {
   if (!array_index_valid(array, index)) {
     return NULL;
   }
@@ -118,7 +118,7 @@ void* array_get(Array* array, int index) {
   return array->elements[index];
 }
 
-void* array_remove(Array* array, int index) {
+void* array_remove(Array* const array, int index) {
   if (index < 0 || index >= array->size) {
     return NULL;
   }
@@ -137,7 +137,7 @@ void* array_remove(Array* array, int index) {
   return removed;
 }
 
-int array_clear(Array* array) {
+int array_clear(Array* const array) {
   for (int i = 0; i < array->capacity; i++) {
     array->elements[i] = NULL;
   }
@@ -146,10 +146,10 @@ int array_clear(Array* array) {
   return 0;
 }
 
-bool array_index_valid(Array* array, int index) {
+bool array_index_valid(Array* const array, int index) {
   return index >= 0 && index <= array->capacity - 1;
 }
 
-bool array_has_capacity(Array* array) {
+bool array_has_capacity(Array* const array) {
   return array->size < array->capacity;
 }

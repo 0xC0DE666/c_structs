@@ -19,12 +19,12 @@
   } Matrix;
 
   Matrix* matrix_new(int rows, int columns);
-  void matrix_free(Matrix** matrix);
+  void matrix_free(Matrix** const matrix);
   // char* matrix_to_string(Matrix* matrix);
-  int matrix_add(Matrix* matrix, Position* position, void* value);
-  void* matrix_get(Matrix* matrix, Position* position);
-  void* matrix_remove(Matrix* matrix, Position* position);
-  int matrix_clear(Matrix* matrix);
-  bool matrix_position_valid(Matrix* matrix, Position* position);
+  int matrix_add(Matrix* const matrix, Position* const position, void* const value);
+  void* matrix_get(Matrix* const matrix, Position* const position);
+  void* matrix_remove(Matrix* const matrix, Position* const position);
+  int matrix_clear(Matrix* const matrix);
+  bool matrix_position_valid(Matrix* const matrix, Position* const position);
 
 #endif

@@ -47,7 +47,7 @@ Matrix* matrix_new(int rows, int columns) {
   return matrix;
 }
 
-void matrix_free(Matrix** matrix) {
+void matrix_free(Matrix** const matrix) {
   free((*matrix)->elements[0]);
   (*matrix)->elements[0] = NULL;
 
@@ -72,7 +72,7 @@ void matrix_free(Matrix** matrix) {
 // }
 // 
 
-int matrix_add(Matrix* matrix, Position* position, void* value) {
+int matrix_add(Matrix* const matrix, Position* const position, void* const value) {
   if (matrix->size >= matrix->capacity) {
     return 1;
   }
@@ -89,7 +89,7 @@ int matrix_add(Matrix* matrix, Position* position, void* value) {
   return 0;
 }
 
-void* matrix_get(Matrix* matrix, Position* position) {
+void* matrix_get(Matrix* const matrix, Position* const position) {
   if (matrix_position_valid(matrix, position) == false) {
     return NULL;
   }
@@ -98,7 +98,7 @@ void* matrix_get(Matrix* matrix, Position* position) {
   return row[position->column];
 }
 
-void* matrix_remove(Matrix* matrix, Position* position) {
+void* matrix_remove(Matrix* const matrix, Position* const position) {
   if (matrix_position_valid(matrix, position) == false) {
     return NULL;
   }
@@ -112,7 +112,7 @@ void* matrix_remove(Matrix* matrix, Position* position) {
   return removed;
 }
 
-int matrix_clear(Matrix* matrix) {
+int matrix_clear(Matrix* const matrix) {
   for (int r = 0; r < matrix->rows; r++) {
     void** row = matrix->elements[r];
     for (int c = 0; c < matrix->columns; c++) {
@@ -126,7 +126,7 @@ int matrix_clear(Matrix* matrix) {
   return 0;
 }
 
-bool matrix_position_valid(Matrix* matrix, Position* position) {
+bool matrix_position_valid(Matrix* const matrix, Position* const position) {
   if (position->row < 0 || position->row >= matrix->rows || position->column < 0 || position->column >= matrix->columns) {
     return false;
   }

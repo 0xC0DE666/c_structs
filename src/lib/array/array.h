@@ -10,16 +10,16 @@
   } Array;
 
   Array* array_new(int capacity);
-  void array_free(Array** array);
+  void array_free(Array** const array);
   // char* array_to_string(Array* array);
-  int array_append(Array* array, void* value);
-  int array_prepend(Array* array, void* value);
-  int array_insert(Array* array, int index, void* value);
+  int array_append(Array* const array, void* const  value);
+  int array_prepend(Array* const array, void* const value);
+  int array_insert(Array* const array, int index, void* const value);
 
-  void* array_get(Array* array, int index);
-  void* array_remove(Array* array, int index);
-  int array_clear(Array* array);
-  bool array_index_valid(Array* array, int index);
-  bool array_has_capacity(Array* array);
+  void* array_get(Array* const array, int index);
+  void* array_remove(Array* const array, int index);
+  int array_clear(Array* const array);
+  bool array_index_valid(Array* const array, int index);
+  bool array_has_capacity(Array* const array);
 
 #endif
