@@ -6,7 +6,7 @@ TEST_DIR := ./src/test
 OBJ_DIR := ./obj
 BIN_DIR := ./bin
 
-all: clean app test libc_structs.so;
+all: clean app test libc_structs.so libc_structs.a;
 
 clean:
 	rm -f ./src/main.o $(LIB_OBJS) $(TEST_OBJS) $(OBJ_DIR)/* $(BIN_DIR)/*;
@@ -27,6 +27,9 @@ libc_structs.o: $(LIB_OBJS);
 
 libc_structs.so: $(LIB_OBJS);
 	$(CC) $(C_FLAGS) -fPIC -shared -lc -o $(OBJ_DIR)/$@ $(LIB_OBJS);
+
+libc_structs.a: $(LIB_OBJS);
+	ar rcs $(OBJ_DIR)/$@ $(LIB_OBJS);
 
 main.o:
 	$(CC) $(C_FLAGS) -c -o ./src/main.o ./src/main.c;
