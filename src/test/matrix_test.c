@@ -7,7 +7,7 @@
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
 
-#include "matrix.h"
+#include "../lib/matrix/matrix.h"
 
 // ####################
 // position_new

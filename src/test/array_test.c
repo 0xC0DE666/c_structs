@@ -7,7 +7,7 @@
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
 
-#include "array.h"
+#include "../lib/array/array.h"
 
 // ####################
 // array_new
