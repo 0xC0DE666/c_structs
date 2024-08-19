@@ -1,6 +1,6 @@
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
+//#include <stdio.h>
+//#include <stdlib.h>
 
 #include <string.h>
 
@@ -8,6 +8,7 @@
 #include <criterion/redirect.h>
 
 #include "../lib/array/array.h"
+#include "utils.h"
 
 // ####################
 // array_new
@@ -42,6 +43,27 @@ Test(array_free, _1) {
   array_free(&array);
 
   cr_assert_eq(array, NULL);
+}
+
+// ####################
+// array_free_values
+// ####################
+Test(array_free_values, _1) {
+
+  Array* array = array_new(5);
+  Point values[array->capacity];
+
+  for (int i = 0; i < array->capacity; ++i) {
+    values[i] = (Point) {i, i + 2};
+    array_append(array, &values[i]);
+
+    Point* p = (Point*) array->elements[i];
+    cr_assert_eq(array->size, i + 1);
+    cr_assert_eq(p->x, values[i].x);
+    cr_assert_eq(p->y, values[i].y);
+  }
+
+  array_free(&array);
 }
 
 // ####################
@@ -102,11 +124,6 @@ Test(array_append, _3) {
 }
 
 Test(array_append, _4) {
-  typedef struct {
-    int x;
-    int y;
-  } Point;
-
   Array* array = array_new(5);
   Point values[array->capacity];
 
@@ -204,11 +221,6 @@ Test(array_prepend, _3) {
 }
 
 Test(array_prepend, _4) {
-  typedef struct {
-    int x;
-    int y;
-  } Point;
-
   Array* array = array_new(5);
   Point values[array->capacity];
 
@@ -319,11 +331,6 @@ Test(array_insert, _3) {
 }
 
 Test(array_insert, _4) {
-  typedef struct {
-    int x;
-    int y;
-  } Point;
-
   Array* array = array_new(5);
   Point values[array->capacity];
 
@@ -404,11 +411,6 @@ Test(array_get, _3) {
 }
 
 Test(array_get, _4) {
-  typedef struct {
-    int x;
-    int y;
-  } Point;
-
   Array* array = array_new(5);
 
   for (int i = 0; i < array->capacity; ++i) {
@@ -491,11 +493,6 @@ Test(array_remove, _3) {
 }
 
 Test(array_remove, _4) {
-  typedef struct {
-    int x;
-    int y;
-  } Point;
-
   Array* array = array_new(5);
   Point values[array->capacity];
 

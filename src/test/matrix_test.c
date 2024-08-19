@@ -1,6 +1,6 @@
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
+//#include <stdio.h>
+//#include <stdlib.h>
 
 #include <string.h>
 
@@ -8,6 +8,7 @@
 #include <criterion/redirect.h>
 
 #include "../lib/matrix/matrix.h"
+#include "utils.h"
 
 // ####################
 // position_new
@@ -135,11 +136,6 @@ Test(matrix_add, _3) {
 }
 
 Test(matrix_add, _4) {
-  typedef struct {
-    int x;
-    int y;
-  } Point;
-
   Matrix* matrix = matrix_new(4, 4);
   Point values[matrix->capacity];
 
@@ -229,11 +225,6 @@ Test(matrix_get, _3) {
 }
 
 Test(matrix_get, _4) {
-  typedef struct {
-    int x;
-    int y;
-  } Point;
-
   Matrix* matrix = matrix_new(4, 4);
   Point values[matrix->capacity];
 
@@ -324,11 +315,6 @@ Test(matrix_remove, _2) {
 }
 
 Test(matrix_remove, _3) {
-  typedef struct {
-    int x;
-    int y;
-  } Point;
-
   Matrix* matrix = matrix_new(5, 3);
   Point values[matrix->capacity];
 
