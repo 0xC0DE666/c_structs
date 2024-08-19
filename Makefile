@@ -20,6 +20,7 @@ clean:
 
 LIB_DIRS = ./src/lib/array ./src/lib/matrix
 LIB_SRCS = $(foreach dir, $(LIB_DIRS), $(wildcard $(dir)/*.c))
+LIB_HDRS = $(foreach dir, $(LIB_DIRS), $(wildcard $(dir)/*.h))
 LIB_OBJS := $(patsubst %.c, %.o, $(LIB_SRCS))
 
 $(LIB_SRCS):
@@ -28,7 +29,7 @@ $(LIB_SRCS):
 libc_structs.o: $(LIB_OBJS);
 	ld -relocatable -o $(OBJ_DIR)/$@ $(LIB_OBJS);
 
-libc_structs.so: $(LIB_OBJS);
+libc_structs.so: $(LIB_OBJS) $(LIB_HDRS);
 	$(CC) $(C_FLAGS) -fPIC -shared -lc -o $(OBJ_DIR)/$@ $(LIB_OBJS);
 
 libc_structs.a: $(LIB_OBJS);
