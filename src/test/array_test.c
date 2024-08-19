@@ -24,7 +24,63 @@ Test(array_new, _1) {
     cr_assert_eq(array->elements[i], NULL);
   }
 
-  array_free(&array);
+  array_free(&array, NULL);
+}
+
+// ####################
+// array_clear
+// ####################
+Test(array_clear, _1) {
+  Array* array = array_new(5);
+  int values[array->capacity];
+
+  for (int i = 0; i < array->capacity; ++i) {
+    values[i] = (i + 1) * 10;
+    array_append(array, &values[i]);
+    cr_assert_eq(array->size, i + 1);
+  }
+
+  array_clear(array, NULL);
+
+  cr_assert_eq(array->size, 0);
+  for (int i = 0; i < array->capacity; ++i) {
+    cr_assert_eq(array->elements[i], NULL);
+  }
+
+  int idx = 0;
+  array_append(array, &values[idx]);
+  int* v = array_get(array, idx);
+
+  cr_assert_eq(array->size, 1);
+  cr_assert_eq(*v, values[idx]);
+
+  array_free(&array, NULL);
+}
+
+Test(array_clear, _2) {
+  Array* array = array_new(5);
+
+  for (int i = 0; i < array->capacity; ++i) {
+    array_append(array, point_new(i, i + 1));
+    cr_assert_eq(array->size, i + 1);
+  }
+
+  array_clear(array, (FreeFn) point_free);
+
+  cr_assert_eq(array->size, 0);
+  for (int i = 0; i < array->capacity; ++i) {
+    cr_assert_eq(array->elements[i], NULL);
+  }
+
+  array_append(array, point_new(0, 0));
+  Point* a = array_get(array, 0);
+  Point* b = array->elements[0];
+
+  cr_assert_eq(array->size, 1);
+  cr_assert_eq(a->x, b->x);
+  cr_assert_eq(a->y, b->y);
+
+  array_free(&array, (FreeFn) point_free);
 }
 
 // ####################
@@ -40,30 +96,20 @@ Test(array_free, _1) {
     cr_assert_eq(array->size, i + 1);
   }
 
-  array_free(&array);
-
+  array_free(&array, NULL);
   cr_assert_eq(array, NULL);
 }
 
-// ####################
-// array_free_values
-// ####################
-Test(array_free_values, _1) {
-
+Test(array_free, _2) {
   Array* array = array_new(5);
-  Point values[array->capacity];
 
   for (int i = 0; i < array->capacity; ++i) {
-    values[i] = (Point) {i, i + 2};
-    array_append(array, &values[i]);
-
-    Point* p = (Point*) array->elements[i];
+    array_append(array, point_new(i, i + 1));
     cr_assert_eq(array->size, i + 1);
-    cr_assert_eq(p->x, values[i].x);
-    cr_assert_eq(p->y, values[i].y);
   }
 
-  array_free(&array);
+  array_free(&array, (FreeFn) point_free);
+  cr_assert_eq(array, NULL);
 }
 
 // ####################
@@ -89,7 +135,7 @@ Test(array_append, _1) {
     }
   }
 
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 Test(array_append, _2) {
@@ -105,7 +151,7 @@ Test(array_append, _2) {
     cr_assert_eq(*n, values[i]);
   }
 
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 Test(array_append, _3) {
@@ -120,7 +166,7 @@ Test(array_append, _3) {
     cr_assert_eq(strcmp(str, values[i]), 0);
   }
 
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 Test(array_append, _4) {
@@ -137,7 +183,7 @@ Test(array_append, _4) {
     cr_assert_eq(p->y, values[i].y);
   }
 
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 
@@ -172,7 +218,7 @@ Test(array_prepend, _1) {
     --a; ++b;
   }
 
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 Test(array_prepend, _2) {
@@ -195,7 +241,7 @@ Test(array_prepend, _2) {
     --a; ++b;
   }
   
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 Test(array_prepend, _3) {
@@ -217,7 +263,7 @@ Test(array_prepend, _3) {
     --a; ++b;
   }
   
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 Test(array_prepend, _4) {
@@ -242,7 +288,7 @@ Test(array_prepend, _4) {
     --a; ++b;
   }
   
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 // ####################
@@ -278,7 +324,7 @@ Test(array_insert, _1) {
     ++a; --b;
   }
 
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 Test(array_insert, _2) {
@@ -303,7 +349,7 @@ Test(array_insert, _2) {
     ++a; --b;
   }
 
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 Test(array_insert, _3) {
@@ -327,7 +373,7 @@ Test(array_insert, _3) {
     ++a; --b;
   }
 
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 Test(array_insert, _4) {
@@ -354,7 +400,7 @@ Test(array_insert, _4) {
     ++a; --b;
   }
 
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 
@@ -376,7 +422,7 @@ Test(array_get, _1) {
     }
   }
 
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 Test(array_get, _2) {
@@ -392,7 +438,7 @@ Test(array_get, _2) {
     cr_assert_eq(*n, (i + 1) * 10);
   }
 
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 Test(array_get, _3) {
@@ -407,7 +453,7 @@ Test(array_get, _3) {
     cr_assert_eq(strcmp(str, values[i]), 0);
   }
 
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 Test(array_get, _4) {
@@ -424,7 +470,7 @@ Test(array_get, _4) {
     cr_assert_eq(p->y, values[i].y);
   }
 
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 
@@ -448,7 +494,7 @@ Test(array_remove, _1) {
     }
   }
 
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 Test(array_remove, _2) {
@@ -469,7 +515,7 @@ Test(array_remove, _2) {
     cr_assert_eq(array->size, array->capacity - x++);
   }
 
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 Test(array_remove, _3) {
@@ -489,7 +535,7 @@ Test(array_remove, _3) {
     cr_assert_eq(array->size, array->capacity - x++);
   }
 
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 Test(array_remove, _4) {
@@ -511,37 +557,9 @@ Test(array_remove, _4) {
     cr_assert_eq(array->size, array->capacity - x++);
   }
 
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
-// ####################
-// array_clear
-// ####################
-Test(array_clear, _1) {
-  Array* array = array_new(5);
-  int values[array->capacity];
-
-  for (int i = 0; i < array->capacity; ++i) {
-    values[i] = (i + 1) * 10;
-    array_append(array, &values[i]);
-    cr_assert_eq(array->size, i + 1);
-  }
-
-  array_clear(array);
-
-  cr_assert_eq(array->size, 0);
-  for (int i = 0; i < array->capacity; ++i) {
-    cr_assert_eq(array->elements[i], NULL);
-  }
-
-  int idx = 0;
-  array_append(array, &values[idx]);
-  int* v = array_get(array, idx);
-
-  cr_assert_eq(*v, values[idx]);
-
-  array_free(&array);
-}
 
 // ####################
 // array_index_valid
@@ -553,7 +571,7 @@ Test(array_index_valid, _1) {
   bool result = array_index_valid(array, index);
   cr_assert_eq(result, false);
 
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 Test(array_index_valid, _2) {
@@ -563,7 +581,7 @@ Test(array_index_valid, _2) {
   bool result = array_index_valid(array, index);
   cr_assert_eq(result, true);
 
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 // ####################
@@ -577,7 +595,7 @@ Test(array_has_capacity, _1) {
   bool result = array_has_capacity(array);
   cr_assert_eq(result, false);
 
-  array_free(&array);
+  array_free(&array, NULL);
 }
 
 Test(array_has_capacity, _2) {
@@ -586,5 +604,5 @@ Test(array_has_capacity, _2) {
   bool result = array_has_capacity(array);
   cr_assert_eq(result, true);
 
-  array_free(&array);
+  array_free(&array, NULL);
 }

@@ -29,16 +29,30 @@ Array* array_new(int capacity) {
   return array;
 }
 
-void array_free(Array** const array) {
-  for (int i = 0; i < (*array)->capacity; ++i) {
-    (*array)->elements[i] = NULL;
+int array_clear(Array* const array, FreeFn free_element) {
+  for (int i = 0; i < array->capacity; i++) {
+    void** ptr = &array->elements[i];
+    if (*ptr != NULL && free_element) {
+      free_element(ptr);
+    } else {
+      array->elements[i] = NULL;
+    }
   }
+  array->size = 0;
+
+  return 0;
+}
+
+int array_free(Array** const array, FreeFn free_element) {
+  array_clear(*array, free_element);
 
   free((*array)->elements);
   (*array)->elements = NULL;
 
   free(*array);
   *array = NULL;
+
+  return 0;
 }
 
 // char* array_to_string(Array* array) {
@@ -135,15 +149,6 @@ void* array_remove(Array* const array, int index) {
   array->size--;
 
   return removed;
-}
-
-int array_clear(Array* const array) {
-  for (int i = 0; i < array->capacity; i++) {
-    array->elements[i] = NULL;
-  }
-  array->size = 0;
-
-  return 0;
 }
 
 bool array_index_valid(Array* const array, int index) {

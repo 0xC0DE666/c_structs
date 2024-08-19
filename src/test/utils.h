@@ -8,7 +8,7 @@
 
 
   Point* point_new(int x, int y);
-  void point_free(Point** point);
-  char* point_to_str(Point* point);
+  void point_free(Point** const point);
+  char* point_to_str(Point* const point);
 
 #endif
