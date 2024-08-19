@@ -48,6 +48,7 @@ app: main.o libc_structs.o;
 
 TEST_DIR := ./src/test
 TEST_SRCS := $(wildcard $(TEST_DIR)/*.c)
+TEST_HDRS = $(foreach dir, $(TEST_DIR), $(wildcard $(dir)/*.h))
 TEST_OBJS := $(patsubst %.c, %.o, $(TEST_SRCS))
 
 $(TEST_SRCS):
