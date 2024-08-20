@@ -67,18 +67,18 @@ int array_free(Array** const array, FreeFn free_element) {
 //   return buffer;
 // }
 
-int array_append(Array* const array, void* const value) {
+int array_append(Array* const array, void* const element) {
   if (!array_has_capacity(array)) {
     return 1;
   }
 
-  array->elements[array->size] = value;
+  array->elements[array->size] = element;
   array->size++;
 
   return 0;
 }
 
-int array_prepend(Array* const array, void* const value) {
+int array_prepend(Array* const array, void* const element) {
   if (!array_has_capacity(array)) {
     return 1;
   }
@@ -87,13 +87,13 @@ int array_prepend(Array* const array, void* const value) {
     array->elements[i] = array->elements[i - 1];
   }
 
-  array->elements[0] = value;
+  array->elements[0] = element;
   array->size++;
 
   return 0;
 }
 
-int array_insert(Array* const array, int index, void* const value) {
+int array_insert(Array* const array, int index, void* const element) {
   if (!array_has_capacity(array)) {
     return 1;
   }
@@ -117,7 +117,7 @@ int array_insert(Array* const array, int index, void* const value) {
   for (int i = array->capacity - 1; i >= index; --i) {
     array->elements[i] = array->elements[i - 1];
   }
-  array->elements[index] = value;
+  array->elements[index] = element;
   array->size++;
 
   return 0;

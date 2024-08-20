@@ -20,13 +20,13 @@
   // ARRAY
   //####################
   Array* array_new(int capacity);
-  int array_clear(Array* const array, FreeFn const free_value);
-  int array_free(Array** const array, FreeFn const free_value);
+  int array_clear(Array* const array, FreeFn const free_element);
+  int array_free(Array** const array, FreeFn const free_element);
 
   char* array_to_string(Array* array, ToStringFn const to_string);
-  int array_append(Array* const array, void* const value);
-  int array_prepend(Array* const array, void* const value);
-  int array_insert(Array* const array, int index, void* const value);
+  int array_append(Array* const array, void* const element);
+  int array_prepend(Array* const array, void* const element);
+  int array_insert(Array* const array, int index, void* const element);
 
   void* array_get(Array* const array, int index);
   void* array_remove(Array* const array, int index);
@@ -56,7 +56,7 @@
   Matrix* matrix_new(int rows, int columns);
   void matrix_free(Matrix** const matrix);
   // char* matrix_to_string(Matrix* matrix);
-  int matrix_add(Matrix* const matrix, Position* const position, void* const value);
+  int matrix_add(Matrix* const matrix, Position* const position, void* const element);
   void* matrix_get(Matrix* const matrix, Position* const position);
   void* matrix_remove(Matrix* const matrix, Position* const position);
   int matrix_clear(Matrix* const matrix);
