@@ -7,6 +7,19 @@ Position position_new(int row, int column) {
   return (Position) {row, column};
 }
 
+char* position_to_string(Position* position) {
+  char* buffer = malloc(14);
+
+  sprintf(
+    buffer,
+    "(%d, %d)",
+    position->row,
+    position->column
+  );
+
+  return buffer;
+}
+
 Matrix* matrix_new(int rows, int columns) {
   Matrix* matrix = malloc(sizeof(Matrix));
 

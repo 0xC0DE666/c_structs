@@ -44,6 +44,7 @@
   } Position;
 
   Position position_new(int row, int column);
+  char* position_to_string(Position* position);
 
   typedef struct Matrix {
     int rows;

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "c_structs.h"
 
@@ -54,18 +55,50 @@ int array_free(Array** const array, FreeFn free_element) {
   return 0;
 }
 
-// char* array_to_string(Array* array) {
-//   char* buffer = malloc(sizeof(char) * 256);
-// 
-//   sprintf(
-//     buffer,
-//     "capacity = %d\nsize = %d\n",
-//     array->capacity,
-//     array->size
-//   ); 
-// 
-//   return buffer;
-// }
+// 1. try malloc char** for size of array
+// 2. for each element in array call to_string on element and assign to pointer above
+// 3. for each string get strlen and add to total
+// 4. try malloc for total strlen
+// 5. concat everything
+// 6. return char*
+
+char* array_to_string(Array* const array, ToStringFn const to_string) {
+  int capacity = array->capacity;
+  char* elements[capacity] = {};
+  int lengths[capacity] = {};
+  int sum_lengths = 0;
+
+
+  for (int i = 0; i < capacity; ++i) {
+    void* element = array_get(array, i);
+    if (element != NULL) {
+      elements[i] = to_string(element);
+    } else {
+      elements[i] = "";
+    }
+    lengths[i] = strlen(elements[i]);
+    sum_lengths += lengths[i];
+  }
+
+  // sum_lengths + capacity * 3 + 2 brackets + 2 newl + 1 null
+  int total_chars = sum_lengths + (3 * capacity) + 5;
+  printf("total_chars = %d\n", total_chars);
+  char* buffer = malloc(sizeof(char) * total_chars);
+
+  if (buffer == NULL) {
+    return NULL;
+  }
+
+  strcat(buffer, "[\n");
+  for (int i = 0; i < capacity; ++i) {
+    strcat(buffer, "\t");
+    strcat(buffer, elements[i]);
+    strcat(buffer, ",\n");
+  }
+  strcat(buffer, "]\n\0");
+
+  return buffer;
+}
 
 int array_append(Array* const array, void* const element) {
   if (!array_has_capacity(array)) {

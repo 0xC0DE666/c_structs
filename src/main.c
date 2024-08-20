@@ -52,7 +52,7 @@ void array_fun() {
   }
 }
 
-int main() {
+void old_code() {
   Matrix* trix = matrix_new(3, 3);
   Position values[9];
 
@@ -71,6 +71,27 @@ int main() {
     }
     printf("\n");
   }
-  
+}
+
+int main() {
+  Array* array = array_new(4);
+  Position p1 = position_new(0, 0);
+  Position p2 = position_new(0, 1);
+
+  array_append(array, &p1);
+  array_insert(array, 2, &p2);
+
+  char* str = array_to_string(array, (ToStringFn) position_to_string);
+  printf("%s\n", str);
+
+  // char* str1 = "one";
+  // char* str2 = "two";
+
+  // char* values[2] = {};
+  // values[0] = str1;
+  // values[1] = str2;
+  // printf("%s %s\n", values[0], values[1]);
+
+
   return 0;
 }
