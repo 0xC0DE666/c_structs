@@ -18,7 +18,7 @@ clean:
 # LIB
 #------------------------------
 
-LIB_DIRS = ./src/lib/array ./src/lib/matrix
+LIB_DIRS = ./src/lib ./src/lib/array ./src/lib/matrix
 LIB_SRCS = $(foreach dir, $(LIB_DIRS), $(wildcard $(dir)/*.c))
 LIB_HDRS = $(foreach dir, $(LIB_DIRS), $(wildcard $(dir)/*.h))
 LIB_OBJS := $(patsubst %.c, %.o, $(LIB_SRCS))

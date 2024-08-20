@@ -1,5 +1,7 @@
 #include <stdbool.h>
 
+#include "../shared.h"
+
 #ifndef ARRAY_H
 #define ARRAY_H
 
@@ -9,13 +11,11 @@
     void** elements;
   } Array;
 
-  typedef void (*FreeFn)(void** const);
-
   Array* array_new(int capacity);
   int array_clear(Array* const array, FreeFn const free_value);
   int array_free(Array** const array, FreeFn const free_value);
 
-  // char* array_to_string(Array* array);
+  char* array_to_string(Array* array, ToStringFn const to_string);
   int array_append(Array* const array, void* const value);
   int array_prepend(Array* const array, void* const value);
   int array_insert(Array* const array, int index, void* const value);
