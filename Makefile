@@ -1,5 +1,6 @@
-VERSION := 0.1.0
-LIB_NAME := libc_structs
+VERSION := 0.2.0
+NAME := libc_structs
+QUALIFIER := $(NAME)-$(VERSION)
 
 CC := gcc
 C_FLAGS := -g -Wall -Wextra
