@@ -1,8 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdbool.h>
 
-#include "matrix.h"
+#include "c_structs.h"
 
 Position position_new(int row, int column) {
   return (Position) {row, column};

@@ -7,7 +7,7 @@
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
 
-#include "../lib/array/array.h"
+#include "../lib/c_structs.h"
 #include "utils.h"
 
 // ####################

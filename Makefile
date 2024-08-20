@@ -4,8 +4,6 @@ LIB_NAME := libc_structs
 CC := gcc
 C_FLAGS := -g -Wall -Wextra
 
-LIB_DIR := ./src/lib
-TEST_DIR := ./src/test
 OBJ_DIR := ./obj
 BIN_DIR := ./bin
 
@@ -18,9 +16,9 @@ clean:
 # LIB
 #------------------------------
 
-LIB_DIRS = ./src/lib ./src/lib/array ./src/lib/matrix
-LIB_SRCS = $(foreach dir, $(LIB_DIRS), $(wildcard $(dir)/*.c))
-LIB_HDRS = $(foreach dir, $(LIB_DIRS), $(wildcard $(dir)/*.h))
+LIB_DIR := ./src/lib
+LIB_SRCS = $(wildcard $(LIB_DIR)/*.c)
+LIB_HDRS = $(wildcard $(LIB_DIR)/*.h)
 LIB_OBJS := $(patsubst %.c, %.o, $(LIB_SRCS))
 
 $(LIB_SRCS):
@@ -48,7 +46,7 @@ app: main.o libc_structs.o;
 
 TEST_DIR := ./src/test
 TEST_SRCS := $(wildcard $(TEST_DIR)/*.c)
-TEST_HDRS = $(foreach dir, $(TEST_DIR), $(wildcard $(dir)/*.h))
+TEST_HDRS = $(wildcard $(TEST_DIR)/*.h)
 TEST_OBJS := $(patsubst %.c, %.o, $(TEST_SRCS))
 
 $(TEST_SRCS):

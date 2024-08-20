@@ -2,8 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "./lib/array/array.h"
-#include "./lib/matrix/matrix.h"
+#include "./lib/c_structs.h"
 
 /*
  * Generic data structures implemnted in C.
