@@ -583,7 +583,6 @@ Test(array_to_string, _2) {
 
   char* result = array_to_string(array, (ToStringFn) point_to_str);
   char* expected = "[(0, 0), NULL, (1, 1)]";
-  printf("%s\n%s", result, expected);
   cr_assert_eq(strcmp(result, expected), 0);
 
   free(result);
