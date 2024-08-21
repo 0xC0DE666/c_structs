@@ -56,7 +56,7 @@ Test(matrix_clear, _1) {
     for (int c = 0; c < matrix->columns; ++c) {
       values[i] = (i + 1) * 10;
       Position p = {r, c};
-      matrix_add(matrix, &p, &values[i]);
+      matrix_insert(matrix, &p, &values[i]);
       cr_assert_eq(matrix->size, i + 1);
       ++i;
     }
@@ -74,7 +74,7 @@ Test(matrix_clear, _1) {
 
   Position p = {0, 0};
   int idx = 0;
-  matrix_add(matrix, &p, &values[idx]);
+  matrix_insert(matrix, &p, &values[idx]);
   int* v = matrix_get(matrix, &p);
 
   cr_assert_eq(*v, values[idx]);
@@ -89,7 +89,7 @@ Test(matrix_clear, _2) {
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
       Position p = {r, c};
-      matrix_add(matrix, &p, point_new(r, c));
+      matrix_insert(matrix, &p, point_new(r, c));
       cr_assert_eq(matrix->size, i + 1);
       ++i;
     }
@@ -106,7 +106,7 @@ Test(matrix_clear, _2) {
   }
 
   Position p = {0, 0};
-  matrix_add(matrix, &p, &p);
+  matrix_insert(matrix, &p, &p);
   Position* v = matrix_get(matrix, &p);
 
   cr_assert_eq(v->row, p.row);
@@ -128,7 +128,7 @@ Test(matrix_free, _1) {
     for (int c = 0; c < matrix->columns; ++c) {
       values[i] = (i + 1) * 10;
       Position p = {r, c};
-      matrix_add(matrix, &p, &values[i]);
+      matrix_insert(matrix, &p, &values[i]);
       cr_assert_eq(matrix_get(matrix, &p) != NULL, true);
       ++i;
     }
@@ -144,7 +144,7 @@ Test(matrix_free, _2) {
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
       Position p = position_new(r, c);
-      matrix_add(matrix, &p, point_new(r, c));
+      matrix_insert(matrix, &p, point_new(r, c));
       cr_assert_eq(matrix_get(matrix, &p) != NULL, true);
     }
   }
@@ -155,9 +155,9 @@ Test(matrix_free, _2) {
 
 
 // ####################
-// matrix_add
+// matrix_insert
 // ####################
-Test(matrix_add, _1) {
+Test(matrix_insert, _1) {
   Matrix* matrix = matrix_new(5, 5);
   int values[matrix->capacity * 2];
 
@@ -166,7 +166,7 @@ Test(matrix_add, _1) {
     for (int c = 0; c < matrix->capacity * 2; ++c) {
       values[i] = (i + 1) * 10;
       Position p = {r, c};
-      int res = matrix_add(matrix, &p, &values[i]);
+      int res = matrix_insert(matrix, &p, &values[i]);
 
       if (i >= matrix->capacity) {
         cr_assert_eq(res, 1);
@@ -179,7 +179,7 @@ Test(matrix_add, _1) {
   matrix_free(&matrix, NULL);
 }
 
-Test(matrix_add, _2) {
+Test(matrix_insert, _2) {
   Matrix* matrix = matrix_new(5, 2);
   int values[matrix->capacity];
 
@@ -188,7 +188,7 @@ Test(matrix_add, _2) {
     for (int c = 0; c < matrix->columns; ++c) {
       values[i] = (i + 1) * 10;
       Position p = {r, c};
-      matrix_add(matrix, &p, &values[i]);
+      matrix_insert(matrix, &p, &values[i]);
 
       void** row = matrix->elements[r];
       int* v = (int*) row[c];
@@ -201,7 +201,7 @@ Test(matrix_add, _2) {
   matrix_free(&matrix, NULL);
 }
 
-Test(matrix_add, _3) {
+Test(matrix_insert, _3) {
   Matrix* matrix = matrix_new(1, 5);
   char* values[] = {"one", "two", "three", "four", "five"};
 
@@ -209,7 +209,7 @@ Test(matrix_add, _3) {
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
       Position p = {r, c};
-      matrix_add(matrix, &p, values[i]);
+      matrix_insert(matrix, &p, values[i]);
 
       void** row = matrix->elements[r];
       char* v = (char*) row[c];
@@ -222,7 +222,7 @@ Test(matrix_add, _3) {
   matrix_free(&matrix, NULL);
 }
 
-Test(matrix_add, _4) {
+Test(matrix_insert, _4) {
   Matrix* matrix = matrix_new(4, 4);
   Point values[matrix->capacity];
 
@@ -232,7 +232,7 @@ Test(matrix_add, _4) {
       values[i].x = i;
       values[i].x = (i + 1) * 10;
       Position p = {r, c};
-      matrix_add(matrix, &p, &values[i]);
+      matrix_insert(matrix, &p, &values[i]);
 
       void** row = matrix->elements[r];
       Point* v = (Point*) row[c];
@@ -259,7 +259,7 @@ Test(matrix_get, _1) {
     for (int c = 0; c < matrix->capacity * 2; ++c) {
       values[i] = (i + 1) * 10;
       Position p = {r, c};
-      int res = matrix_add(matrix, &p, &values[i]);
+      int res = matrix_insert(matrix, &p, &values[i]);
 
       if (i >= 26) {
         cr_assert_eq(res, 1);
@@ -280,7 +280,7 @@ Test(matrix_get, _2) {
     for (int c = 0; c < matrix->columns; ++c) {
       values[i] = (i + 1) * 10;
       Position p = {r, c};
-      matrix_add(matrix, &p, &values[i]);
+      matrix_insert(matrix, &p, &values[i]);
 
       int* v = (int*) matrix_get(matrix, &p);
       cr_assert_eq(matrix->size, i + 1);
@@ -300,7 +300,7 @@ Test(matrix_get, _3) {
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
       Position p = {r, c};
-      matrix_add(matrix, &p, values[i]);
+      matrix_insert(matrix, &p, values[i]);
 
       char* v = (char*) matrix_get(matrix, &p);
       cr_assert_eq(matrix->size, i + 1);
@@ -322,7 +322,7 @@ Test(matrix_get, _4) {
       values[i].x = i;
       values[i].x = (i + 1) * 10;
       Position p = {r, c};
-      matrix_add(matrix, &p, &values[i]);
+      matrix_insert(matrix, &p, &values[i]);
 
       Point* v = (Point*) matrix_get(matrix, &p);
       cr_assert_eq(matrix->size, i + 1);
@@ -349,7 +349,7 @@ Test(matrix_remove, _1) {
       values[i] = i * 10;
       Position p = {r, c};
 
-      matrix_add(matrix, &p, &values[i]);
+      matrix_insert(matrix, &p, &values[i]);
       cr_assert_eq(matrix->size, i);
       ++i;
     }
@@ -380,7 +380,7 @@ Test(matrix_remove, _2) {
     for (int c = 0; c < matrix->columns; ++c) {
       Position p = {r, c};
 
-      matrix_add(matrix, &p, values[i]);
+      matrix_insert(matrix, &p, values[i]);
       cr_assert_eq(matrix->size, i + 1);
       ++i;
     }
@@ -412,7 +412,7 @@ Test(matrix_remove, _3) {
       Position p = {r, c};
       values[i].x = i;
       values[i].x = (i + 1) * 10;
-      matrix_add(matrix, &p, &values[i]);
+      matrix_insert(matrix, &p, &values[i]);
       cr_assert_eq(matrix->size, i + 1);
       ++i;
     }
@@ -444,7 +444,7 @@ Test(matrix_remove, _4) {
     for (int c = 0; c < matrix->capacity * 2; ++c) {
       values[i] = (i + 1) * 10;
       Position p = {r, c};
-      matrix_add(matrix, &p, &values[i]);
+      matrix_insert(matrix, &p, &values[i]);
     }
   }
 
@@ -459,6 +459,43 @@ Test(matrix_remove, _4) {
     }
   }
 
+  matrix_free(&matrix, NULL);
+}
+
+
+// ####################
+// matrix_to_string
+// ####################
+Test(matrix_to_string, _1) {
+  Matrix* matrix = matrix_new(2, 2);
+  Position pos[matrix->rows][matrix->columns] = {};
+
+  char* result = matrix_to_string(matrix, (ToStringFn) position_to_string);
+  char* expected = "[]";
+  cr_assert_eq(strcmp(result, expected), 0);
+
+  free(result);
+  matrix_free(&matrix, NULL);
+}
+
+Test(matrix_to_string, _2) {
+  Matrix* matrix = matrix_new(2, 2);
+  Position pos[matrix->rows][matrix->columns] = {};
+
+  int i = 1;
+  for (unsigned r = 0; r < matrix->rows; ++r) {
+    for (unsigned c = 0; c < matrix->columns; ++c) {
+      pos[r][c] = position_new(r, c); 
+      matrix_insert(matrix, &pos[r][c], i % 2 == 0 ? &pos[r][c] : NULL);
+      ++i;
+    }
+  }
+
+  char* result = matrix_to_string(matrix, (ToStringFn) position_to_string);
+  char* expected = "[NULL, (0, 1)]\n[NULL, (1, 1)]\n";
+  cr_assert_eq(strcmp(result, expected), 0);
+
+  free(result);
   matrix_free(&matrix, NULL);
 }
 

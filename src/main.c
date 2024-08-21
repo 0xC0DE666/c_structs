@@ -63,7 +63,7 @@ void old_code() {
 
     for (int c = 0; c < 3; ++c) {
       values[i] = position_new(r, c);
-      matrix_add(trix, &values[i], &values[i]);
+      matrix_insert(trix, &values[i], &values[i]);
 
       void** col = row[c];
       printf("elements[%d][%d] -> %p\n", r, c, col);
@@ -83,19 +83,26 @@ void array_to_string_test() {
 
   char* str = array_to_string(array, (ToStringFn) position_to_string);
   printf("%s\n", str);
+}
 
-  // char* str1 = "one";
-  // char* str2 = "two";
+void matrix_to_string_test() {
+  Matrix* matrix = matrix_new(2, 2);
+  Position pos[matrix->rows][matrix->columns] = {};
 
-  // char* values[2] = {};
-  // values[0] = str1;
-  // values[1] = str2;
-  // printf("%s %s\n", values[0], values[1]);
+  for (unsigned r = 0; r < matrix->rows; ++r) {
+    for (unsigned c = 0; c < matrix->columns; ++c) {
+      pos[r][c] = position_new(r, c); 
+      matrix_insert(matrix, &pos[r][c], &pos[r][c]);
+      printf("%u %u\n", r, c);
+    }
+  }
 
+  char* str = matrix_to_string(matrix, (ToStringFn) position_to_string);
+  printf("%s", str);
 }
 
 int main() {
-  old_code();
+  matrix_to_string_test();
 
   return 0;
 }
