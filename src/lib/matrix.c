@@ -59,6 +59,25 @@ Matrix* matrix_new(unsigned int rows, unsigned int columns) {
   return matrix;
 }
 
+unsigned int matrix_clear(Matrix* const matrix, FreeFn const free_element) {
+  for (int r = 0; r < matrix->rows; r++) {
+    void** row = matrix->elements[r];
+
+    for (int c = 0; c < matrix->columns; c++) {
+      void** el = &row[c];
+
+      if (*el != NULL && free_element) {
+        free_element(el);
+      } else {
+        *el = NULL;
+      }
+    }
+  }
+  matrix->size = 0;
+
+  return 0;
+}
+
 void matrix_free(Matrix** const matrix) {
   free((*matrix)->elements[0]);
   (*matrix)->elements[0] = NULL;
@@ -124,19 +143,6 @@ void* matrix_remove(Matrix* const matrix, Position* const position) {
   return removed;
 }
 
-unsigned int matrix_clear(Matrix* const matrix) {
-  for (int r = 0; r < matrix->rows; r++) {
-    void** row = matrix->elements[r];
-    for (int c = 0; c < matrix->columns; c++) {
-      if (row[c] != NULL) {
-        row[c] = NULL;
-      }
-    }
-  }
-  matrix->size = 0;
-
-  return 0;
-}
 
 bool matrix_position_valid(Matrix* const matrix, Position* const position) {
   if (position->row < 0 || position->row >= matrix->rows || position->column < 0 || position->column >= matrix->columns) {

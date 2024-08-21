@@ -31,11 +31,12 @@ Array* array_new(unsigned int capacity) {
 
 unsigned int array_clear(Array* const array, FreeFn free_element) {
   for (int i = 0; i < array->capacity; i++) {
-    void** ptr = &array->elements[i];
-    if (*ptr != NULL && free_element) {
-      free_element(ptr);
+    void** el = &array->elements[i];
+
+    if (*el != NULL && free_element) {
+      free_element(el);
     } else {
-      array->elements[i] = NULL;
+      *el = NULL;
     }
   }
   array->size = 0;

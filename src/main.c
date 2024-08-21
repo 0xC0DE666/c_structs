@@ -73,7 +73,7 @@ void old_code() {
   }
 }
 
-int main() {
+void array_to_string_test() {
   Array* array = array_new(4);
   Position p1 = position_new(0, 0);
   Position p2 = position_new(0, 1);
@@ -92,6 +92,10 @@ int main() {
   // values[1] = str2;
   // printf("%s %s\n", values[0], values[1]);
 
+}
+
+int main() {
+  old_code();
 
   return 0;
 }
