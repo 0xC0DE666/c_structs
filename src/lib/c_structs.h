@@ -56,12 +56,16 @@
   } Matrix;
 
   Matrix* matrix_new(unsigned int rows, unsigned int columns);
+  unsigned int matrix_clear(Matrix* const matrix);
   void matrix_free(Matrix** const matrix);
-  // char* matrix_to_string(Matrix* matrix);
+
   unsigned int matrix_add(Matrix* const matrix, Position* const position, void* const element);
+
   void* matrix_get(Matrix* const matrix, Position* const position);
   void* matrix_remove(Matrix* const matrix, Position* const position);
-  unsigned int matrix_clear(Matrix* const matrix);
+
+  // char* matrix_to_string(Matrix* matrix);
+
   bool matrix_position_valid(Matrix* const matrix, Position* const position);
 
 #endif
