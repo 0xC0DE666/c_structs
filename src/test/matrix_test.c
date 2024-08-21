@@ -40,7 +40,7 @@ Test(matrix_new, _1) {
     }
   }
 
-  matrix_free(&matrix);
+  matrix_free(&matrix, NULL);
 }
 
 
@@ -79,7 +79,7 @@ Test(matrix_clear, _1) {
 
   cr_assert_eq(*v, values[idx]);
 
-  matrix_free(&matrix);
+  matrix_free(&matrix, NULL);
 }
 
 Test(matrix_clear, _2) {
@@ -112,7 +112,7 @@ Test(matrix_clear, _2) {
   cr_assert_eq(v->row, p.row);
   cr_assert_eq(v->column, p.column);
 
-  matrix_free(&matrix);
+  matrix_free(&matrix, NULL);
 }
 
 
@@ -129,15 +129,30 @@ Test(matrix_free, _1) {
       values[i] = (i + 1) * 10;
       Position p = {r, c};
       matrix_add(matrix, &p, &values[i]);
-      cr_assert_eq(matrix->size, i + 1);
+      cr_assert_eq(matrix_get(matrix, &p) != NULL, true);
       ++i;
     }
   }
 
-  matrix_free(&matrix);
-
+  matrix_free(&matrix, NULL);
   cr_assert_eq(matrix, NULL);
 }
+
+Test(matrix_free, _2) {
+  Matrix* matrix = matrix_new(5, 5);
+
+  for (int r = 0; r < matrix->rows; ++r) {
+    for (int c = 0; c < matrix->columns; ++c) {
+      Position p = position_new(r, c);
+      matrix_add(matrix, &p, point_new(r, c));
+      cr_assert_eq(matrix_get(matrix, &p) != NULL, true);
+    }
+  }
+
+  matrix_free(&matrix, (FreeFn) point_free);
+  cr_assert_eq(matrix, NULL);
+}
+
 
 // ####################
 // matrix_add
@@ -161,7 +176,7 @@ Test(matrix_add, _1) {
     }
   }
 
-  matrix_free(&matrix);
+  matrix_free(&matrix, NULL);
 }
 
 Test(matrix_add, _2) {
@@ -183,7 +198,7 @@ Test(matrix_add, _2) {
     }
   }
 
-  matrix_free(&matrix);
+  matrix_free(&matrix, NULL);
 }
 
 Test(matrix_add, _3) {
@@ -204,7 +219,7 @@ Test(matrix_add, _3) {
     }
   }
 
-  matrix_free(&matrix);
+  matrix_free(&matrix, NULL);
 }
 
 Test(matrix_add, _4) {
@@ -228,7 +243,7 @@ Test(matrix_add, _4) {
     }
   }
 
-  matrix_free(&matrix);
+  matrix_free(&matrix, NULL);
 }
 
 
@@ -253,7 +268,7 @@ Test(matrix_get, _1) {
     }
   }
 
-  matrix_free(&matrix);
+  matrix_free(&matrix, NULL);
 }
 
 Test(matrix_get, _2) {
@@ -274,7 +289,7 @@ Test(matrix_get, _2) {
     }
   }
 
-  matrix_free(&matrix);
+  matrix_free(&matrix, NULL);
 }
 
 Test(matrix_get, _3) {
@@ -294,7 +309,7 @@ Test(matrix_get, _3) {
     }
   }
 
-  matrix_free(&matrix);
+  matrix_free(&matrix, NULL);
 }
 
 Test(matrix_get, _4) {
@@ -317,7 +332,7 @@ Test(matrix_get, _4) {
     }
   }
 
-  matrix_free(&matrix);
+  matrix_free(&matrix, NULL);
 }
 
 
@@ -353,7 +368,7 @@ Test(matrix_remove, _1) {
     }
   }
 
-  matrix_free(&matrix);
+  matrix_free(&matrix, NULL);
 }
 
 Test(matrix_remove, _2) {
@@ -384,7 +399,7 @@ Test(matrix_remove, _2) {
     }
   }
 
-  matrix_free(&matrix);
+  matrix_free(&matrix, NULL);
 }
 
 Test(matrix_remove, _3) {
@@ -417,7 +432,7 @@ Test(matrix_remove, _3) {
     }
   }
 
-  matrix_free(&matrix);
+  matrix_free(&matrix, NULL);
 }
 
 Test(matrix_remove, _4) {
@@ -444,9 +459,8 @@ Test(matrix_remove, _4) {
     }
   }
 
-  matrix_free(&matrix);
+  matrix_free(&matrix, NULL);
 }
-
 
 
 // ####################
@@ -459,7 +473,7 @@ Test(matrix_position_valid, _1) {
   bool result = matrix_position_valid(matrix, &position);
   cr_assert_eq(result, false);
 
-  matrix_free(&matrix);
+  matrix_free(&matrix, NULL);
 }
 
 Test(matrix_position_valid, _2) {
@@ -469,5 +483,5 @@ Test(matrix_position_valid, _2) {
   bool result = matrix_position_valid(matrix, &position);
   cr_assert_eq(result, true);
 
-  matrix_free(&matrix);
+  matrix_free(&matrix, NULL);
 }
