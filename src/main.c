@@ -39,14 +39,14 @@ void array_fun() {
   Array* arr = array_new(5);
   int values[arr->capacity];
 
-  for (int i = 0; i < arr->capacity - 1; ++i) {
+  for (unsigned i = 0; i < arr->capacity - 1; ++i) {
     values[i] = i + 1;
     array_append(arr, &values[i]);
   }
   values[4] = 10;
   array_insert(arr, 10, &values[4]);
 
-  for (int i = 0; i < arr->size; ++i) {
+  for (unsigned i = 0; i < arr->size; ++i) {
     int* x = (int*) array_get(arr, i);
     printf("%d %d\n", i, *x);
   }

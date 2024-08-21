@@ -4,7 +4,7 @@
 
 #include "c_structs.h"
 
-Array* array_new(int capacity) {
+Array* array_new(unsigned int capacity) {
   Array* array = malloc(sizeof(Array));
 
   if (array == NULL) {
@@ -29,7 +29,7 @@ Array* array_new(int capacity) {
   return array;
 }
 
-int array_clear(Array* const array, FreeFn free_element) {
+unsigned int array_clear(Array* const array, FreeFn free_element) {
   for (int i = 0; i < array->capacity; i++) {
     void** ptr = &array->elements[i];
     if (*ptr != NULL && free_element) {
@@ -43,7 +43,7 @@ int array_clear(Array* const array, FreeFn free_element) {
   return 0;
 }
 
-int array_free(Array** const array, FreeFn free_element) {
+unsigned int array_free(Array** const array, FreeFn free_element) {
   array_clear(*array, free_element);
 
   free((*array)->elements);
@@ -55,7 +55,7 @@ int array_free(Array** const array, FreeFn free_element) {
   return 0;
 }
 
-int array_append(Array* const array, void* const element) {
+unsigned int array_append(Array* const array, void* const element) {
   if (!array_has_capacity(array)) {
     return 1;
   }
@@ -66,7 +66,7 @@ int array_append(Array* const array, void* const element) {
   return 0;
 }
 
-int array_prepend(Array* const array, void* const element) {
+unsigned int array_prepend(Array* const array, void* const element) {
   if (!array_has_capacity(array)) {
     return 1;
   }
@@ -81,7 +81,7 @@ int array_prepend(Array* const array, void* const element) {
   return 0;
 }
 
-int array_insert(Array* const array, int index, void* const element) {
+unsigned int array_insert(Array* const array, unsigned int index, void* const element) {
   if (!array_has_capacity(array)) {
     return 1;
   }
@@ -111,7 +111,7 @@ int array_insert(Array* const array, int index, void* const element) {
   return 0;
 }
 
-void* array_get(Array* const array, int index) {
+void* array_get(Array* const array, unsigned int index) {
   if (!array_index_valid(array, index)) {
     return NULL;
   }
@@ -119,7 +119,7 @@ void* array_get(Array* const array, int index) {
   return array->elements[index];
 }
 
-void* array_remove(Array* const array, int index) {
+void* array_remove(Array* const array, unsigned int index) {
   if (index < 0 || index >= array->size) {
     return NULL;
   }
@@ -145,10 +145,10 @@ char* array_to_string(Array* const array, ToStringFn const to_string) {
     return buffer;
   }
 
-  int capacity = array->capacity;
+  unsigned int capacity = array->capacity;
   char* elements[capacity] = {};
-  int lengths[capacity] = {};
-  int sum_lengths = 0;
+  unsigned int lengths[capacity] = {};
+  unsigned int sum_lengths = 0;
 
   for (int i = 0; i < capacity; ++i) {
     void* element = array_get(array, i);
@@ -157,7 +157,7 @@ char* array_to_string(Array* const array, ToStringFn const to_string) {
     sum_lengths += lengths[i];
   }
 
-  int total_length = sum_lengths + (capacity - 1) * 2 + 2;
+  unsigned int total_length = sum_lengths + (capacity - 1) * 2 + 2;
   char* buffer = malloc(sizeof(char) * total_length);
 
   if (buffer == NULL) {
@@ -176,7 +176,7 @@ char* array_to_string(Array* const array, ToStringFn const to_string) {
   return buffer;
 }
 
-bool array_index_valid(Array* const array, int index) {
+bool array_index_valid(Array* const array, unsigned int index) {
   return index >= 0 && index <= array->capacity - 1;
 }
 
