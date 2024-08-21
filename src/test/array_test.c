@@ -562,6 +562,36 @@ Test(array_remove, _4) {
 
 
 // ####################
+// array_to_string
+// ####################
+Test(array_to_string, _1) {
+  Array* array = array_new(2);
+
+  char* result = array_to_string(array, (ToStringFn) NULL);
+  char* expected = "[]";
+  cr_assert_eq(strcmp(result, expected), 0);
+
+  free(result);
+  array_free(&array, NULL);
+}
+
+Test(array_to_string, _2) {
+  Array* array = array_new(3);
+
+  array_append(array, point_new(0, 0));
+  array_insert(array, 2, point_new(1, 1));
+
+  char* result = array_to_string(array, (ToStringFn) point_to_str);
+  char* expected = "[(0, 0), NULL, (1, 1)]";
+  printf("%s\n%s", result, expected);
+  cr_assert_eq(strcmp(result, expected), 0);
+
+  free(result);
+  array_free(&array, NULL);
+}
+
+
+// ####################
 // array_index_valid
 // ####################
 Test(array_index_valid, _1) {

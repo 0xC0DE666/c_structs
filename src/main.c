@@ -19,7 +19,7 @@ void matrix_fun() {
    char** row = matrix[r];
    for (int c = 0; c < 3; ++c) {
      char* str = malloc(32 * sizeof(char));
-     sprintf(str, "Eat %d dick(s)! Nigga!", i);
+     sprintf(str, "Eat %d cupcake(s)!", i);
      row[c] = str;
      ++i;
    }

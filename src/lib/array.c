@@ -55,51 +55,6 @@ int array_free(Array** const array, FreeFn free_element) {
   return 0;
 }
 
-// 1. try malloc char** for size of array
-// 2. for each element in array call to_string on element and assign to pointer above
-// 3. for each string get strlen and add to total
-// 4. try malloc for total strlen
-// 5. concat everything
-// 6. return char*
-
-char* array_to_string(Array* const array, ToStringFn const to_string) {
-  int capacity = array->capacity;
-  char* elements[capacity] = {};
-  int lengths[capacity] = {};
-  int sum_lengths = 0;
-
-
-  for (int i = 0; i < capacity; ++i) {
-    void* element = array_get(array, i);
-    if (element != NULL) {
-      elements[i] = to_string(element);
-    } else {
-      elements[i] = "";
-    }
-    lengths[i] = strlen(elements[i]);
-    sum_lengths += lengths[i];
-  }
-
-  // sum_lengths + capacity * 3 + 2 brackets + 2 newl + 1 null
-  int total_chars = sum_lengths + (3 * capacity) + 5;
-  printf("total_chars = %d\n", total_chars);
-  char* buffer = malloc(sizeof(char) * total_chars);
-
-  if (buffer == NULL) {
-    return NULL;
-  }
-
-  strcat(buffer, "[\n");
-  for (int i = 0; i < capacity; ++i) {
-    strcat(buffer, "\t");
-    strcat(buffer, elements[i]);
-    strcat(buffer, ",\n");
-  }
-  strcat(buffer, "]\n\0");
-
-  return buffer;
-}
-
 int array_append(Array* const array, void* const element) {
   if (!array_has_capacity(array)) {
     return 1;
@@ -181,6 +136,44 @@ void* array_remove(Array* const array, int index) {
   array->size--;
 
   return removed;
+}
+
+char* array_to_string(Array* const array, ToStringFn const to_string) {
+  if (array->size == 0) {
+    char* buffer = malloc(sizeof(char) * 3);
+    sprintf(buffer, "[]\0");
+    return buffer;
+  }
+
+  int capacity = array->capacity;
+  char* elements[capacity] = {};
+  int lengths[capacity] = {};
+  int sum_lengths = 0;
+
+  for (int i = 0; i < capacity; ++i) {
+    void* element = array_get(array, i);
+    elements[i] = element != NULL ? to_string(element) : "NULL";
+    lengths[i] = strlen(elements[i]);
+    sum_lengths += lengths[i];
+  }
+
+  int total_length = sum_lengths + (capacity - 1) * 2 + 2;
+  char* buffer = malloc(sizeof(char) * total_length);
+
+  if (buffer == NULL) {
+    return NULL;
+  }
+
+  sprintf(buffer, "[");
+  for (int i = 0; i < capacity; ++i) {
+    strcat(buffer, elements[i]);
+    if (i < capacity - 1) {
+      strcat(buffer, ", ");
+    }
+  }
+  strcat(buffer, "]\0");
+
+  return buffer;
 }
 
 bool array_index_valid(Array* const array, int index) {

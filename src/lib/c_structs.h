@@ -23,13 +23,14 @@
   int array_clear(Array* const array, FreeFn const free_element);
   int array_free(Array** const array, FreeFn const free_element);
 
-  char* array_to_string(Array* array, ToStringFn const to_string);
   int array_append(Array* const array, void* const element);
   int array_prepend(Array* const array, void* const element);
   int array_insert(Array* const array, int index, void* const element);
 
   void* array_get(Array* const array, int index);
   void* array_remove(Array* const array, int index);
+
+  char* array_to_string(Array* array, ToStringFn const to_string);
 
   bool array_index_valid(Array* const array, int index);
   bool array_has_capacity(Array* const array);
