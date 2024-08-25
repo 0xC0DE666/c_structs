@@ -40,8 +40,8 @@
   // MATRIX
   //####################
   typedef struct Position {
-    int row;
-    int column;
+    unsigned row;
+    unsigned column;
   } Position;
 
   Position position_new(unsigned row, unsigned column);
