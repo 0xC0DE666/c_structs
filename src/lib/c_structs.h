@@ -9,16 +9,16 @@
   typedef char* (*ToStringFn)(void* const);
   typedef void (*FreeFn)(void** const);
 
+
+  //####################
+  // ARRAY
+  //####################
   typedef struct Array {
     unsigned capacity;
     unsigned size;
     void** elements;
   } Array;
 
-
-  //####################
-  // ARRAY
-  //####################
   Array* array_new(unsigned capacity);
   int array_clear(Array* const array, FreeFn const free_element);
   int array_free(Array** const array, FreeFn const free_element);
