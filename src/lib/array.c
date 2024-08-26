@@ -139,7 +139,7 @@ void* array_remove(Array* const array, int index) {
   return removed;
 }
 
-void array_for_each(Array* array, ArrayEachFn fn) {
+void array_for_each(Array* const array, ArrayEachFn fn) {
   if (array->size == 0) {
     return;
   }
@@ -150,6 +150,23 @@ void array_for_each(Array* array, ArrayEachFn fn) {
       fn(element);
     }
   }
+}
+
+Array* array_map(Array* const array, ArrayMapFn fn) {
+  Array* mapped = array_new(array->capacity);
+  if (array->size == 0) {
+    return mapped;
+  }
+
+  for (int i = 0; i < array->capacity; ++i) {
+    void* element = array_get(array, i);
+    if (element != NULL) {
+      void* val = fn(element);
+      array_append(mapped, val);
+    }
+  }
+  
+  return mapped;
 }
 
 char* array_to_string(Array* const array, ToStringFn const to_string) {

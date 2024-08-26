@@ -33,6 +33,9 @@
   typedef void (*ArrayEachFn)(void* const);
   void array_for_each(Array* array, ArrayEachFn const fn);
 
+  typedef void* (*ArrayMapFn)(void* const);
+  Array* array_map(Array* array, ArrayMapFn const fn);
+
   char* array_to_string(Array* const array, ToStringFn const to_string);
 
   bool array_index_valid(Array* const array, int index);

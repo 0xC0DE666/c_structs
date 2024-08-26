@@ -565,23 +565,48 @@ Test(array_remove, _4) {
 // ####################
 Test(array_for_each, _1) {
   Array* array = array_new(5);
-  int values[array->capacity] = {};
   
   for (int i = 0; i < array->capacity; ++i) {
-    values[i] = i;
-    array_append(array, &values[i]);
+    array_append(array, point_new(i, i));
   }
 
-  array_for_each(array, (ArrayEachFn) inc);
+  array_for_each(array, (ArrayEachFn) point_double);
   
   for (int i = 0; i < array->capacity; ++i) {
-    int* v = array_get(array, i);
-    cr_assert_eq(*v, i + 1);
+    Point* p = array_get(array, i);
+    cr_assert_eq(p->x, i * 2);
+    cr_assert_eq(p->y, i * 2);
   }
 
-  array_free(&array, NULL);
+  array_free(&array, (FreeFn) point_free);
 }
 
+// ####################
+// array_map
+// ####################
+Test(array_map, _1) {
+  Array* points = array_new(5);
+  
+  for (int i = 0; i < points->capacity; ++i) {
+    array_append(points, point_new(i, i));
+  }
+
+  Array* point_strs = array_map(points, (ArrayMapFn) point_to_str);
+
+  cr_assert_eq(point_strs->capacity, points->capacity);
+  cr_assert_eq(point_strs->size, points->size);
+  cr_assert_eq(point_strs->elements != NULL, true);
+  
+  for (int i = 0; i < points->capacity; ++i) {
+    char* result = (char*) array_get(point_strs, i);
+    char* expected = point_to_str(array_get(points, i));
+
+    cr_assert_eq(strcmp(result, expected), 0);
+  }
+
+  array_free(&points, (FreeFn) point_free);
+  array_free(&point_strs, (FreeFn) free_ptr);
+}
 
 
 // ####################

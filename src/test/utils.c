@@ -3,6 +3,11 @@
 
 #include "utils.h"
 
+void free_ptr(void** ptr) {
+  free(*ptr);
+  *ptr = NULL;
+}
+
 Point* point_new(int x, int y) {
   Point* point = malloc(sizeof(Point));
 
@@ -33,6 +38,7 @@ char* point_to_str(Point* point) {
   return buffer;
 }
 
-void inc(int* v) {
-  *v += 1;
+void point_double(Point* point) {
+  point->x = point->x * 2;
+  point->y = point->y * 2;
 }

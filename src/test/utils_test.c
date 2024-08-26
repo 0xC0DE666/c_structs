@@ -5,6 +5,19 @@
 
 #include "utils.h"
 
+// ####################
+// free_ptr
+// ####################
+Test(free_ptr, _1) {
+  char* str = malloc(sizeof(char) * 10);
+
+  cr_assert_eq(str != NULL, true);
+
+  free_ptr((void**) &str);
+
+  cr_assert_eq(str == NULL, true);
+}
+
 
 // ####################
 // point_new
@@ -41,5 +54,19 @@ Test(point_to_str, _1) {
   cr_assert_eq(strcmp(result, expected), 0);
 
   free(result);
+  point_free(&point);
+}
+
+// ####################
+// point_double
+// ####################
+Test(point_double, _1) {
+  Point* point = point_new(3, 2);
+  
+  point_double(point);
+
+  cr_assert_eq(point->x, 6);
+  cr_assert_eq(point->y, 4);
+
   point_free(&point);
 }
