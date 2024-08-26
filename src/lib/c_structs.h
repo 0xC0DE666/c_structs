@@ -57,7 +57,7 @@
 
   Matrix* matrix_new(unsigned rows, unsigned columns);
   int matrix_clear(Matrix* const matrix, FreeFn const free_element);
-  void matrix_free(Matrix** const matrix, FreeFn const free_element);
+  int matrix_free(Matrix** const matrix, FreeFn const free_element);
 
   int matrix_insert(Matrix* const matrix, Position* const position, void* const element);
 

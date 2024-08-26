@@ -79,7 +79,7 @@ int matrix_clear(Matrix* const matrix, FreeFn const free_element) {
   return 0;
 }
 
-void matrix_free(Matrix** const matrix, FreeFn const free_element) {
+int matrix_free(Matrix** const matrix, FreeFn const free_element) {
   matrix_clear(*matrix, free_element);
 
   free((*matrix)->elements[0]);
@@ -90,6 +90,8 @@ void matrix_free(Matrix** const matrix, FreeFn const free_element) {
 
   free(*matrix);
   *matrix = NULL;
+
+  return 0;
 }
 
 char* matrix_to_string(Matrix* matrix, ToStringFn to_string) {
