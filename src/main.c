@@ -39,14 +39,14 @@ void array_fun() {
   Array* arr = array_new(5);
   int values[arr->capacity];
 
-  for (unsigned i = 0; i < arr->capacity - 1; ++i) {
+  for (int i = 0; i < arr->capacity - 1; ++i) {
     values[i] = i + 1;
     array_append(arr, &values[i]);
   }
   values[4] = 10;
   array_insert(arr, 10, &values[4]);
 
-  for (unsigned i = 0; i < arr->size; ++i) {
+  for (int i = 0; i < arr->size; ++i) {
     int* x = (int*) array_get(arr, i);
     printf("%d %d\n", i, *x);
   }
@@ -89,8 +89,8 @@ void matrix_to_string_test() {
   Matrix* matrix = matrix_new(2, 2);
   Position pos[matrix->rows][matrix->columns] = {};
 
-  for (unsigned r = 0; r < matrix->rows; ++r) {
-    for (unsigned c = 0; c < matrix->columns; ++c) {
+  for (int r = 0; r < matrix->rows; ++r) {
+    for (int c = 0; c < matrix->columns; ++c) {
       pos[r][c] = position_new(r, c); 
       matrix_insert(matrix, &pos[r][c], &pos[r][c]);
       printf("%u %u\n", r, c);
@@ -101,8 +101,26 @@ void matrix_to_string_test() {
   printf("%s", str);
 }
 
+void add2(int* v) {
+  *v += 2;
+}
+
+void print(int* v) {
+  printf("%d\n", *v);
+}
+
 int main() {
-  matrix_to_string_test();
+  Array* arr = array_new(3);
+  int values[arr->capacity] = {};
+  
+  for (int i = 0; i < arr->capacity; ++i) {
+    values[i] = i + 1;
+    array_append(arr, &values[i]);
+  }
+
+  array_for_each(arr, (ArrayEachFn) add2);
+  array_for_each(arr, (ArrayEachFn) print);
+
 
   return 0;
 }

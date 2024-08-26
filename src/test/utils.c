@@ -32,3 +32,7 @@ char* point_to_str(Point* point) {
  
   return buffer;
 }
+
+void inc(int* v) {
+  *v += 1;
+}

@@ -11,4 +11,6 @@
   void point_free(Point** const point);
   char* point_to_str(Point* const point);
 
+  void inc(int* v);
+
 #endif

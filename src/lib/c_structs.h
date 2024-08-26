@@ -14,12 +14,12 @@
   // ARRAY
   //####################
   typedef struct Array {
-    unsigned capacity;
-    unsigned size;
+    int capacity;
+    int size;
     void** elements;
   } Array;
 
-  Array* array_new(unsigned capacity);
+  Array* array_new(int capacity);
   int array_clear(Array* const array, FreeFn const free_element);
   int array_free(Array** const array, FreeFn const free_element);
 
@@ -29,6 +29,9 @@
 
   void* array_get(Array* const array, int index);
   void* array_remove(Array* const array, int index);
+
+  typedef void (*ArrayEachFn)(void* const);
+  void array_for_each(Array* array, ArrayEachFn const fn);
 
   char* array_to_string(Array* const array, ToStringFn const to_string);
 
@@ -40,22 +43,22 @@
   // MATRIX
   //####################
   typedef struct Position {
-    unsigned row;
-    unsigned column;
+    int row;
+    int column;
   } Position;
 
-  Position position_new(unsigned row, unsigned column);
+  Position position_new(int row, int column);
   char* position_to_string(Position* position);
 
   typedef struct Matrix {
-    unsigned rows;
-    unsigned columns;
-    unsigned capacity;
-    unsigned size;
+    int rows;
+    int columns;
+    int capacity;
+    int size;
     void** elements;
   } Matrix;
 
-  Matrix* matrix_new(unsigned rows, unsigned columns);
+  Matrix* matrix_new(int rows, int columns);
   int matrix_clear(Matrix* const matrix, FreeFn const free_element);
   int matrix_free(Matrix** const matrix, FreeFn const free_element);
 
@@ -63,6 +66,9 @@
 
   void* matrix_get(Matrix* const matrix, Position* const position);
   void* matrix_remove(Matrix* const matrix, Position* const position);
+
+  typedef void (*MatrixEachFn)(void* const);
+  void matrix_for_each(Matrix* array, MatrixEachFn const fn);
 
   char* matrix_to_string(Matrix* const matrix, ToStringFn to_string);
 

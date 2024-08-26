@@ -4,7 +4,7 @@
 
 #include "c_structs.h"
 
-Array* array_new(unsigned capacity) {
+Array* array_new(int capacity) {
   Array* array = malloc(sizeof(Array));
 
   if (array == NULL) {
@@ -137,6 +137,19 @@ void* array_remove(Array* const array, int index) {
   array->size--;
 
   return removed;
+}
+
+void array_for_each(Array* array, ArrayEachFn fn) {
+  if (array->size == 0) {
+    return;
+  }
+
+  for (int i = 0; i < array->capacity; ++i) {
+    void* element = array_get(array, i);
+    if (element != NULL) {
+      fn(element);
+    }
+  }
 }
 
 char* array_to_string(Array* const array, ToStringFn const to_string) {

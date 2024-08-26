@@ -483,8 +483,8 @@ Test(matrix_to_string, _2) {
   Position pos[matrix->rows][matrix->columns] = {};
 
   int i = 1;
-  for (unsigned r = 0; r < matrix->rows; ++r) {
-    for (unsigned c = 0; c < matrix->columns; ++c) {
+  for (int r = 0; r < matrix->rows; ++r) {
+    for (int c = 0; c < matrix->columns; ++c) {
       pos[r][c] = position_new(r, c); 
       matrix_insert(matrix, &pos[r][c], i % 2 == 0 ? &pos[r][c] : NULL);
       ++i;

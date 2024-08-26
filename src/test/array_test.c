@@ -560,6 +560,29 @@ Test(array_remove, _4) {
   array_free(&array, NULL);
 }
 
+// ####################
+// array_for_each
+// ####################
+Test(array_for_each, _1) {
+  Array* array = array_new(5);
+  int values[array->capacity] = {};
+  
+  for (int i = 0; i < array->capacity; ++i) {
+    values[i] = i;
+    array_append(array, &values[i]);
+  }
+
+  array_for_each(array, (ArrayEachFn) inc);
+  
+  for (int i = 0; i < array->capacity; ++i) {
+    int* v = array_get(array, i);
+    cr_assert_eq(*v, i + 1);
+  }
+
+  array_free(&array, NULL);
+}
+
+
 
 // ####################
 // array_to_string

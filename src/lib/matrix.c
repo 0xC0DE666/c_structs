@@ -4,7 +4,7 @@
 
 #include "c_structs.h"
 
-Position position_new(unsigned row, unsigned column) {
+Position position_new(int row, int column) {
   return (Position) {row, column};
 }
 
@@ -21,7 +21,7 @@ char* position_to_string(Position* position) {
   return buffer;
 }
 
-Matrix* matrix_new(unsigned rows, unsigned columns) {
+Matrix* matrix_new(int rows, int columns) {
   Matrix* matrix = malloc(sizeof(Matrix));
 
   if (matrix == NULL) {
@@ -119,7 +119,7 @@ char* matrix_to_string(Matrix* matrix, ToStringFn to_string) {
   }
   // rows: (2) brackets  + (1) newline
   // capacity: + (2) comma space
-  unsigned total_length = sum_lengths + (rows * 3) + (capacity * 2) - rows;
+  int total_length = sum_lengths + (rows * 3) + (capacity * 2) - rows;
   char* buffer = malloc(sizeof(char) * total_length);
 
   if (buffer == NULL) {
