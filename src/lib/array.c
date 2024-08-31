@@ -162,7 +162,6 @@ Array* array_map(Array* const array, ArrayMapFn fn) {
     return mapped;
   }
 
-
   for (int i = 0; i < array->capacity; ++i) {
     void* element = array_get(array, i);
     if (element != NULL) {

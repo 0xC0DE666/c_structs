@@ -48,7 +48,7 @@ Test(point_free, _1) {
 Test(point_to_str, _1) {
   Point* point = point_new(3, 2);
   
-  char* result = point_to_str(point);
+  char* result = point_to_string(point);
   char* expected = "(3, 2)";
 
   cr_assert_eq(strcmp(result, expected), 0);

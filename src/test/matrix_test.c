@@ -464,6 +464,34 @@ Test(matrix_remove, _4) {
 
 
 // ####################
+// matrix_for_each
+// ####################
+Test(matrix_for_each, _1) {
+  Matrix* matrix = matrix_new(3, 3);
+
+  for (int r = 0; r < matrix->rows; ++r) {
+    for (int c = 0; c < matrix->columns; ++c) {
+      Position pos = {r, c};
+      matrix_insert(matrix, &pos, point_new(r, c));
+    }
+  }
+
+  matrix_for_each(matrix, (MatrixEachFn) point_double);
+
+  for (int r = 0; r < matrix->rows; ++r) {
+    for (int c = 0; c < matrix->columns; ++c) {
+      Position pos = {r, c};
+      Point* p = matrix_get(matrix, &pos);
+      cr_assert_eq(p->x, r * 2);
+      cr_assert_eq(p->y, c * 2);
+    }
+  }
+
+  matrix_free(&matrix, (FreeFn) point_free);
+}
+
+
+// ####################
 // matrix_to_string
 // ####################
 Test(matrix_to_string, _1) {

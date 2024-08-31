@@ -145,9 +145,9 @@ void matrix_for_each(Matrix* const matrix, MatrixEachFn const fn) {
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
       pos = position_new(r, c);
-      void* el = matrix_get(matrix, &pos);
-      if (el != NULL) {
-        fn(el);
+      void* element = matrix_get(matrix, &pos);
+      if (element != NULL) {
+        fn(element);
       }
     }
   }

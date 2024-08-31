@@ -585,13 +585,24 @@ Test(array_for_each, _1) {
 // array_map
 // ####################
 Test(array_map, _1) {
+  Array* array = array_new(5);
+
+  Array* empty = array_map(array, (ArrayMapFn) NULL);
+
+  cr_assert_eq(empty->size, 0);
+
+  array_free(&array, NULL);
+  array_free(&empty, NULL);
+}
+
+Test(array_map, _2) {
   Array* points = array_new(5);
   
   for (int i = 0; i < points->capacity; ++i) {
     array_append(points, point_new(i, i));
   }
 
-  Array* point_strs = array_map(points, (ArrayMapFn) point_to_str);
+  Array* point_strs = array_map(points, (ArrayMapFn) point_to_string);
 
   cr_assert_eq(point_strs->capacity, points->capacity);
   cr_assert_eq(point_strs->size, points->size);
@@ -599,7 +610,7 @@ Test(array_map, _1) {
   
   for (int i = 0; i < points->capacity; ++i) {
     char* result = (char*) array_get(point_strs, i);
-    char* expected = point_to_str(array_get(points, i));
+    char* expected = point_to_string(array_get(points, i));
 
     cr_assert_eq(strcmp(result, expected), 0);
   }
@@ -629,7 +640,7 @@ Test(array_to_string, _2) {
   array_append(array, point_new(0, 0));
   array_insert(array, 2, point_new(1, 1));
 
-  char* result = array_to_string(array, (ToStringFn) point_to_str);
+  char* result = array_to_string(array, (ToStringFn) point_to_string);
   char* expected = "[(0, 0), NULL, (1, 1)]";
   cr_assert_eq(strcmp(result, expected), 0);
 
