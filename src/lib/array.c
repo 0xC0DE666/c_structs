@@ -154,9 +154,14 @@ void array_for_each(Array* const array, ArrayEachFn fn) {
 
 Array* array_map(Array* const array, ArrayMapFn fn) {
   Array* mapped = array_new(array->capacity);
+  if (mapped == NULL) {
+    return NULL;
+  }
+
   if (array->size == 0) {
     return mapped;
   }
+
 
   for (int i = 0; i < array->capacity; ++i) {
     void* element = array_get(array, i);

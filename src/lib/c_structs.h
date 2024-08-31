@@ -31,10 +31,10 @@
   void* array_remove(Array* const array, int index);
 
   typedef void (*ArrayEachFn)(void* const);
-  void array_for_each(Array* array, ArrayEachFn const fn);
+  void array_for_each(Array* const array, ArrayEachFn const fn);
 
   typedef void* (*ArrayMapFn)(void* const);
-  Array* array_map(Array* array, ArrayMapFn const fn);
+  Array* array_map(Array* const array, ArrayMapFn const fn);
 
   char* array_to_string(Array* const array, ToStringFn const to_string);
 
@@ -71,7 +71,7 @@
   void* matrix_remove(Matrix* const matrix, Position* const position);
 
   typedef void (*MatrixEachFn)(void* const);
-  void matrix_for_each(Matrix* array, MatrixEachFn const fn);
+  void matrix_for_each(Matrix* const matrix, MatrixEachFn const fn);
 
   char* matrix_to_string(Matrix* const matrix, ToStringFn to_string);
 

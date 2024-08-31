@@ -94,6 +94,66 @@ int matrix_free(Matrix** const matrix, FreeFn const free_element) {
   return 0;
 }
 
+
+int matrix_insert(Matrix* const matrix, Position* const position, void* const value) {
+  if (matrix->size >= matrix->capacity) {
+    return 1;
+  }
+
+  if (matrix_position_valid(matrix, position) == false) {
+    return 1;
+  }
+
+  void** row = matrix->elements[position->row];
+  row[position->column] = value;
+
+  matrix->size++;
+
+  return 0;
+}
+
+void* matrix_get(Matrix* const matrix, Position* const position) {
+  if (matrix_position_valid(matrix, position) == false) {
+    return NULL;
+  }
+
+  void** row = matrix->elements[position->row];
+  return row[position->column];
+}
+
+void* matrix_remove(Matrix* const matrix, Position* const position) {
+  if (matrix_position_valid(matrix, position) == false) {
+    return NULL;
+  }
+
+  void** row = matrix->elements[position->row];
+  void* removed = row[position->column];
+
+  row[position->column] = NULL;
+  matrix->size--;
+
+  return removed;
+}
+
+
+void matrix_for_each(Matrix* const matrix, MatrixEachFn const fn) {
+  if (matrix->size == 0) {
+    return;
+  }
+
+  Position pos;
+  for (int r = 0; r < matrix->rows; ++r) {
+    for (int c = 0; c < matrix->columns; ++c) {
+      pos = position_new(r, c);
+      void* el = matrix_get(matrix, &pos);
+      if (el != NULL) {
+        fn(el);
+      }
+    }
+  }
+}
+
+
 char* matrix_to_string(Matrix* matrix, ToStringFn to_string) {
   if (matrix->size == 0) {
     char* buffer = malloc(sizeof(char) * 3);
@@ -141,47 +201,6 @@ char* matrix_to_string(Matrix* matrix, ToStringFn to_string) {
   }
 
   return buffer;
-}
-
-
-int matrix_insert(Matrix* const matrix, Position* const position, void* const value) {
-  if (matrix->size >= matrix->capacity) {
-    return 1;
-  }
-
-  if (matrix_position_valid(matrix, position) == false) {
-    return 1;
-  }
-
-  void** row = matrix->elements[position->row];
-  row[position->column] = value;
-
-  matrix->size++;
-
-  return 0;
-}
-
-void* matrix_get(Matrix* const matrix, Position* const position) {
-  if (matrix_position_valid(matrix, position) == false) {
-    return NULL;
-  }
-
-  void** row = matrix->elements[position->row];
-  return row[position->column];
-}
-
-void* matrix_remove(Matrix* const matrix, Position* const position) {
-  if (matrix_position_valid(matrix, position) == false) {
-    return NULL;
-  }
-
-  void** row = matrix->elements[position->row];
-  void* removed = row[position->column];
-
-  row[position->column] = NULL;
-  matrix->size--;
-
-  return removed;
 }
 
 
