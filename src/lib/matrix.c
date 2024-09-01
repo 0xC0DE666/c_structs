@@ -52,6 +52,7 @@ Matrix* matrix_new(int rows, int columns) {
     }
   }
 
+  matrix->size = 0;
   matrix->capacity = rows * columns;
   matrix->rows = rows;
   matrix->columns = columns;
@@ -153,6 +154,30 @@ void matrix_for_each(Matrix* const matrix, MatrixEachFn const fn) {
   }
 }
 
+Matrix* matrix_map(Matrix* const matrix, MatrixMapFn const fn) {
+  Matrix* mapped = matrix_new(matrix->rows, matrix->columns);
+  if (mapped == NULL) {
+    return NULL;
+  }
+
+  if (matrix->size == 0) {
+    return mapped;
+  }
+
+  Position pos;
+  for (int r = 0; r < matrix->rows; ++r) {
+    for (int c = 0; c < matrix->columns; ++c) {
+      pos = position_new(r, c);
+      void* element = matrix_get(matrix, &pos);
+      if (element != NULL) {
+        void* val = fn(element);
+        matrix_insert(mapped, &pos, val);
+      }
+    }
+  }
+
+  return mapped;
+}
 
 char* matrix_to_string(Matrix* matrix, ToStringFn to_string) {
   if (matrix->size == 0) {
@@ -172,8 +197,9 @@ char* matrix_to_string(Matrix* matrix, ToStringFn to_string) {
     for (int c = 0; c < columns; ++c) {
       Position p = position_new(r, c);
       void* element = matrix_get(matrix, &p);
-      elements[r][c] = element != NULL ? to_string(element) : "NULL";
-      lengths[r][c] = strlen(elements[r][c]);
+      bool not_null = element != NULL;
+      elements[r][c] = not_null ? to_string(element) : "NULL";
+      lengths[r][c] = not_null ? strlen(elements[r][c]) : strlen("NULL");
       sum_lengths += lengths[r][c];
     }
   }

@@ -42,3 +42,11 @@ void point_double(Point* point) {
   point->x = point->x * 2;
   point->y = point->y * 2;
 }
+
+void print_string(char* str) {
+  printf("%s", str);
+}
+
+void* nothing(void* v) {
+  return v;
+}

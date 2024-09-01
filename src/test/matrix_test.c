@@ -490,6 +490,52 @@ Test(matrix_for_each, _1) {
   matrix_free(&matrix, (FreeFn) point_free);
 }
 
+// ####################
+// matrix_map
+// ####################
+Test(matrix_map, _1) {
+  Matrix* matrix = matrix_new(3, 3);
+
+  Matrix* empty = matrix_map(matrix, (MatrixMapFn) NULL);
+
+  cr_assert_eq(empty->size, 0);
+
+  matrix_free(&matrix, NULL);
+  matrix_free(&empty, NULL);
+}
+
+Test(matrix_map, _2) {
+  Matrix* points = matrix_new(3, 3);
+  
+  for (int r = 0; r < points->rows; ++r) {
+    for (int c = 0; c < points->columns; ++c) {
+      Position pos = {r, c};
+      matrix_insert(points, &pos, point_new(r, c));
+    }
+  }
+
+  Matrix* point_strs = matrix_map(points, (MatrixMapFn) point_to_string);
+  char* mstr = matrix_to_string(points, (ToStringFn) point_to_string);
+  char* sstr = matrix_to_string(point_strs, (ToStringFn) nothing);
+
+  cr_assert_eq(point_strs->capacity, points->capacity);
+  cr_assert_eq(point_strs->size, points->size);
+  cr_assert_eq(point_strs->elements != NULL, true);
+  
+  for (int r = 0; r < points->rows; ++r) {
+    for (int c = 0; c < points->columns; ++c) {
+      Position pos = {r, c};
+      char* result = (char*) matrix_get(point_strs, &pos);
+      char* expected = point_to_string(matrix_get(points, &pos));
+
+      cr_assert_eq(strcmp(result, expected), 0);
+    }
+  }
+
+  matrix_free(&points, (FreeFn) point_free);
+  matrix_free(&point_strs, (FreeFn) free_ptr);
+}
+
 
 // ####################
 // matrix_to_string
