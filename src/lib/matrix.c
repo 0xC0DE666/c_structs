@@ -97,7 +97,7 @@ int matrix_free(Matrix** const matrix, FreeFn const free_element) {
 
 
 int matrix_insert(Matrix* const matrix, Position* const position, void* const value) {
-  if (matrix->size >= matrix->capacity) {
+  if (matrix_has_capacity(matrix) == false) {
     return 1;
   }
 
@@ -231,8 +231,11 @@ char* matrix_to_string(Matrix* matrix, ToStringFn to_string) {
 
 
 bool matrix_position_valid(Matrix* const matrix, Position* const position) {
-  if (position->row < 0 || position->row >= matrix->rows || position->column < 0 || position->column >= matrix->columns) {
-    return false;
-  }
-  return true;
+  bool valid_row = position->row >= 0 && position->row < matrix->rows;
+  bool valid_col = position->column >= 0 && position->column < matrix->columns;
+  return valid_row && valid_col;
+}
+
+bool matrix_has_capacity(Matrix* const matrix) {
+  return matrix->size < matrix->capacity;
 }

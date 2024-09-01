@@ -596,3 +596,27 @@ Test(matrix_position_valid, _2) {
 
   matrix_free(&matrix, NULL);
 }
+
+// ####################
+// matrix_has_capacity
+// ####################
+Test(matrix_has_capacity, _1) {
+  Matrix* matrix = matrix_new(1, 1);
+  int x = 10;
+  Position pos = position_new(0, 0);
+  matrix_insert(matrix, &pos, &x);
+
+  bool result = matrix_has_capacity(matrix);
+  cr_assert_eq(result, false);
+
+  matrix_free(&matrix, NULL);
+}
+
+Test(matrix_has_capacity, _2) {
+  Matrix* matrix = matrix_new(5, 6);
+
+  bool result = matrix_has_capacity(matrix);
+  cr_assert_eq(result, true);
+
+  matrix_free(&matrix, NULL);
+}

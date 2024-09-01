@@ -6,14 +6,14 @@
 #include "utils.h"
 
 // ####################
-// free_ptr
+// ptr_free
 // ####################
-Test(free_ptr, _1) {
+Test(ptr_free, _1) {
   char* str = malloc(sizeof(char) * 10);
 
   cr_assert_eq(str != NULL, true);
 
-  free_ptr((void**) &str);
+  ptr_free((void**) &str);
 
   cr_assert_eq(str == NULL, true);
 }

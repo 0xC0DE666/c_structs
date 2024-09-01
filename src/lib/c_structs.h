@@ -79,5 +79,6 @@
   char* matrix_to_string(Matrix* const matrix, ToStringFn to_string);
 
   bool matrix_position_valid(Matrix* const matrix, Position* const position);
+  bool matrix_has_capacity(Matrix* const matrix);
 
 #endif
