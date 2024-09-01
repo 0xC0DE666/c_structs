@@ -540,9 +540,8 @@ Test(matrix_map, _2) {
 // ####################
 // matrix_to_string
 // ####################
-Test(matrix_to_string, _1) {
+Test(matrix_to_string, empty) {
   Matrix* matrix = matrix_new(2, 2);
-  Position pos[matrix->rows][matrix->columns] = {};
 
   char* result = matrix_to_string(matrix, (ToStringFn) position_to_string);
   char* expected = "[]";
@@ -552,15 +551,64 @@ Test(matrix_to_string, _1) {
   matrix_free(&matrix, NULL);
 }
 
-Test(matrix_to_string, _2) {
+Test(matrix_to_string, single_element) {
+  Matrix* matrix = matrix_new(1, 1);
+  Position pos = position_new(0, 0);
+
+  matrix_insert(matrix, &pos, &pos);
+
+  char* result = matrix_to_string(matrix, (ToStringFn) position_to_string);
+  char* expected = "[(0, 0)]\n";
+  cr_assert_eq(strcmp(result, expected), 0);
+
+  free(result);
+  matrix_free(&matrix, NULL);
+}
+
+Test(matrix_to_string, single_row) {
+  Matrix* matrix = matrix_new(1, 2);
+
+  for (int r = 0; r < matrix->rows; ++r) {
+    for (int c = 0; c < matrix->columns; ++c) {
+      Position pos = position_new(r, c);
+      matrix_insert(matrix, &pos, point_new(r, c));
+    }
+  }
+
+  char* result = matrix_to_string(matrix, (ToStringFn) point_to_string);
+  char* expected = "[(0, 0), (0, 1)]\n";
+  cr_assert_eq(strcmp(result, expected), 0);
+
+  free(result);
+  matrix_free(&matrix, (FreeFn) point_free);
+}
+
+Test(matrix_to_string, single_column) {
+  Matrix* matrix = matrix_new(2, 1);
+
+  for (int r = 0; r < matrix->rows; ++r) {
+    for (int c = 0; c < matrix->columns; ++c) {
+      Position pos = position_new(r, c);
+      matrix_insert(matrix, &pos, point_new(r, c));
+    }
+  }
+
+  char* result = matrix_to_string(matrix, (ToStringFn) point_to_string);
+  char* expected = "[(0, 0)]\n[(1, 0)]\n";
+  cr_assert_eq(strcmp(result, expected), 0);
+
+  free(result);
+  matrix_free(&matrix, (FreeFn) point_free);
+}
+
+Test(matrix_to_string, multi) {
   Matrix* matrix = matrix_new(2, 2);
-  Position pos[matrix->rows][matrix->columns] = {};
 
   int i = 1;
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
-      pos[r][c] = position_new(r, c); 
-      matrix_insert(matrix, &pos[r][c], i % 2 == 0 ? &pos[r][c] : NULL);
+      Position pos = position_new(r, c);
+      matrix_insert(matrix, &pos, i % 2 == 0 ? point_new(r, c) : NULL);
       ++i;
     }
   }
@@ -570,7 +618,7 @@ Test(matrix_to_string, _2) {
   cr_assert_eq(strcmp(result, expected), 0);
 
   free(result);
-  matrix_free(&matrix, NULL);
+  matrix_free(&matrix, (FreeFn) point_free);
 }
 
 

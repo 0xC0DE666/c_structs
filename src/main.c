@@ -110,6 +110,7 @@ void print(int* v) {
 }
 
 int main() {
+  printf("%ld\n", sizeof(Position));
   Array* arr = array_new(3);
   int values[arr->capacity] = {};
   
