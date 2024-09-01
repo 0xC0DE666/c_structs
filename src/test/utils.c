@@ -3,7 +3,7 @@
 
 #include "utils.h"
 
-void free_ptr(void** ptr) {
+void ptr_free(void** ptr) {
   free(*ptr);
   *ptr = NULL;
 }

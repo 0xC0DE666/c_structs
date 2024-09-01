@@ -533,7 +533,7 @@ Test(matrix_map, _2) {
   }
 
   matrix_free(&points, (FreeFn) point_free);
-  matrix_free(&point_strs, (FreeFn) free_ptr);
+  matrix_free(&point_strs, (FreeFn) ptr_free);
 }
 
 

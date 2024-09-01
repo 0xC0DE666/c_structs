@@ -616,7 +616,7 @@ Test(array_map, _2) {
   }
 
   array_free(&points, (FreeFn) point_free);
-  array_free(&point_strs, (FreeFn) free_ptr);
+  array_free(&point_strs, (FreeFn) ptr_free);
 }
 
 
