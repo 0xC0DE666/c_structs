@@ -179,7 +179,7 @@ Matrix* matrix_map(Matrix* const matrix, MatrixMapFn const fn) {
   return mapped;
 }
 
-char* matrix_to_string(Matrix* matrix, ToStringFn to_string) {
+char* matrix_to_string(Matrix* const matrix, ToStringFn const to_string) {
   if (matrix->size == 0) {
     char* buffer = malloc(sizeof(char) * 3);
     sprintf(buffer, "[]\0");

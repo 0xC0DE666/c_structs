@@ -76,7 +76,7 @@
   typedef void* (*MatrixMapFn)(void* const);
   Matrix* matrix_map(Matrix* const matrix, MatrixMapFn const fn);
 
-  char* matrix_to_string(Matrix* const matrix, ToStringFn to_string);
+  char* matrix_to_string(Matrix* const matrix, ToStringFn const to_string);
 
   bool matrix_position_valid(Matrix* const matrix, Position* const position);
   bool matrix_has_capacity(Matrix* const matrix);
