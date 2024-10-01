@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <pthread.h>
 
 #ifndef C_STRUCTS_H
 #define C_STRUCTS_H
@@ -14,6 +15,7 @@
   // ARRAY
   //####################
   typedef struct Array {
+    pthread_mutex_t lock;
     int capacity;
     int size;
     void** elements;

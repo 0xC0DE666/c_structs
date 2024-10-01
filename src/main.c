@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
 
 #include "./lib/c_structs.h"
 
@@ -110,7 +111,6 @@ void print(int* v) {
 }
 
 int main() {
-  printf("%ld\n", sizeof(Position));
   Array* arr = array_new(3);
   int values[arr->capacity] = {};
   
@@ -119,6 +119,8 @@ int main() {
     array_append(arr, &values[i]);
   }
 
+  array_for_each(arr, (ArrayEachFn) print);
+  printf("\n");
   array_for_each(arr, (ArrayEachFn) add2);
   array_for_each(arr, (ArrayEachFn) print);
 

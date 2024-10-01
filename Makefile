@@ -3,7 +3,7 @@ NAME := libc_structs
 QUALIFIER := $(NAME)-$(VERSION)
 
 CC := gcc
-C_FLAGS := -g -Wall -Wextra
+C_FLAGS := -g -Wall -Wextra -pthread
 
 OBJ_DIR := ./obj
 BIN_DIR := ./bin
