@@ -56,6 +56,7 @@
   char* position_to_string(Position* position);
 
   typedef struct Matrix {
+    pthread_mutex_t lock;
     int rows;
     int columns;
     int capacity;

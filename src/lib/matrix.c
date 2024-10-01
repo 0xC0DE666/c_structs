@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <pthread.h>
 
 #include "c_structs.h"
 
@@ -52,6 +53,7 @@ Matrix* matrix_new(int rows, int columns) {
     }
   }
 
+  pthread_mutex_init(&matrix->lock, NULL);
   matrix->size = 0;
   matrix->capacity = rows * columns;
   matrix->rows = rows;
@@ -62,6 +64,7 @@ Matrix* matrix_new(int rows, int columns) {
 }
 
 int matrix_clear(Matrix* const matrix, FreeFn const free_element) {
+  pthread_mutex_lock(&matrix->lock);
   for (int r = 0; r < matrix->rows; r++) {
     void** row = matrix->elements[r];
 
@@ -77,17 +80,22 @@ int matrix_clear(Matrix* const matrix, FreeFn const free_element) {
   }
   matrix->size = 0;
 
+  pthread_mutex_unlock(&matrix->lock);
   return 0;
 }
 
 int matrix_free(Matrix** const matrix, FreeFn const free_element) {
   matrix_clear(*matrix, free_element);
+  pthread_mutex_lock(&(*matrix)->lock);
 
   free((*matrix)->elements[0]);
   (*matrix)->elements[0] = NULL;
 
   free((*matrix)->elements);
   (*matrix)->elements = NULL;
+
+  pthread_mutex_unlock(&(*matrix)->lock);
+  pthread_mutex_destroy(&(*matrix)->lock);
 
   free(*matrix);
   *matrix = NULL;
@@ -97,11 +105,14 @@ int matrix_free(Matrix** const matrix, FreeFn const free_element) {
 
 
 int matrix_insert(Matrix* const matrix, Position* const position, void* const value) {
-  if (matrix_has_capacity(matrix) == false) {
+  pthread_mutex_lock(&matrix->lock);
+  if (!matrix_has_capacity(matrix)) {
+    pthread_mutex_unlock(&matrix->lock);
     return 1;
   }
 
-  if (matrix_position_valid(matrix, position) == false) {
+  if (!matrix_position_valid(matrix, position)) {
+    pthread_mutex_unlock(&matrix->lock);
     return 1;
   }
 
@@ -110,11 +121,12 @@ int matrix_insert(Matrix* const matrix, Position* const position, void* const va
 
   matrix->size++;
 
+  pthread_mutex_unlock(&matrix->lock);
   return 0;
 }
 
 void* matrix_get(Matrix* const matrix, Position* const position) {
-  if (matrix_position_valid(matrix, position) == false) {
+  if (!matrix_position_valid(matrix, position)) {
     return NULL;
   }
 
@@ -123,7 +135,9 @@ void* matrix_get(Matrix* const matrix, Position* const position) {
 }
 
 void* matrix_remove(Matrix* const matrix, Position* const position) {
-  if (matrix_position_valid(matrix, position) == false) {
+  pthread_mutex_lock(&matrix->lock);
+  if (!matrix_position_valid(matrix, position)) {
+    pthread_mutex_unlock(&matrix->lock);
     return NULL;
   }
 
@@ -133,6 +147,7 @@ void* matrix_remove(Matrix* const matrix, Position* const position) {
   row[position->column] = NULL;
   matrix->size--;
 
+  pthread_mutex_unlock(&matrix->lock);
   return removed;
 }
 
