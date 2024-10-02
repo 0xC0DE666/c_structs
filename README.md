@@ -1,1 +1,1 @@
-Generic data structures implemnted in C.
+Generic thread safe data structures implemnted in C.
