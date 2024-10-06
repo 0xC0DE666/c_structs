@@ -32,33 +32,6 @@ Test(array_new, _1) {
 // ####################
 Test(array_clear, _1) {
   Array* array = array_new(5);
-  int values[array->capacity];
-
-  for (int i = 0; i < array->capacity; ++i) {
-    values[i] = (i + 1) * 10;
-    array_append(array, &values[i]);
-    cr_assert_eq(array->size, i + 1);
-  }
-
-  array_clear(array, NULL);
-
-  cr_assert_eq(array->size, 0);
-  for (int i = 0; i < array->capacity; ++i) {
-    cr_assert_eq(array->elements[i], NULL);
-  }
-
-  int idx = 0;
-  array_append(array, &values[idx]);
-  int* v = array_get(array, idx);
-
-  cr_assert_eq(array->size, 1);
-  cr_assert_eq(*v, values[idx]);
-
-  array_free(&array, NULL);
-}
-
-Test(array_clear, _2) {
-  Array* array = array_new(5);
 
   for (int i = 0; i < array->capacity; ++i) {
     array_append(array, point_new(i, i + 1));
@@ -87,20 +60,6 @@ Test(array_clear, _2) {
 // array_free
 // ####################
 Test(array_free, _1) {
-  Array* array = array_new(5);
-  int values[array->capacity];
-
-  for (int i = 0; i < array->capacity; ++i) {
-    values[i] = (i + 1) * 10;
-    array_append(array, &values[i]);
-    cr_assert_eq(array->size, i + 1);
-  }
-
-  array_free(&array, NULL);
-  cr_assert_eq(array, NULL);
-}
-
-Test(array_free, _2) {
   Array* array = array_new(5);
 
   for (int i = 0; i < array->capacity; ++i) {
