@@ -163,7 +163,7 @@ void* array_remove(Array* const array, int index) {
 
   void* removed = array->elements[index];
 
-  for (int i = index; i < array->size; i++) {
+  for (int i = index; i < array->size; ++i) {
     if (i < array->size - 1) {
       array->elements[i] = array->elements[i + 1];
     } else {
