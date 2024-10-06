@@ -64,7 +64,7 @@ void old_code() {
 
     for (int c = 0; c < 3; ++c) {
       values[i] = position_new(r, c);
-      matrix_insert(trix, &values[i], &values[i]);
+      matrix_set(trix, &values[i], &values[i]);
 
       void** col = row[c];
       printf("elements[%d][%d] -> %p\n", r, c, col);
@@ -93,7 +93,7 @@ void matrix_to_string_test() {
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
       pos[r][c] = position_new(r, c); 
-      matrix_insert(matrix, &pos[r][c], &pos[r][c]);
+      matrix_set(matrix, &pos[r][c], &pos[r][c]);
       printf("%u %u\n", r, c);
     }
   }

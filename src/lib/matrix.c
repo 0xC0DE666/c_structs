@@ -104,12 +104,12 @@ int matrix_free(Matrix** const matrix, FreeFn const free_element) {
 }
 
 
-int matrix_insert(Matrix* const matrix, Position* const position, void* const value) {
+int matrix_set(Matrix* const matrix, Position* const position, void* const value) {
   pthread_mutex_lock(&matrix->lock);
-  if (!matrix_has_capacity(matrix)) {
-    pthread_mutex_unlock(&matrix->lock);
-    return 1;
-  }
+  // if (!matrix_has_capacity(matrix)) {
+  //   pthread_mutex_unlock(&matrix->lock);
+  //   return 1;
+  // }
 
   if (!matrix_position_valid(matrix, position)) {
     pthread_mutex_unlock(&matrix->lock);
@@ -117,9 +117,12 @@ int matrix_insert(Matrix* const matrix, Position* const position, void* const va
   }
 
   void** row = matrix->elements[position->row];
+
+  if (row[position->column] == NULL) {
+    matrix->size++;
+  }
   row[position->column] = value;
 
-  matrix->size++;
 
   pthread_mutex_unlock(&matrix->lock);
   return 0;
@@ -186,7 +189,7 @@ Matrix* matrix_map(Matrix* const matrix, MatrixMapFn const fn) {
       void* element = matrix_get(matrix, &pos);
       if (element != NULL) {
         void* val = fn(element);
-        matrix_insert(mapped, &pos, val);
+        matrix_set(mapped, &pos, val);
       }
     }
   }

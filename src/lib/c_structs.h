@@ -69,7 +69,7 @@
   int matrix_clear(Matrix* const matrix, FreeFn const free_element);
   int matrix_free(Matrix** const matrix, FreeFn const free_element);
 
-  int matrix_insert(Matrix* const matrix, Position* const position, void* const element);
+  int matrix_set(Matrix* const matrix, Position* const position, void* const element);
 
   void* matrix_get(Matrix* const matrix, Position* const position);
   void* matrix_remove(Matrix* const matrix, Position* const position);
