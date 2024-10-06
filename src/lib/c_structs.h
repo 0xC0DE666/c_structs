@@ -28,15 +28,16 @@
   int array_append(Array* const array, void* const element);
   int array_prepend(Array* const array, void* const element);
   int array_insert(Array* const array, int index, void* const element);
+  int array_set(Array* const array, int index, void* const element);
 
   void* array_get(Array* const array, int index);
   void* array_remove(Array* const array, int index);
 
   typedef void (*ArrayEachFn)(void* const);
-  void array_for_each(Array* const array, ArrayEachFn const fn);
+  void array_for_each(Array* const array, ArrayEachFn const each);
 
   typedef void* (*ArrayMapFn)(void* const);
-  Array* array_map(Array* const array, ArrayMapFn const fn);
+  Array* array_map(Array* const array, ArrayMapFn const map);
 
   char* array_to_string(Array* const array, ToStringFn const to_string);
 

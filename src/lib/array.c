@@ -131,6 +131,21 @@ int array_insert(Array* const array, int index, void* const element) {
   return 0;
 }
 
+int array_set(Array* const array, int index, void* const element) {
+  if (!array_index_valid(array, index)) {
+    pthread_mutex_unlock(&array->lock);
+    return 1;
+  }
+
+  if (array->elements[index] == NULL) {
+    array->size++;
+  }
+  array->elements[index] = element;
+
+  pthread_mutex_unlock(&array->lock);
+  return 0;
+}
+
 void* array_get(Array* const array, int index) {
   if (!array_index_valid(array, index)) {
     return NULL;
@@ -161,7 +176,7 @@ void* array_remove(Array* const array, int index) {
   return removed;
 }
 
-void array_for_each(Array* const array, ArrayEachFn fn) {
+void array_for_each(Array* const array, ArrayEachFn each) {
   if (array->size == 0) {
     return;
   }
@@ -169,12 +184,12 @@ void array_for_each(Array* const array, ArrayEachFn fn) {
   for (int i = 0; i < array->capacity; ++i) {
     void* element = array_get(array, i);
     if (element != NULL) {
-      fn(element);
+      each(element);
     }
   }
 }
 
-Array* array_map(Array* const array, ArrayMapFn fn) {
+Array* array_map(Array* const array, ArrayMapFn map) {
   Array* mapped = array_new(array->capacity);
   if (mapped == NULL) {
     return NULL;
@@ -187,7 +202,7 @@ Array* array_map(Array* const array, ArrayMapFn fn) {
   for (int i = 0; i < array->capacity; ++i) {
     void* element = array_get(array, i);
     if (element != NULL) {
-      void* val = fn(element);
+      void* val = map(element);
       array_append(mapped, val);
     }
   }

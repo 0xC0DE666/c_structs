@@ -403,6 +403,41 @@ Test(array_insert, _4) {
   array_free(&array, NULL);
 }
 
+// ####################
+// array_set
+// ####################
+Test(array_set, _1) {
+  Array* array = array_new(5);
+  int values[array->capacity * 2];
+
+  int res;
+  for (int i = 0; i < array->capacity * 2; ++i) {
+    values[i] = (i + 1) * 10;
+    res = array_set(array, i, &values[i]);
+
+
+    if (i < array->size) {
+      int* n = (int*) array->elements[i];
+      cr_assert_eq(array->size, i + 1);
+      cr_assert_eq(*n, values[i]);
+    }
+
+    if (i >= array->capacity) {
+      cr_assert_eq(res, 1);
+      cr_assert_eq(array->size, array->capacity);
+    }
+  }
+  int i = 0;
+  values[i] = -10;
+  array_set(array, i, &values[i]);
+
+  cr_assert_eq(array->size, array->capacity);
+  int* v = array_get(array, i);
+  cr_assert_eq(*v, values[i]);
+
+  array_free(&array, NULL);
+}
+
 
 // ####################
 // array_get
