@@ -123,10 +123,15 @@ Test(matrix_set, _1) {
       }
     }
   }
+
+  Point* points[matrix->capacity] = {};
+  int idx = 0;
   
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
       Position p = {r, c};
+      points[idx] = matrix_get(matrix, &p);
+      ++idx;
       int res = matrix_set(matrix, &p, point_new((r + 1) * 2, (c + 1) * 2));
 
       Point* pt = matrix_get(matrix, &p);
@@ -136,6 +141,10 @@ Test(matrix_set, _1) {
       cr_assert_eq(pt->x, (r + 1) * 2);
       cr_assert_eq(pt->y, (c + 1) * 2);
     }
+  }
+
+  for (int i = 0; i < matrix->capacity; ++i) {
+    point_free(&points[i]);
   }
 
   matrix_free(&matrix, (FreeFn) point_free);
