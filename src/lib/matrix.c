@@ -106,10 +106,6 @@ int matrix_free(Matrix** const matrix, FreeFn const free_element) {
 
 int matrix_set(Matrix* const matrix, Position* const position, void* const value) {
   pthread_mutex_lock(&matrix->lock);
-  // if (!matrix_has_capacity(matrix)) {
-  //   pthread_mutex_unlock(&matrix->lock);
-  //   return 1;
-  // }
 
   if (!matrix_position_valid(matrix, position)) {
     pthread_mutex_unlock(&matrix->lock);

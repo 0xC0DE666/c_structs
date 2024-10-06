@@ -244,13 +244,13 @@ Test(array_set, _1) {
     res = array_set(array, i, &values[i]);
 
 
-    if (i < array->size) {
-      int* n = (int*) array->elements[i];
+    if (array_index_valid(array, i)) {
+      int* n = array->elements[i];
       cr_assert_eq(array->size, i + 1);
       cr_assert_eq(*n, values[i]);
     }
 
-    if (i >= array->capacity) {
+    if (!array_index_valid(array, i)) {
       cr_assert_eq(res, 1);
       cr_assert_eq(array->size, array->capacity);
     }
