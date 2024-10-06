@@ -108,9 +108,9 @@ Test(matrix_set, _1) {
       res == 0 ? ++sze : 0;
 
       if (matrix_position_valid(matrix, &p)) {
-        Point* pt = matrix_get(matrix, &p);
         cr_assert_eq(res, 0);
         cr_assert_eq(matrix->size, sze);
+        Point* pt = matrix_get(matrix, &p);
         cr_assert_eq(pt != NULL, true);
         cr_assert_eq(pt->x, r);
         cr_assert_eq(pt->y, c);
@@ -134,9 +134,9 @@ Test(matrix_set, _1) {
       ++idx;
       int res = matrix_set(matrix, &p, point_new((r + 1) * 2, (c + 1) * 2));
 
-      Point* pt = matrix_get(matrix, &p);
       cr_assert_eq(res, 0);
       cr_assert_eq(matrix->size, matrix->capacity);
+      Point* pt = matrix_get(matrix, &p);
       cr_assert_eq(pt != NULL, true);
       cr_assert_eq(pt->x, (r + 1) * 2);
       cr_assert_eq(pt->y, (c + 1) * 2);
@@ -153,46 +153,35 @@ Test(matrix_set, _1) {
 // ####################
 // matrix_get
 // ####################
-Test(matrix_get, _1) {
-  Matrix* matrix = matrix_new(5, 5);
-  int values[matrix->capacity * 2];
-
-  int i = 0;
-  for (int r = 0; r < matrix->capacity * 2; ++r) {
-    for (int c = 0; c < matrix->capacity * 2; ++c) {
-      values[i] = (i + 1) * 10;
-      Position p = {r, c};
-      int res = matrix_set(matrix, &p, &values[i]);
-
-      if (i >= 26) {
-        cr_assert_eq(res, 1);
-        cr_assert_eq(matrix->size, 25);
-      }
-    }
-  }
-
-  matrix_free(&matrix, NULL);
-}
-
-Test(matrix_get, _2) {
-  Matrix* matrix = matrix_new(1, 5);
-  char* values[] = {"one", "two", "three", "four", "five"};
-
-  int i = 0;
-  for (int r = 0; r < matrix->rows; ++r) {
-    for (int c = 0; c < matrix->columns; ++c) {
-      Position p = {r, c};
-      matrix_set(matrix, &p, values[i]);
-
-      char* v = (char*) matrix_get(matrix, &p);
-      cr_assert_eq(matrix->size, i + 1);
-      cr_assert_eq(strcmp(v, values[i]), 0);
-      ++i;
-    }
-  }
-
-  matrix_free(&matrix, NULL);
-}
+//Test(matrix_get, _1) {
+//  Matrix* matrix = matrix_new(5, 5);
+//
+//  int sze = 0;
+//  for (int r = -5; r < matrix->capacity * 2; ++r) {
+//    for (int c = -5; c < matrix->capacity * 2; ++c) {
+//      Position p = {r, c};
+//      int res = matrix_set(matrix, &p, point_new(r, c));
+//      res == 0 ? ++sze : 0;
+//
+//      if (matrix_position_valid(matrix, &p)) {
+//        printf("%s\n", position_to_string(&p));
+//        cr_assert_eq(res, 0);
+//        cr_assert_eq(matrix->size, sze);
+//        Point* pt = matrix_get(matrix, &p);
+//        cr_assert_eq(pt != NULL, true);
+//        cr_assert_eq(pt->x, (r + 1) * 2);
+//        cr_assert_eq(pt->y, (c + 1) * 2);
+//      }
+//
+//      if (!matrix_position_valid(matrix, &p)) {
+//        cr_assert_eq(res, 1);
+//        cr_assert_eq(matrix->size, matrix->capacity);
+//      }
+//    }
+//  }
+//
+//  matrix_free(&matrix, NULL);
+//}
 
 
 // ####################

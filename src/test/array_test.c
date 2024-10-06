@@ -237,13 +237,15 @@ Test(array_insert, _2) {
 Test(array_set, _1) {
   Array* array = array_new(5);
 
-  for (int i = 0; i < array->capacity * 2; ++i) {
+  int sze = 0;
+  for (int i = -5; i < array->capacity * 2; ++i) {
     int res = array_set(array, i, point_new(i, i));
+    res == 0 ? ++sze : 0;
 
     if (array_index_valid(array, i)) {
       Point* pt = array_get(array, i);
       cr_assert_eq(res, 0);
-      cr_assert_eq(array->size, i + 1);
+      cr_assert_eq(array->size, sze);
       cr_assert_eq(pt != NULL, true);
       cr_assert_eq(pt->x, i);
       cr_assert_eq(pt->y, i);
@@ -251,9 +253,10 @@ Test(array_set, _1) {
 
     if (!array_index_valid(array, i)) {
       cr_assert_eq(res, 1);
-      cr_assert_eq(array->size, array->capacity);
+      cr_assert_eq(array->size, sze);
     }
   }
+  cr_assert_eq(sze, array->capacity);
 
   Point* points[array->capacity] = {};
 
@@ -281,42 +284,30 @@ Test(array_set, _1) {
 // ####################
 Test(array_get, _1) {
   Array* array = array_new(5);
-  int values[array->capacity * 2];
 
-  for (int i = 0; i < array->capacity * 2; ++i) {
-    values[i] = (i + 1) * 10;
-    int res = array_append(array, &values[i]);
+  int sze = 0;
+  for (int i = -5; i < array->capacity * 2; ++i) {
+    int res = array_set(array, i, point_new(i, i));
+    res == 0 ? ++sze : 0;
 
-    if (i < array->size) {
-      int* v = (int*) array_get(array, i);
+    if (array_index_valid(array, i)) {
       cr_assert_eq(res, 0);
-      cr_assert_eq(array->size, i + 1);
-      cr_assert_eq(*v, values[i]);
+      cr_assert_eq(array->size, sze);
+      Point* p = array_get(array, i);
+      cr_assert_eq(p != NULL, true);
+      cr_assert_eq(p->x, i);
+      cr_assert_eq(p->y, i);
     }
 
-    if (i >= 5) {
+    if (!array_index_valid(array, i)) {
       cr_assert_eq(res, 1);
-      cr_assert_eq(array->size, 5);
+      cr_assert_eq(array->size, sze);
       cr_assert_eq(array_get(array, i), NULL);
     }
   }
+  cr_assert_eq(sze, array->capacity);
 
-  array_free(&array, NULL);
-}
-
-Test(array_get, _2) {
-  Array* array = array_new(5);
-  char* values[] = {"one", "two", "three", "four", "five"};
-
-  for (int i = 0; i < array->capacity; ++i) {
-    array_append(array, values[i]);
-
-    cr_assert_eq(array->size, i + 1);
-    char* str = (char*) array_get(array, i);
-    cr_assert_eq(strcmp(str, values[i]), 0);
-  }
-
-  array_free(&array, NULL);
+  array_free(&array, (FreeFn) point_free);
 }
 
 
