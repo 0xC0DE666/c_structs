@@ -236,18 +236,17 @@ Test(array_insert, _2) {
 // ####################
 Test(array_set, _1) {
   Array* array = array_new(5);
-  int values[array->capacity * 2];
 
-  int res;
   for (int i = 0; i < array->capacity * 2; ++i) {
-    values[i] = (i + 1) * 10;
-    res = array_set(array, i, &values[i]);
-
+    int res = array_set(array, i, point_new(i, i));
 
     if (array_index_valid(array, i)) {
-      int* n = array->elements[i];
+      Point* pt = array_get(array, i);
+      cr_assert_eq(res, 0);
       cr_assert_eq(array->size, i + 1);
-      cr_assert_eq(*n, values[i]);
+      cr_assert_eq(pt != NULL, true);
+      cr_assert_eq(pt->x, i);
+      cr_assert_eq(pt->y, i);
     }
 
     if (!array_index_valid(array, i)) {
@@ -255,15 +254,25 @@ Test(array_set, _1) {
       cr_assert_eq(array->size, array->capacity);
     }
   }
-  int i = 0;
-  values[i] = -10;
-  array_set(array, i, &values[i]);
 
-  cr_assert_eq(array->size, array->capacity);
-  int* v = array_get(array, i);
-  cr_assert_eq(*v, values[i]);
+  Point* points[array->capacity] = {};
 
-  array_free(&array, NULL);
+  for (int i = 0; i < array->capacity; ++i) {
+    points[i] = array_get(array, i);
+    int res = array_set(array, i, point_new((i + 1) * 2, (i + 1) * 2));
+
+    Point* pt = array_get(array, i);
+    cr_assert_eq(res, 0);
+    cr_assert_eq(array->size, array->capacity);
+    cr_assert_eq(pt != NULL, true);
+    cr_assert_eq(pt->x, (i + 1) * 2);
+    cr_assert_eq(pt->y, (i + 1) * 2);
+  }
+
+  for (int i = 0; i < array->capacity; ++i) {
+    point_free(&points[i]);
+  }
+  array_free(&array, (FreeFn) point_free);
 }
 
 

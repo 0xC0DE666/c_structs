@@ -146,7 +146,6 @@ Test(matrix_set, _1) {
   for (int i = 0; i < matrix->capacity; ++i) {
     point_free(&points[i]);
   }
-
   matrix_free(&matrix, (FreeFn) point_free);
 }
 
