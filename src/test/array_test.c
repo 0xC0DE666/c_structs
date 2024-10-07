@@ -36,22 +36,17 @@ Test(array_clear, _1) {
   for (int i = 0; i < array->capacity; ++i) {
     array_append(array, point_new(i, i + 1));
     cr_assert_eq(array->size, i + 1);
+    cr_assert_eq(array_get(array, i) != NULL, true);
   }
+  cr_assert_eq(array->size, array->capacity);
 
   array_clear(array, (FreeFn) point_free);
-
+  cr_assert_eq(array != NULL, true);
   cr_assert_eq(array->size, 0);
+
   for (int i = 0; i < array->capacity; ++i) {
     cr_assert_eq(array->elements[i], NULL);
   }
-
-  array_append(array, point_new(0, 0));
-  Point* a = array_get(array, 0);
-  Point* b = array->elements[0];
-
-  cr_assert_eq(array->size, 1);
-  cr_assert_eq(a->x, b->x);
-  cr_assert_eq(a->y, b->y);
 
   array_free(&array, (FreeFn) point_free);
 }

@@ -80,6 +80,7 @@ Test(matrix_clear, _1) {
   cr_assert_eq(matrix->size, matrix->capacity);
 
   matrix_clear(matrix, (FreeFn) point_free);
+  cr_assert_eq(matrix != NULL, true);
   cr_assert_eq(matrix->size, 0);
 
   for (int r = 0; r < matrix->rows; ++r) {
