@@ -7,24 +7,9 @@
   //####################
   // SHARED
   //####################
-  typedef char* (*ToStringFn)(void* const);
   typedef void (*FreeFn)(void** const);
-
-
-  //####################
-  // LINKED LIST
-  //####################
-  typedef struct Node {
-    void* value;
-    struct Node* next;
-    struct Node* prev;
-  } Node;
-
-  typedef struct LinkedList {
-    int size;
-    struct Node* head;
-    struct Node* tail;
-  } LinkedList;
+  typedef bool (*PredicateFn)(void* const);
+  typedef char* (*ToStringFn)(void* const);
 
 
   //####################
@@ -99,5 +84,41 @@
 
   bool matrix_position_valid(Matrix* const matrix, Position* const position);
   bool matrix_has_capacity(Matrix* const matrix);
+
+
+  //####################
+  // LINKED LIST
+  //####################
+  typedef struct Node {
+    void* value;
+    struct Node* next;
+    struct Node* prev;
+  } Node;
+
+  Node* node_new(void* const value);
+  int node_free(Node** const node, FreeFn const free_value);
+
+  int node_insert_before(Node* const node, void* const value);
+  int node_insert_after(Node* const node, void* const value);
+
+  Node* node_remove(Node* const node);
+
+  typedef struct LinkedList {
+    struct Node* head;
+    struct Node* tail;
+  } LinkedList;
+
+  LinkedList* linked_list_new();
+  int linked_list_free(LinkedList** const linked_list, FreeFn const free_value);
+
+  int linked_list_append(LinkedList* const linked_list, void* const value);
+  int linked_list_prepend(LinkedList* const linked_list, void* const value);
+
+  Node* linked_list_remove_head(LinkedList* const linked_list);
+  Node* linked_list_remove_tail(LinkedList* const linked_list);
+
+  Node* linked_list_find(LinkedList* const linked_list, PredicateFn const predicate);
+
+  int linked_list_size(LinkedList* const linked_list);
 
 #endif
