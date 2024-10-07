@@ -121,15 +121,15 @@ void* array_get(Array* const array, int index) {
 
 void* array_remove(Array* const array, int index) {
   pthread_mutex_lock(&array->lock);
-  if (index < 0 || index >= array->size) {
+  if (!array_index_valid(array, index)) {
     pthread_mutex_unlock(&array->lock);
     return NULL;
   }
 
   void* removed = array->elements[index];
 
-  for (int i = index; i < array->size; ++i) {
-    if (i < array->size - 1) {
+  for (int i = index; i < array->capacity; ++i) {
+    if (i < array->capacity - 1) {
       array->elements[i] = array->elements[i + 1];
     } else {
       array->elements[i] = NULL;
