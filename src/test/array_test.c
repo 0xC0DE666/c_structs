@@ -394,6 +394,7 @@ Test(array_map, _1) {
   Array* array = array_new(5);
   Array* empty = array_map(array, (ArrayMapFn) NULL);
 
+  cr_assert_eq(empty != NULL, true);
   cr_assert_eq(empty->size, 0);
 
   array_free(&array, NULL);
@@ -407,20 +408,20 @@ Test(array_map, _2) {
     array_append(points, point_new(i, i));
   }
 
-  Array* point_strs = array_map(points, (ArrayMapFn) point_to_string);
+  Array* strings = array_map(points, (ArrayMapFn) point_to_string);
 
-  cr_assert_eq(point_strs->capacity, points->capacity);
-  cr_assert_eq(point_strs->size, points->size);
-  cr_assert_eq(point_strs->elements != NULL, true);
+  cr_assert_eq(strings->capacity, points->capacity);
+  cr_assert_eq(strings->size, points->size);
+  cr_assert_eq(strings->elements != NULL, true);
   
   for (int i = 0; i < points->capacity; ++i) {
-    char* result = (char*) array_get(point_strs, i);
+    char* result = (char*) array_get(strings, i);
     char* expected = point_to_string(array_get(points, i));
     cr_assert_eq(strcmp(result, expected), 0);
   }
 
   array_free(&points, (FreeFn) point_free);
-  array_free(&point_strs, (FreeFn) ptr_free);
+  array_free(&strings, (FreeFn) ptr_free);
 }
 
 

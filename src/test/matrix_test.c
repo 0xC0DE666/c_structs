@@ -303,18 +303,16 @@ Test(matrix_map, _2) {
     }
   }
 
-  Matrix* point_strs = matrix_map(points, (MatrixMapFn) point_to_string);
-  char* mstr = matrix_to_string(points, (ToStringFn) point_to_string);
-  char* sstr = matrix_to_string(point_strs, (ToStringFn) nothing);
+  Matrix* strings = matrix_map(points, (MatrixMapFn) point_to_string);
 
-  cr_assert_eq(point_strs->capacity, points->capacity);
-  cr_assert_eq(point_strs->size, points->size);
-  cr_assert_eq(point_strs->elements != NULL, true);
-  
+  cr_assert_eq(strings->capacity, points->capacity);
+  cr_assert_eq(strings->size, points->size);
+  cr_assert_eq(strings->elements != NULL, true);
+
   for (int r = 0; r < points->rows; ++r) {
     for (int c = 0; c < points->columns; ++c) {
       Position pos = {r, c};
-      char* result = (char*) matrix_get(point_strs, &pos);
+      char* result = matrix_get(strings, &pos);
       char* expected = point_to_string(matrix_get(points, &pos));
 
       cr_assert_eq(strcmp(result, expected), 0);
@@ -322,7 +320,7 @@ Test(matrix_map, _2) {
   }
 
   matrix_free(&points, (FreeFn) point_free);
-  matrix_free(&point_strs, (FreeFn) ptr_free);
+  matrix_free(&strings, (FreeFn) ptr_free);
 }
 
 
