@@ -415,21 +415,17 @@ Test(matrix_to_string, multi) {
 // matrix_position_valid
 // ####################
 Test(matrix_position_valid, _1) {
-  Matrix* matrix = matrix_new(5, 6);
-  Position position = position_new(6, 8);
+  Matrix* matrix = matrix_new(3, 3);
 
-  bool result = matrix_position_valid(matrix, &position);
-  cr_assert_eq(result, false);
-
-  matrix_free(&matrix, NULL);
-}
-
-Test(matrix_position_valid, _2) {
-  Matrix* matrix = matrix_new(5, 6);
-  Position position = position_new(1, 1);
-
-  bool result = matrix_position_valid(matrix, &position);
-  cr_assert_eq(result, true);
+  for (int r = -3; r < matrix->rows * 2; ++r) {
+    for (int c = -3; c < matrix->columns * 2; ++c) {
+      Position p = {r, c};
+      bool result = matrix_position_valid(matrix, &p);
+      bool expected =
+        r >= 0 && c >= 0 && r < matrix->rows && c < matrix->columns ? true : false;
+      cr_assert_eq(result, expected);
+    }
+  }
 
   matrix_free(&matrix, NULL);
 }
@@ -438,22 +434,18 @@ Test(matrix_position_valid, _2) {
 // matrix_has_capacity
 // ####################
 Test(matrix_has_capacity, _1) {
-  Matrix* matrix = matrix_new(1, 1);
-  int x = 10;
-  Position pos = position_new(0, 0);
-  matrix_set(matrix, &pos, &x);
+  Matrix* matrix = matrix_new(3, 3);
 
-  bool result = matrix_has_capacity(matrix);
-  cr_assert_eq(result, false);
+  for (int r = 0; r < matrix->rows * 2; ++r) {
+    for (int c = 0; c < matrix->columns * 2; ++c) {
+      bool result = matrix_has_capacity(matrix);
+      bool expected = matrix->size < matrix->capacity ? true : false;
+      cr_assert_eq(result, expected);
+      Position p = {r, c};
+      matrix_set(matrix, &p, point_new(r, c));
+    }
+  }
+  cr_assert_eq(matrix->size, matrix->capacity);
 
-  matrix_free(&matrix, NULL);
-}
-
-Test(matrix_has_capacity, _2) {
-  Matrix* matrix = matrix_new(5, 6);
-
-  bool result = matrix_has_capacity(matrix);
-  cr_assert_eq(result, true);
-
-  matrix_free(&matrix, NULL);
+  matrix_free(&matrix, (FreeFn) point_free);
 }

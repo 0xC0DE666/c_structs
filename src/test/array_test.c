@@ -461,7 +461,7 @@ Test(array_index_valid, _1) {
 
   for (int i = -5; i < array->capacity * 2; ++i) {
     bool result = array_index_valid(array, i);
-    bool expected = i < 0 ? false : i >= array->capacity ? false : true;
+    bool expected = i >= 0 && i < array->capacity ? true : false;
     cr_assert_eq(result, expected);
   }
 
