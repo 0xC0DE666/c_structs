@@ -96,41 +96,6 @@ int array_prepend(Array* const array, void* const element) {
   return 0;
 }
 
-int array_insert(Array* const array, int index, void* const element) {
-  pthread_mutex_lock(&array->lock);
-  if (!array_has_capacity(array)) {
-    pthread_mutex_unlock(&array->lock);
-    return 1;
-  }
-
-  if (!array_index_valid(array, index)) {
-    pthread_mutex_unlock(&array->lock);
-    return 1;
-  }
-
-  bool open_spot = false;
-  for (int i = index; i < array->capacity; ++i) {
-    if (array->elements[i] == NULL) {
-      open_spot = true;
-      break;
-    }
-  }
-
-  if (!open_spot) {
-    pthread_mutex_unlock(&array->lock);
-    return 1;
-  }
-
-  for (int i = array->capacity - 1; i >= index; --i) {
-    array->elements[i] = array->elements[i - 1];
-  }
-  array->elements[index] = element;
-  array->size++;
-
-  pthread_mutex_unlock(&array->lock);
-  return 0;
-}
-
 int array_set(Array* const array, int index, void* const element) {
   if (!array_index_valid(array, index)) {
     pthread_mutex_unlock(&array->lock);

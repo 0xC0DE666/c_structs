@@ -126,67 +126,6 @@ Test(array_prepend, _1) {
 
 
 // ####################
-// array_insert
-// ####################
-Test(array_insert, _1) {
-  Array* array = array_new(5);
-  int values[array->capacity * 2];
-
-  int idx = 2;
-  int total_inserts = 3;
-  for (int i = 0; i < array->capacity * 2; ++i) {
-    values[i] = (i + 1) * 10;
-    int res = array_insert(array, idx, &values[i]);
-
-
-    if (i < total_inserts) {
-      int* n = (int*) array->elements[idx];
-      cr_assert_eq(array->size, i + 1);
-      cr_assert_eq(*n, values[i]);
-    }
-
-    if (i >= array->capacity) {
-      cr_assert_eq(res, 1);
-      cr_assert_eq(array->size, total_inserts);
-    }
-  }
-
-  int a = idx, b = idx;
-  for (int i = 0; i < total_inserts; ++i) {
-    int* n = (int*) array->elements[a];
-    cr_assert_eq(*n, values[b]);
-    ++a; --b;
-  }
-
-  array_free(&array, NULL);
-}
-
-Test(array_insert, _2) {
-  Array* array = array_new(5);
-  char* values[] = {"one", "two", "three", "four", "five"};
-
-  int idx = 1;
-  int total_inserts = 4;
-  for (int i = 0; i < total_inserts; ++i) {
-    array_insert(array, idx, values[i]);
-
-    char* str = (char*) array->elements[idx];
-    cr_assert_eq(array->size, i + 1);
-    cr_assert_eq(strcmp(str, values[i]), 0);
-  }
-
-  int a = idx, b = total_inserts - 1;
-  for (int i = 0; i < total_inserts; ++i) {
-    char* str = (char*) array->elements[a];
-    cr_assert_eq(strcmp(str, values[b]), 0);
-    ++a; --b;
-  }
-
-  array_free(&array, NULL);
-}
-
-
-// ####################
 // array_set
 // ####################
 Test(array_set, _1) {
@@ -398,7 +337,7 @@ Test(array_to_string, _2) {
   Array* array = array_new(3);
 
   array_append(array, point_new(0, 0));
-  array_insert(array, 2, point_new(1, 1));
+  array_set(array, 2, point_new(1, 1));
 
   char* result = array_to_string(array, (ToStringFn) point_to_string);
   char* expected = "[(0, 0), NULL, (1, 1)]";

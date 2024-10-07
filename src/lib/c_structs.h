@@ -27,7 +27,6 @@
 
   int array_append(Array* const array, void* const element);
   int array_prepend(Array* const array, void* const element);
-  int array_insert(Array* const array, int index, void* const element);
   int array_set(Array* const array, int index, void* const element);
 
   void* array_get(Array* const array, int index);

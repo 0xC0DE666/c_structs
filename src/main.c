@@ -45,7 +45,7 @@ void array_fun() {
     array_append(arr, &values[i]);
   }
   values[4] = 10;
-  array_insert(arr, 10, &values[4]);
+  array_set(arr, 10, &values[4]);
 
   for (int i = 0; i < arr->size; ++i) {
     int* x = (int*) array_get(arr, i);
@@ -80,7 +80,7 @@ void array_to_string_test() {
   Position p2 = position_new(0, 1);
 
   array_append(array, &p1);
-  array_insert(array, 2, &p2);
+  array_set(array, 2, &p2);
 
   char* str = array_to_string(array, (ToStringFn) position_to_string);
   printf("%s\n", str);
