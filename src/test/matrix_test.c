@@ -13,10 +13,28 @@
 // ####################
 // position_new
 // ####################
-Test(position_new, _j) {
-  Position position = position_new(3, 3);
-  cr_assert_eq(position.row, 3);
-  cr_assert_eq(position.column, 3);
+Test(position_new, _1) {
+  Position p = position_new(3, 3);
+  cr_assert_eq(p.row, 3);
+  cr_assert_eq(p.column, 3);
+}
+
+
+// ####################
+// position_to_string
+// ####################
+Test(position_to_string, _1) {
+  Position a = position_new(1, 2);
+  Position b = position_new(2, 8);
+
+  char* str_a = position_to_string(&a);
+  char* str_b = position_to_string(&b);
+
+  cr_assert_eq(strcmp(str_a, "(1, 2)"), 0);
+  cr_assert_eq(strcmp(str_b, "(2, 8)"), 0);
+
+  ptr_free((void*) &str_a);
+  ptr_free((void*) &str_b);
 }
 
 
