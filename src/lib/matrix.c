@@ -151,24 +151,23 @@ void* matrix_remove(Matrix* const matrix, Position* const position) {
 }
 
 
-void matrix_for_each(Matrix* const matrix, MatrixEachFn const fn) {
+void matrix_for_each(Matrix* const matrix, MatrixEachFn const each) {
   if (matrix->size == 0) {
     return;
   }
 
-  Position pos;
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
-      pos = position_new(r, c);
-      void* element = matrix_get(matrix, &pos);
+      Position p = position_new(r, c);
+      void* element = matrix_get(matrix, &p);
       if (element != NULL) {
-        fn(element);
+        each(element);
       }
     }
   }
 }
 
-Matrix* matrix_map(Matrix* const matrix, MatrixMapFn const fn) {
+Matrix* matrix_map(Matrix* const matrix, MatrixMapFn const map) {
   Matrix* mapped = matrix_new(matrix->rows, matrix->columns);
   if (mapped == NULL) {
     return NULL;
@@ -184,7 +183,7 @@ Matrix* matrix_map(Matrix* const matrix, MatrixMapFn const fn) {
       pos = position_new(r, c);
       void* element = matrix_get(matrix, &pos);
       if (element != NULL) {
-        void* val = fn(element);
+        void* val = map(element);
         matrix_set(mapped, &pos, val);
       }
     }

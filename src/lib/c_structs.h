@@ -75,10 +75,10 @@
   void* matrix_remove(Matrix* const matrix, Position* const position);
 
   typedef void (*MatrixEachFn)(void* const);
-  void matrix_for_each(Matrix* const matrix, MatrixEachFn const fn);
+  void matrix_for_each(Matrix* const matrix, MatrixEachFn const each);
 
   typedef void* (*MatrixMapFn)(void* const);
-  Matrix* matrix_map(Matrix* const matrix, MatrixMapFn const fn);
+  Matrix* matrix_map(Matrix* const matrix, MatrixMapFn const map);
 
   char* matrix_to_string(Matrix* const matrix, ToStringFn const to_string);
 
