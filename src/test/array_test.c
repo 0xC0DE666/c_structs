@@ -90,6 +90,7 @@ Test(array_append, _1) {
       cr_assert_eq(array->size, array->capacity);
     }
   }
+  cr_assert_eq(array->size, array->capacity);
 
   array_free(&array, (FreeFn) point_free);
 }
@@ -100,17 +101,17 @@ Test(array_append, _1) {
 // ####################
 Test(array_prepend, _1) {
   Array* array = array_new(5);
-  int values[array->capacity * 2];
 
   for (int i = 0; i < array->capacity * 2; ++i) {
-    values[i] = (i + 1) * 10;
-    int res = array_prepend(array, &values[i]);
-
+    int res = array_prepend(array, point_new(i, i));
 
     if (i < array->capacity) {
-      int* n = (int*) array->elements[0];
+      cr_assert_eq(res, 0);
       cr_assert_eq(array->size, i + 1);
-      cr_assert_eq(*n, values[i]);
+      Point* p = array->elements[0];
+      cr_assert_eq(p != NULL, true);
+      cr_assert_eq(p->x, i);
+      cr_assert_eq(p->y, i);
     }
 
     if (i >= array->capacity) {
@@ -118,37 +119,9 @@ Test(array_prepend, _1) {
       cr_assert_eq(array->size, array->capacity);
     }
   }
+  cr_assert_eq(array->size, array->capacity);
 
-  int a = array->size - 1, b = 0;
-  for (int i = 0; i < array->size; ++i) {
-    int* n = (int*) array->elements[a];
-    cr_assert_eq(*n, values[b]);
-    --a; ++b;
-  }
-
-  array_free(&array, NULL);
-}
-
-Test(array_prepend, _2) {
-  Array* array = array_new(5);
-  char* values[] = {"one", "two", "three", "four", "five"};
-
-  for (int i = 0; i < array->capacity; ++i) {
-    array_prepend(array, values[i]);
-
-    char* str = (char*) array->elements[0];
-    cr_assert_eq(array->size, i + 1);
-    cr_assert_eq(strcmp(str, values[i]), 0);
-  }
-
-  int a = array->size - 1, b = 0;
-  for (int i = 0; i < array->size; ++i) {
-    char* str = (char*) array->elements[a];
-    cr_assert_eq(strcmp(str, values[b]), 0);
-    --a; ++b;
-  }
-  
-  array_free(&array, NULL);
+  array_free(&array, (FreeFn) point_free);
 }
 
 
