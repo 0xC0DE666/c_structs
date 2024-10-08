@@ -163,17 +163,15 @@ int linked_list_clear(LinkedList* const list, FreeFn const free_value) {
   }
 
   // multiple nodes
-  Node* cur = list->head;
-  Node* next;
-  while(cur != NULL) {
-    next = cur->next;
-    cur->next != NULL ? cur->next->previous = NULL : 0;
-    cur->previous != NULL ? cur->previous->next = NULL : 0;
+  while(list->head) {
+    Node* next = list->head->next;
+    list->head->next ? list->head->next->previous = NULL : 0;
+    list->head->previous ? list->head->previous->next = NULL : 0;
 
-    e = node_free(&cur, free_value);
+    e = node_free(&list->head, free_value);
     if (e) return e;
 
-    cur = next;
+    list->head = next;
   }
   list->head = NULL;
   list->tail = NULL;
