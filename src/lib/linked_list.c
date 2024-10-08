@@ -17,8 +17,8 @@ int node_lock(Node* node) {
     }
   }
 
-  if (node->prev != NULL) {
-    e = pthread_mutex_trylock(&node->prev->lock);
+  if (node->previous != NULL) {
+    e = pthread_mutex_trylock(&node->previous->lock);
     if (e) {
       pthread_mutex_unlock(&node->lock);
       if (node->next) {
@@ -40,8 +40,8 @@ int node_unlock(Node* node) {
     if (e) return e;
   }
 
-  if (node->prev != NULL) {
-    e = pthread_mutex_unlock(&node->prev->lock);
+  if (node->previous != NULL) {
+    e = pthread_mutex_unlock(&node->previous->lock);
     if (e) return e;
   }
 
@@ -58,7 +58,7 @@ Node* node_new(void* const value) {
   pthread_mutex_init(&node->lock, NULL);
   node->value = value;
   node->next = NULL;
-  node->prev = NULL;
+  node->previous = NULL;
   
   return node;
 }
@@ -82,7 +82,41 @@ int node_free(Node** node, FreeFn const free_value) {
   return 0;
 }
 
+int node_set_value(Node* const node, void* const value) {
+  int e = node_lock(node);
+  if (e) return e;
 
+  node->value = value;
+
+  e = node_unlock(node);
+  if (e) return e;
+
+  return 0;
+}
+
+int node_set_next(Node* const node, Node* const other) {
+  int e = node_lock(node);
+  if (e) return e;
+
+  node->next = other;
+
+  e = node_unlock(node);
+  if (e) return e;
+
+  return 0;
+}
+
+int node_set_previous(Node* const node, Node* const other) {
+  int e = node_lock(node);
+  if (e) return e;
+
+  node->previous = other;
+
+  e = node_unlock(node);
+  if (e) return e;
+
+  return 0;
+}
 
 // LinkedList* linked_list_new() {
 //   LinkedList* list = malloc(sizeof(LinkedList));

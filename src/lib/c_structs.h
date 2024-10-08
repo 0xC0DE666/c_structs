@@ -93,16 +93,15 @@
     pthread_mutex_t lock;
     void* value;
     struct Node* next;
-    struct Node* prev;
+    struct Node* previous;
   } Node;
 
   Node* node_new(void* const value);
   int node_free(Node** const node, FreeFn const free_value);
 
-  int node_insert_before(Node* const node, void* const value);
-  int node_insert_after(Node* const node, void* const value);
-
-  Node* node_remove(Node* const node);
+  int node_set_value(Node* const node, void* const value);
+  int node_set_next(Node* const node, Node* const other);
+  int node_set_previous(Node* const node, Node* const other);
 
   typedef struct LinkedList {
     pthread_mutex_t lock;
@@ -116,6 +115,9 @@
 
   int linked_list_append(LinkedList* const list, void* const value);
   int linked_list_prepend(LinkedList* const list, void* const value);
+
+  int linked_list_insert_before(LinkedList* const list, Node* const node, void* const value);
+  int linked_list_insert_after(LinkedList* const list, Node* const node, void* const value);
 
   Node* linked_list_remove_head(LinkedList* const list);
   Node* linked_list_remove_tail(LinkedList* const list);
