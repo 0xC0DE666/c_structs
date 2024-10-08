@@ -1,8 +1,7 @@
 #include <stdbool.h>
+#include <string.h>
 //#include <stdio.h>
 //#include <stdlib.h>
-
-#include <string.h>
 
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
@@ -95,7 +94,6 @@ Test(array_append, _1) {
   array_free(&array, (FreeFn) point_free);
 }
 
-
 // ####################
 // array_prepend
 // ####################
@@ -123,7 +121,6 @@ Test(array_prepend, _1) {
 
   array_free(&array, (FreeFn) point_free);
 }
-
 
 // ####################
 // array_set
@@ -172,7 +169,6 @@ Test(array_set, _1) {
   array_free(&array, (FreeFn) point_free);
 }
 
-
 // ####################
 // array_get
 // ####################
@@ -204,7 +200,6 @@ Test(array_get, _1) {
   array_free(&array, (FreeFn) point_free);
 }
 
-
 // ####################
 // array_remove
 // ####################
@@ -235,7 +230,6 @@ Test(array_remove, _1) {
 
   array_free(&array, (FreeFn) point_free);
 }
-
 
 // ####################
 // array_for_each
@@ -295,7 +289,6 @@ Test(array_map, _2) {
   array_free(&strings, (FreeFn) ptr_free);
 }
 
-
 // ####################
 // array_to_string
 // ####################
@@ -323,7 +316,6 @@ Test(array_to_string, _2) {
   free(result);
   array_free(&array, NULL);
 }
-
 
 // ####################
 // array_index_valid

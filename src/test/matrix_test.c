@@ -1,8 +1,7 @@
 #include <stdbool.h>
+#include <string.h>
 //#include <stdio.h>
 //#include <stdlib.h>
-
-#include <string.h>
 
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
@@ -18,7 +17,6 @@ Test(position_new, _1) {
   cr_assert_eq(p.row, 3);
   cr_assert_eq(p.column, 3);
 }
-
 
 // ####################
 // position_to_string
@@ -36,7 +34,6 @@ Test(position_to_string, _1) {
   ptr_free((void*) &str_a);
   ptr_free((void*) &str_b);
 }
-
 
 // ####################
 // matrix_new
@@ -59,7 +56,6 @@ Test(matrix_new, _1) {
 
   matrix_free(&matrix, NULL);
 }
-
 
 // ####################
 // matrix_clear
@@ -93,7 +89,6 @@ Test(matrix_clear, _1) {
   matrix_free(&matrix, NULL);
 }
 
-
 // ####################
 // matrix_free
 // ####################
@@ -112,7 +107,6 @@ Test(matrix_free, _1) {
   matrix_free(&matrix, (FreeFn) point_free);
   cr_assert_eq(matrix, NULL);
 }
-
 
 // ####################
 // matrix_set
@@ -169,7 +163,6 @@ Test(matrix_set, _1) {
   matrix_free(&matrix, (FreeFn) point_free);
 }
 
-
 // ####################
 // matrix_get
 // ####################
@@ -203,7 +196,6 @@ Test(matrix_get, _1) {
 
   matrix_free(&matrix, (FreeFn) point_free);
 }
-
 
 // ####################
 // matrix_remove
@@ -240,7 +232,6 @@ Test(matrix_remove, _1) {
 
   matrix_free(&matrix, (FreeFn) point_free);
 }
-
 
 // ####################
 // matrix_for_each
@@ -311,7 +302,6 @@ Test(matrix_map, _2) {
   matrix_free(&points, (FreeFn) point_free);
   matrix_free(&strings, (FreeFn) ptr_free);
 }
-
 
 // ####################
 // matrix_to_string
@@ -396,7 +386,6 @@ Test(matrix_to_string, multi) {
   free(result);
   matrix_free(&matrix, (FreeFn) point_free);
 }
-
 
 // ####################
 // matrix_position_valid
