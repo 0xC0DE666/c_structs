@@ -96,6 +96,7 @@
   } Node;
 
   Node* node_new(void* const value);
+  int node_clear(Node* const node, FreeFn const free_value);
   int node_free(Node** const node, FreeFn const free_value);
 
   int node_insert_before(Node* const node, void* const value);
@@ -109,16 +110,17 @@
   } LinkedList;
 
   LinkedList* linked_list_new();
-  int linked_list_free(LinkedList** const linked_list, FreeFn const free_value);
+  int linked_list_clear(LinkedList** const list, FreeFn const free_value);
+  int linked_list_free(LinkedList** const list, FreeFn const free_value);
 
-  int linked_list_append(LinkedList* const linked_list, void* const value);
-  int linked_list_prepend(LinkedList* const linked_list, void* const value);
+  int linked_list_append(LinkedList* const list, void* const value);
+  int linked_list_prepend(LinkedList* const list, void* const value);
 
-  Node* linked_list_remove_head(LinkedList* const linked_list);
-  Node* linked_list_remove_tail(LinkedList* const linked_list);
+  Node* linked_list_remove_head(LinkedList* const list);
+  Node* linked_list_remove_tail(LinkedList* const list);
 
-  Node* linked_list_find(LinkedList* const linked_list, PredicateFn const predicate);
+  Node* linked_list_find(LinkedList* const list, PredicateFn const predicate);
 
-  int linked_list_size(LinkedList* const linked_list);
+  int linked_list_size(LinkedList* const list);
 
 #endif
