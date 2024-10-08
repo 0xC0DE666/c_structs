@@ -28,34 +28,17 @@ Test(node_new, _1) {
 }
 
 // ####################
-// node_clear
+// node_free
 // ####################
-// Test(node_clear, _1) {
-//   Node* node = node_new(point_new(0, 1));
-//   cr_assert_eq(node != NULL, true);
-//   cr_assert_eq(node->value != NULL, true);
-// 
-//   int res = node_clear(node, (FreeFn) point_free);
-//   cr_assert_eq(res, 0);
-//   cr_assert_eq(node != NULL, true);
-//   cr_assert_eq(node->value, NULL);
-//   cr_assert_eq(node->next, NULL);
-//   cr_assert_eq(node->prev, NULL);
-// 
-//   node_free(&node, NULL);
-// }
-// 
-// // ####################
-// // node_free
-// // ####################
-// Test(node_free, _1) {
-//   Node* node = node_new(point_new(0, 1));
-//   cr_assert_eq(node != NULL, true);
-//   cr_assert_eq(node->value != NULL, true);
-// 
-//   node_free(&node, (FreeFn) point_free);
-//   cr_assert_eq(node, NULL);
-// }
+Test(node_free, _1) {
+  Node* node = node_new(point_new(0, 1));
+  cr_assert_eq(node != NULL, true);
+  cr_assert_eq(node->value != NULL, true);
+
+  int e = node_free(&node, (FreeFn) point_free);
+  cr_assert_eq(e, 0);
+  cr_assert_eq(node, NULL);
+}
 
 // ####################
 // linked_list_new

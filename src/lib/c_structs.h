@@ -90,13 +90,13 @@
   // LINKED LIST
   //####################
   typedef struct Node {
+    pthread_mutex_t lock;
     void* value;
     struct Node* next;
     struct Node* prev;
   } Node;
 
   Node* node_new(void* const value);
-  int node_clear(Node* const node, FreeFn const free_value);
   int node_free(Node** const node, FreeFn const free_value);
 
   int node_insert_before(Node* const node, void* const value);
@@ -105,6 +105,7 @@
   Node* node_remove(Node* const node);
 
   typedef struct LinkedList {
+    pthread_mutex_t lock;
     struct Node* head;
     struct Node* tail;
   } LinkedList;

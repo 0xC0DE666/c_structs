@@ -111,6 +111,9 @@ void print(int* v) {
 }
 
 int main() {
+  printf("mutex + node = %ld\n", sizeof(pthread_mutex_t) + sizeof(Node));
+  printf("node = %ld\n", sizeof(Node));
+  printf("linked_list = %ld\n", sizeof(LinkedList));
   Array* arr = array_new(3);
   int values[arr->capacity] = {};
   
