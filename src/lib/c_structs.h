@@ -110,7 +110,7 @@
   } LinkedList;
 
   LinkedList* linked_list_new();
-  int linked_list_clear(LinkedList** const list, FreeFn const free_value);
+  int linked_list_clear(LinkedList* const list, FreeFn const free_value);
   int linked_list_free(LinkedList** const list, FreeFn const free_value);
 
   int linked_list_append(LinkedList* const list, void* const value);
