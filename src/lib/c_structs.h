@@ -109,6 +109,8 @@
     struct Node* tail;
   } LinkedList;
 
+  int linked_list_size(LinkedList* const list);
+
   LinkedList* linked_list_new();
   int linked_list_clear(LinkedList* const list, FreeFn const free_value);
   int linked_list_free(LinkedList** const list, FreeFn const free_value);
@@ -123,7 +125,5 @@
   Node* linked_list_remove_tail(LinkedList* const list);
 
   Node* linked_list_find(LinkedList* const list, PredicateFn const predicate);
-
-  int linked_list_size(LinkedList* const list);
 
 #endif

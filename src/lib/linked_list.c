@@ -121,6 +121,16 @@ int node_set_previous(Node* const node, Node* const other) {
   return 0;
 }
 
+int linked_list_size(LinkedList* list) {
+  int sze = 0;
+  Node* n = list->head;
+  while(n) {
+    ++sze;
+    n = n->next;
+  }
+  return sze;
+}
+
 LinkedList* linked_list_new() {
   LinkedList* list = malloc(sizeof(LinkedList));
 
@@ -190,5 +200,34 @@ int linked_list_free(LinkedList** const list, FreeFn const free_value) {
   free(*list);
   *list = NULL;
 
+  return 0;
+}
+
+int linked_list_append(LinkedList* list, void* value) {
+  int e = pthread_mutex_lock(&list->lock);
+  if (e) return e;
+
+  Node* node = node_new(value);
+  if (list->head == NULL && list->tail == NULL) {
+    list->head = node;
+    list->tail = node;
+
+    e = pthread_mutex_unlock(&list->lock);
+    if (e) return e;
+    
+    return 0;
+  }
+  
+  list->tail->next = node;
+  node->previous = list->tail;
+  list->tail = node;
+
+  e = pthread_mutex_unlock(&list->lock);
+  if (e) return e;
+
+  return 0;
+}
+
+int linked_list_prepend(LinkedList* list, void* value) {
   return 0;
 }
