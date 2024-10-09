@@ -229,5 +229,26 @@ int linked_list_append(LinkedList* list, void* value) {
 }
 
 int linked_list_prepend(LinkedList* list, void* value) {
+  int e = pthread_mutex_lock(&list->lock);
+  if (e) return e;
+
+  Node* node = node_new(value);
+  if (list->head == NULL && list->tail == NULL) {
+    list->head = node;
+    list->tail = node;
+
+    e = pthread_mutex_unlock(&list->lock);
+    if (e) return e;
+    
+    return 0;
+  }
+
+  list->head->previous = node;
+  node->next = list->head;
+  list->head = node;
+
+  e = pthread_mutex_unlock(&list->lock);
+  if (e) return e;
+
   return 0;
 }

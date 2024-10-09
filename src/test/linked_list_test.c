@@ -221,7 +221,7 @@ Test(linked_list_append, empty) {
   linked_list_free(&list, (FreeFn) point_free);
 }
 
-Test(linked_list_prepend, not_empty) {
+Test(linked_list_append, not_empty) {
   LinkedList* list = linked_list_new();
 
   int e = linked_list_append(list, point_new(0, 0));
@@ -231,6 +231,68 @@ Test(linked_list_prepend, not_empty) {
   cr_assert_eq(e, 0);
 
   e = linked_list_append(list, point_new(2, 2));
+  cr_assert_eq(e, 0);
+
+  int sze = linked_list_size(list);
+  cr_assert_eq(sze, 3);
+
+  Node* n = list->head;
+  int i = 0;
+  while (n) {
+    cr_assert_eq(n != NULL, true);
+    Point* p = n->value;
+    cr_assert_eq(p->x, i);
+    cr_assert_eq(p->y, i);
+    ++i;
+    n = n->next;
+  }
+  cr_assert_eq(i, sze);
+
+  n = list->tail;
+  i = sze;
+  while (n) {
+    --i;
+    cr_assert_eq(n != NULL, true);
+    Point* p = n->value;
+    cr_assert_eq(p->x, i);
+    cr_assert_eq(p->y, i);
+    n = n->previous;
+  }
+  cr_assert_eq(i, 0);
+
+  linked_list_free(&list, (FreeFn) point_free);
+}
+
+// ####################
+// linked_list_prepend
+// ####################
+Test(linked_list_prepend, empty) {
+  LinkedList* list = linked_list_new();
+
+  int e = linked_list_prepend(list, point_new(0, 0));
+  cr_assert_eq(e, 0);
+  cr_assert_eq(list->head != NULL, true);
+  cr_assert_eq(list->tail != NULL, true);
+  cr_assert_eq(list->head, list->tail);
+
+  Point* p = list->head->value;
+  cr_assert_eq(p != NULL, true);
+  cr_assert_eq(p->x, 0);
+  cr_assert_eq(p->y, 0);
+
+  linked_list_free(&list, (FreeFn) point_free);
+}
+
+Test(linked_list_prepend, not_empty) {
+  LinkedList* list = linked_list_new();
+
+  int e = linked_list_prepend(list, point_new(2, 2));
+  cr_assert_eq(e, 0);
+
+  e = linked_list_prepend(list, point_new(1, 1));
+  cr_assert_eq(e, 0);
+
+  e = linked_list_prepend(list, point_new(0, 0));
   cr_assert_eq(e, 0);
 
   int sze = linked_list_size(list);
