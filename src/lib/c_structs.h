@@ -139,9 +139,9 @@
   int linked_list_insert_after(LinkedList* const list, Node* const node, void* const value);
 
   Result linked_list_remove_head(LinkedList* const list);
-  Node* linked_list_remove_tail(LinkedList* const list);
-  Node* linked_list_remove(LinkedList* const list, Node* node);
+  Result linked_list_remove_tail(LinkedList* const list);
+  Result linked_list_remove(LinkedList* const list, Node* node);
 
-  Node* linked_list_find(LinkedList* const list, PredicateFn const predicate);
+  Result linked_list_find(LinkedList* const list, PredicateFn const predicate);
 
 #endif
