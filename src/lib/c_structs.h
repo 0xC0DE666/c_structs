@@ -4,6 +4,23 @@
 #ifndef C_STRUCTS_H
 #define C_STRUCTS_H
 
+  typedef struct Error {
+    int code;
+    char* message;
+  } Error;
+
+  Error* error(int code, char* message);
+  void error_free(Error** error);
+
+  typedef struct Result {
+    void* ok;
+    Error* error;
+  } Result;
+
+  Result success(void* value);
+  Result fail(int code, char* message);
+
+
   //####################
   // SHARED
   //####################
@@ -121,8 +138,9 @@
   int linked_list_insert_before(LinkedList* const list, Node* const node, void* const value);
   int linked_list_insert_after(LinkedList* const list, Node* const node, void* const value);
 
-  Node* linked_list_remove_head(LinkedList* const list);
+  Result linked_list_remove_head(LinkedList* const list);
   Node* linked_list_remove_tail(LinkedList* const list);
+  Node* linked_list_remove(LinkedList* const list, Node* node);
 
   Node* linked_list_find(LinkedList* const list, PredicateFn const predicate);
 

@@ -256,10 +256,9 @@ int linked_list_prepend(LinkedList* list, void* value) {
 int linked_list_insert_before(LinkedList* const list, Node* const node, void* const value) {
   int e = pthread_mutex_lock(&list->lock);
   if (e) return e;
-  // insert before head
-  // insert before mid node
   
   Node* new_node = node_new(value);
+  // insert before head
   if (node == list->head) {
     list->head->previous = new_node;
     new_node->next = list->head;
@@ -271,6 +270,7 @@ int linked_list_insert_before(LinkedList* const list, Node* const node, void* co
     return 0;
   }
 
+  // insert before mid node
   new_node->next = node;
   new_node->previous = node->previous;
   node->previous->next = new_node;
@@ -286,10 +286,9 @@ int linked_list_insert_before(LinkedList* const list, Node* const node, void* co
   int linked_list_insert_after(LinkedList* const list, Node* const node, void* const value) {
   int e = pthread_mutex_lock(&list->lock);
   if (e) return e;
-  // insert after tail
-  // insert after mid node
   
   Node* new_node = node_new(value);
+  // insert after tail
   if (node == list->tail) {
     new_node->previous = list->tail;
     list->tail->next = new_node;
@@ -301,6 +300,7 @@ int linked_list_insert_before(LinkedList* const list, Node* const node, void* co
     return 0;
   }
 
+  // insert after mid node
   new_node->previous = node;
   new_node->next = node->next;
   node->next->previous = new_node;
@@ -310,4 +310,41 @@ int linked_list_insert_before(LinkedList* const list, Node* const node, void* co
   if (e) return e;
 
   return 0;
+}
+
+Result linked_list_remove_head(LinkedList* const list) {
+  int e = pthread_mutex_lock(&list->lock);
+  if (e) return fail(e, "failed to lock");
+
+  // empty
+  if (list->head == NULL && list->tail == NULL) {
+    e = pthread_mutex_unlock(&list->lock);
+    if (e) return fail(e, "failed to unlock");
+
+    return success(NULL);
+  }
+
+  // sinlge node
+  if (list->head == list->tail) {
+    Node* n = list->head;
+    list->head = NULL;
+    list->tail = NULL;
+
+    e = pthread_mutex_unlock(&list->lock);
+    if (e) return fail(e, "failed to unlock");
+
+    return success(n);
+  }
+
+  // multiple nodes
+  Node* n = list->head;
+  list->head = list->head->next;
+  list->head->previous = NULL;
+  n->next = NULL;
+  n->previous = NULL;
+
+  e = pthread_mutex_unlock(&list->lock);
+  if (e) return fail(e, "failed to unlock");
+
+  return success(n);
 }
