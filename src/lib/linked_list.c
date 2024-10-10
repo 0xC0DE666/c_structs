@@ -271,10 +271,40 @@ int linked_list_insert_before(LinkedList* const list, Node* const node, void* co
     return 0;
   }
 
-  node->previous->next = new_node;
-  new_node->previous = node->previous;
-  node->previous = new_node;
   new_node->next = node;
+  new_node->previous = node->previous;
+  node->previous->next = new_node;
+  node->previous = new_node;
+
+  e = pthread_mutex_unlock(&list->lock);
+  if (e) return e;
+
+  return 0;
+}
+
+
+  int linked_list_insert_after(LinkedList* const list, Node* const node, void* const value) {
+  int e = pthread_mutex_lock(&list->lock);
+  if (e) return e;
+  // insert after tail
+  // insert after mid node
+  
+  Node* new_node = node_new(value);
+  if (node == list->tail) {
+    new_node->previous = list->tail;
+    list->tail->next = new_node;
+    list->tail = new_node;
+
+    e = pthread_mutex_unlock(&list->lock);
+    if (e) return e;
+
+    return 0;
+  }
+
+  new_node->previous = node;
+  new_node->next = node->next;
+  node->next->previous = new_node;
+  node->next = new_node;
 
   e = pthread_mutex_unlock(&list->lock);
   if (e) return e;
