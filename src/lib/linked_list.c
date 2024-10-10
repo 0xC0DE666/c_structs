@@ -252,3 +252,32 @@ int linked_list_prepend(LinkedList* list, void* value) {
 
   return 0;
 }
+
+int linked_list_insert_before(LinkedList* const list, Node* const node, void* const value) {
+  int e = pthread_mutex_lock(&list->lock);
+  if (e) return e;
+  // insert before head
+  // insert before mid node
+  
+  Node* new_node = node_new(value);
+  if (node == list->head) {
+    list->head->previous = new_node;
+    new_node->next = list->head;
+    list->head = new_node;
+
+    e = pthread_mutex_unlock(&list->lock);
+    if (e) return e;
+
+    return 0;
+  }
+
+  node->previous->next = new_node;
+  new_node->previous = node->previous;
+  node->previous = new_node;
+  new_node->next = node;
+
+  e = pthread_mutex_unlock(&list->lock);
+  if (e) return e;
+
+  return 0;
+}
