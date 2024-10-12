@@ -23,22 +23,14 @@ char* position_to_string(Position* position) {
 }
 
 Matrix* matrix_new(int rows, int columns) {
-  Matrix* matrix = malloc(sizeof(Matrix) + rows * sizeof(void**));
+  Matrix* matrix = malloc(sizeof(Matrix) + rows * columns * sizeof(void*));
 
   if (matrix == NULL) {
     return NULL;
   }
 
-  void** ptr_columns = malloc(rows * columns * sizeof(void*));
-
-  if (ptr_columns == NULL) {
-    free(matrix);
-    return NULL;
-  }
-
   for (int r = 0; r < rows; ++r) {
-    matrix->elements[r] = ptr_columns + (r * columns);
-    void** row = matrix->elements[r];
+    void** row  = matrix->elements + r * columns;
     for (int c = 0; c < columns; ++c) {
       row[c] = NULL;
     }
@@ -56,7 +48,7 @@ Matrix* matrix_new(int rows, int columns) {
 int matrix_clear(Matrix* const matrix, FreeFn const free_element) {
   pthread_mutex_lock(&matrix->lock);
   for (int r = 0; r < matrix->rows; r++) {
-    void** row = matrix->elements[r];
+    void** row = matrix->elements + r * matrix->columns;
 
     for (int c = 0; c < matrix->columns; c++) {
       void** el = &row[c];
@@ -76,14 +68,8 @@ int matrix_clear(Matrix* const matrix, FreeFn const free_element) {
 
 int matrix_free(Matrix** const matrix, FreeFn const free_element) {
   matrix_clear(*matrix, free_element);
-  pthread_mutex_lock(&(*matrix)->lock);
 
-  free((*matrix)->elements[0]);
-  (*matrix)->elements[0] = NULL;
-
-  pthread_mutex_unlock(&(*matrix)->lock);
   pthread_mutex_destroy(&(*matrix)->lock);
-
   free(*matrix);
   *matrix = NULL;
 
@@ -99,7 +85,7 @@ int matrix_set(Matrix* const matrix, Position* const position, void* const value
     return 1;
   }
 
-  void** row = matrix->elements[position->row];
+  void** row = matrix->elements + position->row * matrix->columns;
 
   if (row[position->column] == NULL) {
     matrix->size++;
@@ -116,7 +102,7 @@ void* matrix_get(Matrix* const matrix, Position* const position) {
     return NULL;
   }
 
-  void** row = matrix->elements[position->row];
+  void** row = matrix->elements + position->row * matrix->columns;
   return row[position->column];
 }
 
@@ -127,7 +113,7 @@ void* matrix_remove(Matrix* const matrix, Position* const position) {
     return NULL;
   }
 
-  void** row = matrix->elements[position->row];
+  void** row = matrix->elements + position->row * matrix->columns;
   void* removed = row[position->column];
 
   row[position->column] = NULL;

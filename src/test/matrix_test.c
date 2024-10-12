@@ -48,7 +48,7 @@ Test(matrix_new, _1) {
   cr_assert_eq(matrix->elements == NULL, false);
 
   for (int r = 0; r < matrix->rows; ++r) {
-    void** row = matrix->elements[r];
+    void** row = matrix->elements + r * columns;
     for (int c = 0; c < matrix->columns; ++c) {
       cr_assert_eq(row[c], NULL);
     }
@@ -80,7 +80,7 @@ Test(matrix_clear, _1) {
   cr_assert_eq(matrix->size, 0);
 
   for (int r = 0; r < matrix->rows; ++r) {
-    void** row = matrix->elements[r];
+    void** row = matrix->elements + r * matrix->columns;
     for (int c = 0; c < matrix->columns; ++c) {
       cr_assert_eq(row[c], NULL);
     }
