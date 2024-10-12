@@ -6,23 +6,15 @@
 #include "c_structs.h"
 
 Array* array_new(int capacity) {
-  Array* array = malloc(sizeof(Array));
+  Array* array = malloc(sizeof(Array) + capacity * sizeof(void*));
 
   if (array == NULL) {
-    return NULL;
-  }
-
-  void** elements = malloc(capacity * sizeof(void*));
-
-  if (elements == NULL) {
-    free(array);
     return NULL;
   }
 
   pthread_mutex_init(&array->lock, NULL);
   array->capacity = capacity;
   array->size = 0;
-  array->elements = elements;
 
   for (int i = 0; i < capacity; ++i) {
     array->elements[i] = NULL;
@@ -34,7 +26,7 @@ Array* array_new(int capacity) {
 int array_clear(Array* const array, FreeFn free_element) {
   pthread_mutex_lock(&array->lock);
   for (int i = 0; i < array->capacity; i++) {
-    void** el = &array->elements[i];
+    void** el = array->elements + i;
 
     if (*el != NULL && free_element) {
       free_element(el);
@@ -50,14 +42,8 @@ int array_clear(Array* const array, FreeFn free_element) {
 
 int array_free(Array** const array, FreeFn free_element) {
   array_clear(*array, free_element);
-  pthread_mutex_lock(&(*array)->lock);
 
-  free((*array)->elements);
-  (*array)->elements = NULL;
-
-  pthread_mutex_unlock(&(*array)->lock);
   pthread_mutex_destroy(&(*array)->lock);
-
   free(*array);
   *array = NULL;
 

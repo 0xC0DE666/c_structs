@@ -110,7 +110,7 @@ void print(int* v) {
   printf("%d\n", *v);
 }
 
-int main() {
+void prev() {
   printf("mutex + node = %ld\n", sizeof(pthread_mutex_t) + sizeof(Node));
   printf("node = %ld\n", sizeof(Node));
   printf("linked_list = %ld\n", sizeof(LinkedList));
@@ -126,7 +126,9 @@ int main() {
   printf("\n");
   array_for_each(arr, (ArrayEachFn) add2);
   array_for_each(arr, (ArrayEachFn) print);
+}
 
-
+int main() {
+  prev();
   return 0;
 }

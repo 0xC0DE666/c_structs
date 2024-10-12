@@ -4,6 +4,9 @@
 #ifndef C_STRUCTS_H
 #define C_STRUCTS_H
 
+  //####################
+  // COMMON
+  //####################
   typedef struct Error {
     int code;
     char* message;
@@ -20,10 +23,6 @@
   Result success(void* value);
   Result fail(int code, char* message);
 
-
-  //####################
-  // SHARED
-  //####################
   typedef void (*FreeFn)(void** const);
   typedef bool (*PredicateFn)(void* const);
   typedef char* (*ToStringFn)(void* const);
@@ -36,7 +35,7 @@
     pthread_mutex_t lock;
     int capacity;
     int size;
-    void** elements;
+    void* elements[];
   } Array;
 
   Array* array_new(int capacity);
