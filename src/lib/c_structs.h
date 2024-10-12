@@ -78,7 +78,7 @@
     int columns;
     int capacity;
     int size;
-    void** elements;
+    void** elements[];
   } Matrix;
 
   Matrix* matrix_new(int rows, int columns);

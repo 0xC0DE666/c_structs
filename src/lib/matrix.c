@@ -23,16 +23,9 @@ char* position_to_string(Position* position) {
 }
 
 Matrix* matrix_new(int rows, int columns) {
-  Matrix* matrix = malloc(sizeof(Matrix));
+  Matrix* matrix = malloc(sizeof(Matrix) + rows * sizeof(void**));
 
   if (matrix == NULL) {
-    return NULL;
-  }
-
-  void** ptr_rows =  malloc(rows * sizeof(void*));
-
-  if (ptr_rows == NULL) {
-    free(matrix);
     return NULL;
   }
 
@@ -40,14 +33,12 @@ Matrix* matrix_new(int rows, int columns) {
 
   if (ptr_columns == NULL) {
     free(matrix);
-    free(ptr_rows);
     return NULL;
   }
 
   for (int r = 0; r < rows; ++r) {
-    ptr_rows[r] = ptr_columns + (r * columns);
-
-    void** row = ptr_rows[r];
+    matrix->elements[r] = ptr_columns + (r * columns);
+    void** row = matrix->elements[r];
     for (int c = 0; c < columns; ++c) {
       row[c] = NULL;
     }
@@ -58,7 +49,6 @@ Matrix* matrix_new(int rows, int columns) {
   matrix->capacity = rows * columns;
   matrix->rows = rows;
   matrix->columns = columns;
-  matrix->elements = ptr_rows;
 
   return matrix;
 }
@@ -90,9 +80,6 @@ int matrix_free(Matrix** const matrix, FreeFn const free_element) {
 
   free((*matrix)->elements[0]);
   (*matrix)->elements[0] = NULL;
-
-  free((*matrix)->elements);
-  (*matrix)->elements = NULL;
 
   pthread_mutex_unlock(&(*matrix)->lock);
   pthread_mutex_destroy(&(*matrix)->lock);
