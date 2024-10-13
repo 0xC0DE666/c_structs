@@ -246,7 +246,7 @@ Result linked_list_remove_head(LinkedList* const list) {
     return success(n);
   }
 
-  // multiple nodes
+  // multiple mid
   Node* n = list->head;
   list->head = list->head->next;
   list->head->previous = NULL;
@@ -283,7 +283,7 @@ Result linked_list_remove_tail(LinkedList* const list) {
     return success(n);
   }
 
-  // multiple nodes
+  // multiple mid
   Node* n = list->tail;
   list->tail = list->tail->previous;
   list->tail->next = NULL;
@@ -294,4 +294,13 @@ Result linked_list_remove_tail(LinkedList* const list) {
   if (e) return fail(e, "failed to unlock");
 
   return success(n);
+}
+
+Result linked_list_remove(LinkedList* const list, Node* node) {
+  // empty
+  // single
+  // head
+  // tail
+  // mid
+  return success(NULL);
 }
