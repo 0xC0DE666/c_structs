@@ -56,7 +56,7 @@ Matrix* matrix_new(int rows, int columns) {
 }
 
 int matrix_clear(Matrix* const matrix, FreeFn const free_element) {
-  pthread_mutex_lock(&matrix->lock);
+  pthread_mutex_trylock(&matrix->lock);
   for (int r = 0; r < matrix->rows; r++) {
     void** row = matrix->elements + r * matrix->columns;
 
@@ -88,7 +88,7 @@ int matrix_free(Matrix** const matrix, FreeFn const free_element) {
 
 
 int matrix_set(Matrix* const matrix, Position* const position, void* const value) {
-  pthread_mutex_lock(&matrix->lock);
+  pthread_mutex_trylock(&matrix->lock);
 
   if (!matrix_position_valid(matrix, position)) {
     pthread_mutex_unlock(&matrix->lock);
@@ -117,7 +117,7 @@ void* matrix_get(Matrix* const matrix, Position* const position) {
 }
 
 void* matrix_remove(Matrix* const matrix, Position* const position) {
-  pthread_mutex_lock(&matrix->lock);
+  pthread_mutex_trylock(&matrix->lock);
   if (!matrix_position_valid(matrix, position)) {
     pthread_mutex_unlock(&matrix->lock);
     return NULL;

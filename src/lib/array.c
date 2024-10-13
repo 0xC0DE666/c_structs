@@ -32,7 +32,7 @@ Array* array_new(int capacity) {
 }
 
 int array_clear(Array* const array, FreeFn free_element) {
-  pthread_mutex_lock(&array->lock);
+  pthread_mutex_trylock(&array->lock);
   for (int i = 0; i < array->capacity; i++) {
     void** el = array->elements + i;
 
@@ -59,7 +59,7 @@ int array_free(Array** const array, FreeFn free_element) {
 }
 
 int array_append(Array* const array, void* const element) {
-  pthread_mutex_lock(&array->lock);
+  pthread_mutex_trylock(&array->lock);
   if (!array_has_capacity(array)) {
     pthread_mutex_unlock(&array->lock);
     return 1;
@@ -73,7 +73,7 @@ int array_append(Array* const array, void* const element) {
 }
 
 int array_prepend(Array* const array, void* const element) {
-  pthread_mutex_lock(&array->lock);
+  pthread_mutex_trylock(&array->lock);
   if (!array_has_capacity(array)) {
     pthread_mutex_unlock(&array->lock);
     return 1;
@@ -114,7 +114,7 @@ void* array_get(Array* const array, int index) {
 }
 
 void* array_remove(Array* const array, int index) {
-  pthread_mutex_lock(&array->lock);
+  pthread_mutex_trylock(&array->lock);
   if (!array_index_valid(array, index)) {
     pthread_mutex_unlock(&array->lock);
     return NULL;

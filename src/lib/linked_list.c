@@ -57,7 +57,7 @@ LinkedList* linked_list_new() {
 
 
 int linked_list_clear(LinkedList* const list, FreeFn const free_value) {
-  int e = pthread_mutex_lock(&list->lock);
+  int e = pthread_mutex_trylock(&list->lock);
   if (e) return e;
 
   // empty
@@ -114,7 +114,7 @@ int linked_list_free(LinkedList** const list, FreeFn const free_value) {
 }
 
 int linked_list_append(LinkedList* list, void* value) {
-  int e = pthread_mutex_lock(&list->lock);
+  int e = pthread_mutex_trylock(&list->lock);
   if (e) return e;
 
   Node* node = node_new(value);
@@ -139,7 +139,7 @@ int linked_list_append(LinkedList* list, void* value) {
 }
 
 int linked_list_prepend(LinkedList* list, void* value) {
-  int e = pthread_mutex_lock(&list->lock);
+  int e = pthread_mutex_trylock(&list->lock);
   if (e) return e;
 
   Node* node = node_new(value);
@@ -164,7 +164,7 @@ int linked_list_prepend(LinkedList* list, void* value) {
 }
 
 int linked_list_insert_before(LinkedList* const list, Node* const node, void* const value) {
-  int e = pthread_mutex_lock(&list->lock);
+  int e = pthread_mutex_trylock(&list->lock);
   if (e) return e;
   
   Node* new_node = node_new(value);
@@ -194,7 +194,7 @@ int linked_list_insert_before(LinkedList* const list, Node* const node, void* co
 
 
   int linked_list_insert_after(LinkedList* const list, Node* const node, void* const value) {
-  int e = pthread_mutex_lock(&list->lock);
+  int e = pthread_mutex_trylock(&list->lock);
   if (e) return e;
   
   Node* new_node = node_new(value);
@@ -223,7 +223,7 @@ int linked_list_insert_before(LinkedList* const list, Node* const node, void* co
 }
 
 Result linked_list_remove_head(LinkedList* const list) {
-  int e = pthread_mutex_lock(&list->lock);
+  int e = pthread_mutex_trylock(&list->lock);
   if (e) return fail(e, "failed to lock");
 
   // empty
@@ -260,7 +260,7 @@ Result linked_list_remove_head(LinkedList* const list) {
 }
 
 Result linked_list_remove_tail(LinkedList* const list) {
-  int e = pthread_mutex_lock(&list->lock);
+  int e = pthread_mutex_trylock(&list->lock);
   if (e) return fail(e, "failed to lock");
 
   // empty
@@ -297,7 +297,7 @@ Result linked_list_remove_tail(LinkedList* const list) {
 }
 
 Result linked_list_remove(LinkedList* const list, Node* node) {
-  int e = pthread_mutex_lock(&list->lock);
+  int e = pthread_mutex_trylock(&list->lock);
   if (e) return fail(e, "failed to lock");
 
   // sinlge
@@ -338,7 +338,7 @@ Result linked_list_remove(LinkedList* const list, Node* node) {
 
 
 Result linked_list_find(LinkedList* const list, PredicateFn const predicate) {
-  int e = pthread_mutex_lock(&list->lock);
+  int e = pthread_mutex_trylock(&list->lock);
   if (e) return fail(e, "failed to lock");
 
   Node* n = list->head;
