@@ -297,10 +297,41 @@ Result linked_list_remove_tail(LinkedList* const list) {
 }
 
 Result linked_list_remove(LinkedList* const list, Node* node) {
-  // empty
-  // single
+  int e = pthread_mutex_lock(&list->lock);
+  if (e) return fail(e, "failed to lock");
+
+  // sinlge
+  if (list->head == list->tail) {
+    e = pthread_mutex_unlock(&list->lock);
+    if (e) return fail(e, "failed to unlock");
+
+    return linked_list_remove_head(list);
+  }
+
   // head
+  if (node == list->head) {
+    e = pthread_mutex_unlock(&list->lock);
+    if (e) return fail(e, "failed to unlock");
+
+    return linked_list_remove_head(list);
+  }
+
   // tail
+  if (node == list->tail) {
+    e = pthread_mutex_unlock(&list->lock);
+    if (e) return fail(e, "failed to unlock");
+
+    return linked_list_remove_tail(list);
+  }
+
   // mid
-  return success(NULL);
+  node->next->previous = node->previous;
+  node->previous->next = node->next;
+  node->next = NULL;
+  node->previous = NULL;
+
+  e = pthread_mutex_unlock(&list->lock);
+  if (e) return fail(e, "failed to unlock");
+
+  return success(node);
 }
