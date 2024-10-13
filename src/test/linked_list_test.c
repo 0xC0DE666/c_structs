@@ -43,6 +43,23 @@ Test(node_free, _1) {
 }
 
 // ####################
+// linked_list_size
+// ####################
+Test(linked_list_size, _1) {
+  LinkedList* list = linked_list_new();
+  int sze = linked_list_size(list);
+  cr_assert_eq(sze, 0);
+
+  for (int i = 0; i < 3; ++i) {
+    linked_list_append(list, point_new(i, i));
+    sze = linked_list_size(list);
+    cr_assert_eq(sze, i + 1);
+  }
+
+  linked_list_free(&list, (FreeFn) point_free);
+}
+
+// ####################
 // linked_list_new
 // ####################
 Test(linked_list_new, _1) {
