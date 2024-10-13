@@ -335,3 +335,25 @@ Result linked_list_remove(LinkedList* const list, Node* node) {
 
   return success(node);
 }
+
+
+Result linked_list_find(LinkedList* const list, PredicateFn const predicate) {
+  int e = pthread_mutex_lock(&list->lock);
+  if (e) return fail(e, "failed to lock");
+
+  Node* n = list->head;
+  while (n) {
+    if (predicate(n)) {
+      e = pthread_mutex_unlock(&list->lock);
+      if (e) return fail(e, "failed to unlock");
+
+      return success(n);
+    }
+    n = n->next;
+  }
+  
+  e = pthread_mutex_unlock(&list->lock);
+  if (e) return fail(e, "failed to unlock");
+
+  return success(NULL);
+}

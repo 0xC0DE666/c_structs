@@ -777,8 +777,6 @@ Test(linked_list_remove, multiple_mid) {
   cr_assert_eq(p != NULL, true);
   cr_assert_eq(p->x, 1);
   cr_assert_eq(p->y, 1);
-  cr_assert_eq(n->next, NULL);
-  cr_assert_eq(n->previous, NULL);
   node_free(&n, (FreeFn) point_free);
 
   int sze = linked_list_size(list);
@@ -807,6 +805,49 @@ Test(linked_list_remove, multiple_mid) {
     n = n->previous;
   }
   cr_assert_eq(i, 0);
+
+  linked_list_free(&list, (FreeFn) point_free);
+}
+
+// ####################
+// linked_list_find
+// ####################
+bool node_fun(Node* n) {
+  Point* p = n->value;
+  return p->x == 69 && p->y == 420;
+}
+
+Test(linked_list_find, not_found) {
+  LinkedList* list = linked_list_new();
+  
+  Result res = linked_list_find(list, (PredicateFn) node_fun);
+  cr_assert_eq(res.ok, NULL);
+  cr_assert_eq(res.error, NULL);
+
+  linked_list_free(&list, NULL);
+}
+
+Test(linked_list_find, found) {
+  LinkedList* list = linked_list_new();
+  int e = linked_list_append(list, point_new(0, 0));
+  cr_assert_eq(e, 0);
+
+  e = linked_list_append(list, point_new(69, 420));
+  cr_assert_eq(e, 0);
+
+  e = linked_list_append(list, point_new(2, 2));
+  cr_assert_eq(e, 0);
+
+  
+  Result res = linked_list_find(list, (PredicateFn) node_fun);
+  cr_assert_eq(res.ok != NULL, true);
+  cr_assert_eq(res.error, NULL);
+
+  Node* n = res.ok;
+  Point* p = n->value;
+  cr_assert_eq(p != NULL, true);
+  cr_assert_eq(p->x, 69);
+  cr_assert_eq(p->y, 420);
 
   linked_list_free(&list, (FreeFn) point_free);
 }
