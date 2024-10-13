@@ -5,6 +5,14 @@
 
 #include "c_structs.h"
 
+bool array_index_valid(Array* const array, int index) {
+  return index >= 0 && index <= array->capacity - 1;
+}
+
+bool array_has_capacity(Array* const array) {
+  return array->size < array->capacity;
+}
+
 Array* array_new(int capacity) {
   Array* array = malloc(sizeof(Array) + capacity * sizeof(void*));
 
@@ -197,12 +205,4 @@ char* array_to_string(Array* const array, ToStringFn const to_string) {
   strcat(buffer, "]\0");
 
   return buffer;
-}
-
-bool array_index_valid(Array* const array, int index) {
-  return index >= 0 && index <= array->capacity - 1;
-}
-
-bool array_has_capacity(Array* const array) {
-  return array->size < array->capacity;
 }

@@ -22,6 +22,16 @@ char* position_to_string(Position* position) {
   return buffer;
 }
 
+bool matrix_position_valid(Matrix* const matrix, Position* const position) {
+  bool valid_row = position->row >= 0 && position->row < matrix->rows;
+  bool valid_col = position->column >= 0 && position->column < matrix->columns;
+  return valid_row && valid_col;
+}
+
+bool matrix_has_capacity(Matrix* const matrix) {
+  return matrix->size < matrix->capacity;
+}
+
 Matrix* matrix_new(int rows, int columns) {
   Matrix* matrix = malloc(sizeof(Matrix) + rows * columns * sizeof(void*));
 
@@ -213,15 +223,4 @@ char* matrix_to_string(Matrix* const matrix, ToStringFn const to_string) {
   }
 
   return buffer;
-}
-
-
-bool matrix_position_valid(Matrix* const matrix, Position* const position) {
-  bool valid_row = position->row >= 0 && position->row < matrix->rows;
-  bool valid_col = position->column >= 0 && position->column < matrix->columns;
-  return valid_row && valid_col;
-}
-
-bool matrix_has_capacity(Matrix* const matrix) {
-  return matrix->size < matrix->capacity;
 }
