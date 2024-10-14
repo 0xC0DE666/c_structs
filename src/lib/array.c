@@ -20,7 +20,7 @@ Array* array_new(int capacity) {
     return NULL;
   }
 
-  pthread_mutex_init(&array->lock, NULL);
+  pthread_rwlock_init(&array->lock, NULL);
   array->capacity = capacity;
   array->size = 0;
 
@@ -32,7 +32,7 @@ Array* array_new(int capacity) {
 }
 
 int array_clear(Array* const array, FreeFn free_element) {
-  pthread_mutex_trylock(&array->lock);
+  pthread_rwlock_trywrlock(&array->lock);
   for (int i = 0; i < array->capacity; i++) {
     void** el = array->elements + i;
 
@@ -44,14 +44,14 @@ int array_clear(Array* const array, FreeFn free_element) {
   }
   array->size = 0;
 
-  pthread_mutex_unlock(&array->lock);
+  pthread_rwlock_unlock(&array->lock);
   return 0;
 }
 
 int array_free(Array** const array, FreeFn free_element) {
   array_clear(*array, free_element);
 
-  pthread_mutex_destroy(&(*array)->lock);
+  pthread_rwlock_destroy(&(*array)->lock);
   free(*array);
   *array = NULL;
 
@@ -59,23 +59,23 @@ int array_free(Array** const array, FreeFn free_element) {
 }
 
 int array_append(Array* const array, void* const element) {
-  pthread_mutex_trylock(&array->lock);
+  pthread_rwlock_trywrlock(&array->lock);
   if (!array_has_capacity(array)) {
-    pthread_mutex_unlock(&array->lock);
+    pthread_rwlock_unlock(&array->lock);
     return 1;
   }
 
   array->elements[array->size] = element;
   array->size++;
 
-  pthread_mutex_unlock(&array->lock);
+  pthread_rwlock_unlock(&array->lock);
   return 0;
 }
 
 int array_prepend(Array* const array, void* const element) {
-  pthread_mutex_trylock(&array->lock);
+  pthread_rwlock_trywrlock(&array->lock);
   if (!array_has_capacity(array)) {
-    pthread_mutex_unlock(&array->lock);
+    pthread_rwlock_unlock(&array->lock);
     return 1;
   }
 
@@ -86,13 +86,13 @@ int array_prepend(Array* const array, void* const element) {
   array->elements[0] = element;
   array->size++;
 
-  pthread_mutex_unlock(&array->lock);
+  pthread_rwlock_unlock(&array->lock);
   return 0;
 }
 
 int array_set(Array* const array, int index, void* const element) {
   if (!array_index_valid(array, index)) {
-    pthread_mutex_unlock(&array->lock);
+    pthread_rwlock_unlock(&array->lock);
     return 1;
   }
 
@@ -101,7 +101,7 @@ int array_set(Array* const array, int index, void* const element) {
   }
   array->elements[index] = element;
 
-  pthread_mutex_unlock(&array->lock);
+  pthread_rwlock_unlock(&array->lock);
   return 0;
 }
 
@@ -114,9 +114,9 @@ void* array_get(Array* const array, int index) {
 }
 
 void* array_remove(Array* const array, int index) {
-  pthread_mutex_trylock(&array->lock);
+  pthread_rwlock_trywrlock(&array->lock);
   if (!array_index_valid(array, index)) {
-    pthread_mutex_unlock(&array->lock);
+    pthread_rwlock_unlock(&array->lock);
     return NULL;
   }
 
@@ -131,7 +131,7 @@ void* array_remove(Array* const array, int index) {
   }
   array->size--;
 
-  pthread_mutex_unlock(&array->lock);
+  pthread_rwlock_unlock(&array->lock);
   return removed;
 }
 

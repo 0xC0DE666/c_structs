@@ -32,7 +32,7 @@
   // ARRAY
   //####################
   typedef struct Array {
-    pthread_mutex_t lock;
+    pthread_rwlock_t lock;
     int capacity;
     int size;
     void* elements[];
@@ -73,7 +73,7 @@
   char* position_to_string(Position* position);
 
   typedef struct Matrix {
-    pthread_mutex_t lock;
+    pthread_rwlock_t lock;
     int rows;
     int columns;
     int capacity;
@@ -115,7 +115,7 @@
   int node_free(Node** const node, FreeFn const free_value);
 
   typedef struct LinkedList {
-    pthread_mutex_t lock;
+    pthread_rwlock_t lock;
     struct Node* head;
     struct Node* tail;
   } LinkedList;

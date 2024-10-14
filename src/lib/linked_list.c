@@ -48,7 +48,7 @@ LinkedList* linked_list_new() {
     return NULL;
   }
 
-  pthread_mutex_init(&list->lock, NULL);
+  pthread_rwlock_init(&list->lock, NULL);
   list->head = NULL;
   list->tail = NULL;
   
@@ -57,12 +57,12 @@ LinkedList* linked_list_new() {
 
 
 int linked_list_clear(LinkedList* const list, FreeFn const free_value) {
-  int e = pthread_mutex_trylock(&list->lock);
+  int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return e;
 
   // empty
   if (list->head == NULL && list->tail == NULL) {
-    e = pthread_mutex_unlock(&list->lock);
+    e = pthread_rwlock_unlock(&list->lock);
     if (e) return e;
 
     return 0;
@@ -76,7 +76,7 @@ int linked_list_clear(LinkedList* const list, FreeFn const free_value) {
     list->head = NULL;
     list->tail = NULL;
 
-    e = pthread_mutex_unlock(&list->lock);
+    e = pthread_rwlock_unlock(&list->lock);
     if (e) return e;
 
     return 0;
@@ -96,7 +96,7 @@ int linked_list_clear(LinkedList* const list, FreeFn const free_value) {
   list->head = NULL;
   list->tail = NULL;
 
-  e = pthread_mutex_unlock(&list->lock);
+  e = pthread_rwlock_unlock(&list->lock);
   if (e) return e;
 
   return 0;
@@ -106,7 +106,7 @@ int linked_list_free(LinkedList** const list, FreeFn const free_value) {
   int e = linked_list_clear(*list, free_value);
   if (e) return e;
 
-  pthread_mutex_destroy(&(*list)->lock);
+  pthread_rwlock_destroy(&(*list)->lock);
   free(*list);
   *list = NULL;
 
@@ -114,7 +114,7 @@ int linked_list_free(LinkedList** const list, FreeFn const free_value) {
 }
 
 int linked_list_append(LinkedList* list, void* value) {
-  int e = pthread_mutex_trylock(&list->lock);
+  int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return e;
 
   Node* node = node_new(value);
@@ -122,7 +122,7 @@ int linked_list_append(LinkedList* list, void* value) {
     list->head = node;
     list->tail = node;
 
-    e = pthread_mutex_unlock(&list->lock);
+    e = pthread_rwlock_unlock(&list->lock);
     if (e) return e;
     
     return 0;
@@ -132,14 +132,14 @@ int linked_list_append(LinkedList* list, void* value) {
   node->previous = list->tail;
   list->tail = node;
 
-  e = pthread_mutex_unlock(&list->lock);
+  e = pthread_rwlock_unlock(&list->lock);
   if (e) return e;
 
   return 0;
 }
 
 int linked_list_prepend(LinkedList* list, void* value) {
-  int e = pthread_mutex_trylock(&list->lock);
+  int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return e;
 
   Node* node = node_new(value);
@@ -147,7 +147,7 @@ int linked_list_prepend(LinkedList* list, void* value) {
     list->head = node;
     list->tail = node;
 
-    e = pthread_mutex_unlock(&list->lock);
+    e = pthread_rwlock_unlock(&list->lock);
     if (e) return e;
     
     return 0;
@@ -157,14 +157,14 @@ int linked_list_prepend(LinkedList* list, void* value) {
   node->next = list->head;
   list->head = node;
 
-  e = pthread_mutex_unlock(&list->lock);
+  e = pthread_rwlock_unlock(&list->lock);
   if (e) return e;
 
   return 0;
 }
 
 int linked_list_insert_before(LinkedList* const list, Node* const node, void* const value) {
-  int e = pthread_mutex_trylock(&list->lock);
+  int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return e;
   
   Node* new_node = node_new(value);
@@ -174,7 +174,7 @@ int linked_list_insert_before(LinkedList* const list, Node* const node, void* co
     new_node->next = list->head;
     list->head = new_node;
 
-    e = pthread_mutex_unlock(&list->lock);
+    e = pthread_rwlock_unlock(&list->lock);
     if (e) return e;
 
     return 0;
@@ -186,7 +186,7 @@ int linked_list_insert_before(LinkedList* const list, Node* const node, void* co
   node->previous->next = new_node;
   node->previous = new_node;
 
-  e = pthread_mutex_unlock(&list->lock);
+  e = pthread_rwlock_unlock(&list->lock);
   if (e) return e;
 
   return 0;
@@ -194,7 +194,7 @@ int linked_list_insert_before(LinkedList* const list, Node* const node, void* co
 
 
   int linked_list_insert_after(LinkedList* const list, Node* const node, void* const value) {
-  int e = pthread_mutex_trylock(&list->lock);
+  int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return e;
   
   Node* new_node = node_new(value);
@@ -204,7 +204,7 @@ int linked_list_insert_before(LinkedList* const list, Node* const node, void* co
     list->tail->next = new_node;
     list->tail = new_node;
 
-    e = pthread_mutex_unlock(&list->lock);
+    e = pthread_rwlock_unlock(&list->lock);
     if (e) return e;
 
     return 0;
@@ -216,19 +216,19 @@ int linked_list_insert_before(LinkedList* const list, Node* const node, void* co
   node->next->previous = new_node;
   node->next = new_node;
 
-  e = pthread_mutex_unlock(&list->lock);
+  e = pthread_rwlock_unlock(&list->lock);
   if (e) return e;
 
   return 0;
 }
 
 Result linked_list_remove_head(LinkedList* const list) {
-  int e = pthread_mutex_trylock(&list->lock);
+  int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return fail(e, "failed to lock");
 
   // empty
   if (list->head == NULL && list->tail == NULL) {
-    e = pthread_mutex_unlock(&list->lock);
+    e = pthread_rwlock_unlock(&list->lock);
     if (e) return fail(e, "failed to unlock");
 
     return success(NULL);
@@ -240,7 +240,7 @@ Result linked_list_remove_head(LinkedList* const list) {
     list->head = NULL;
     list->tail = NULL;
 
-    e = pthread_mutex_unlock(&list->lock);
+    e = pthread_rwlock_unlock(&list->lock);
     if (e) return fail(e, "failed to unlock");
 
     return success(n);
@@ -253,19 +253,19 @@ Result linked_list_remove_head(LinkedList* const list) {
   n->next = NULL;
   n->previous = NULL;
 
-  e = pthread_mutex_unlock(&list->lock);
+  e = pthread_rwlock_unlock(&list->lock);
   if (e) return fail(e, "failed to unlock");
 
   return success(n);
 }
 
 Result linked_list_remove_tail(LinkedList* const list) {
-  int e = pthread_mutex_trylock(&list->lock);
+  int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return fail(e, "failed to lock");
 
   // empty
   if (list->head == NULL && list->tail == NULL) {
-    e = pthread_mutex_unlock(&list->lock);
+    e = pthread_rwlock_unlock(&list->lock);
     if (e) return fail(e, "failed to unlock");
 
     return success(NULL);
@@ -277,7 +277,7 @@ Result linked_list_remove_tail(LinkedList* const list) {
     list->head = NULL;
     list->tail = NULL;
 
-    e = pthread_mutex_unlock(&list->lock);
+    e = pthread_rwlock_unlock(&list->lock);
     if (e) return fail(e, "failed to unlock");
 
     return success(n);
@@ -290,19 +290,19 @@ Result linked_list_remove_tail(LinkedList* const list) {
   n->next = NULL;
   n->previous = NULL;
 
-  e = pthread_mutex_unlock(&list->lock);
+  e = pthread_rwlock_unlock(&list->lock);
   if (e) return fail(e, "failed to unlock");
 
   return success(n);
 }
 
 Result linked_list_remove(LinkedList* const list, Node* node) {
-  int e = pthread_mutex_trylock(&list->lock);
+  int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return fail(e, "failed to lock");
 
   // sinlge
   if (list->head == list->tail) {
-    e = pthread_mutex_unlock(&list->lock);
+    e = pthread_rwlock_unlock(&list->lock);
     if (e) return fail(e, "failed to unlock");
 
     return linked_list_remove_head(list);
@@ -310,7 +310,7 @@ Result linked_list_remove(LinkedList* const list, Node* node) {
 
   // head
   if (node == list->head) {
-    e = pthread_mutex_unlock(&list->lock);
+    e = pthread_rwlock_unlock(&list->lock);
     if (e) return fail(e, "failed to unlock");
 
     return linked_list_remove_head(list);
@@ -318,7 +318,7 @@ Result linked_list_remove(LinkedList* const list, Node* node) {
 
   // tail
   if (node == list->tail) {
-    e = pthread_mutex_unlock(&list->lock);
+    e = pthread_rwlock_unlock(&list->lock);
     if (e) return fail(e, "failed to unlock");
 
     return linked_list_remove_tail(list);
@@ -330,7 +330,7 @@ Result linked_list_remove(LinkedList* const list, Node* node) {
   node->next = NULL;
   node->previous = NULL;
 
-  e = pthread_mutex_unlock(&list->lock);
+  e = pthread_rwlock_unlock(&list->lock);
   if (e) return fail(e, "failed to unlock");
 
   return success(node);
@@ -338,13 +338,13 @@ Result linked_list_remove(LinkedList* const list, Node* node) {
 
 
 Result linked_list_find(LinkedList* const list, PredicateFn const predicate) {
-  int e = pthread_mutex_trylock(&list->lock);
+  int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return fail(e, "failed to lock");
 
   Node* n = list->head;
   while (n) {
     if (predicate(n)) {
-      e = pthread_mutex_unlock(&list->lock);
+      e = pthread_rwlock_unlock(&list->lock);
       if (e) return fail(e, "failed to unlock");
 
       return success(n);
@@ -352,7 +352,7 @@ Result linked_list_find(LinkedList* const list, PredicateFn const predicate) {
     n = n->next;
   }
   
-  e = pthread_mutex_unlock(&list->lock);
+  e = pthread_rwlock_unlock(&list->lock);
   if (e) return fail(e, "failed to unlock");
 
   return success(NULL);
