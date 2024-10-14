@@ -10,6 +10,38 @@
 #include "utils.h"
 
 // ####################
+// array_index_valid
+// ####################
+Test(array_index_valid, _1) {
+  Array* array = array_new(5).ok;
+
+  for (int i = -5; i < array->capacity * 2; ++i) {
+    bool result = array_index_valid(array, i);
+    bool expected = i >= 0 && i < array->capacity ? true : false;
+    cr_assert_eq(result, expected);
+  }
+
+  array_free(&array, NULL);
+}
+
+// ####################
+// array_has_capacity
+// ####################
+Test(array_has_capacity, _1) {
+  Array* array = array_new(5).ok;
+  char* values[] = {"one", "two", "three", "four", "five"};
+
+  for (int i = 0; i < array->capacity * 2; ++i) {
+    bool result = array_has_capacity(array);
+    bool expected = i < array->capacity ? true : false;
+    cr_assert_eq(result, expected);
+    array_append(array, values[i]);
+  }
+
+  array_free(&array, NULL);
+}
+
+// ####################
 // array_new
 // ####################
 Test(array_new, _1) {
@@ -302,58 +334,20 @@ Test(array_map, _2) {
 // array_to_string
 // ####################
 Test(array_to_string, _1) {
-  Array* array = array_new(2).ok;
+  Array* array = array_new(3).ok;
 
-  char* result = array_to_string(array, (ToStringFn) NULL);
+  char* result = array_to_string(array, (ToStringFn) NULL).ok;
   char* expected = "[]";
   cr_assert_eq(strcmp(result, expected), 0);
-
   free(result);
-  array_free(&array, NULL);
-}
-
-Test(array_to_string, _2) {
-  Array* array = array_new(3).ok;
 
   array_append(array, point_new(0, 0));
   array_set(array, 2, point_new(1, 1));
 
-  char* result = array_to_string(array, (ToStringFn) point_to_string);
-  char* expected = "[(0, 0), NULL, (1, 1)]";
+  result = array_to_string(array, (ToStringFn) point_to_string).ok;
+  expected = "[(0, 0), NULL, (1, 1)]";
   cr_assert_eq(strcmp(result, expected), 0);
 
   free(result);
-  array_free(&array, NULL);
-}
-
-// ####################
-// array_index_valid
-// ####################
-Test(array_index_valid, _1) {
-  Array* array = array_new(5).ok;
-
-  for (int i = -5; i < array->capacity * 2; ++i) {
-    bool result = array_index_valid(array, i);
-    bool expected = i >= 0 && i < array->capacity ? true : false;
-    cr_assert_eq(result, expected);
-  }
-
-  array_free(&array, NULL);
-}
-
-// ####################
-// array_has_capacity
-// ####################
-Test(array_has_capacity, _1) {
-  Array* array = array_new(5).ok;
-  char* values[] = {"one", "two", "three", "four", "five"};
-
-  for (int i = 0; i < array->capacity * 2; ++i) {
-    bool result = array_has_capacity(array);
-    bool expected = i < array->capacity ? true : false;
-    cr_assert_eq(result, expected);
-    array_append(array, values[i]);
-  }
-
   array_free(&array, NULL);
 }

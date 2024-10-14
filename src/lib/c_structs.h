@@ -69,7 +69,7 @@ int array_for_each(Array* const array, ArrayEachFn const each);
 typedef void* (*ArrayMapFn)(void* const);
 Result array_map(Array* const array, ArrayMapFn const map);
 
-char* array_to_string(Array* const array, ToStringFn const to_string);
+Result array_to_string(Array* const array, ToStringFn const to_string);
 
 
 //####################

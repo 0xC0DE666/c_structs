@@ -82,7 +82,7 @@ void array_to_string_test() {
   array_append(array, &p1);
   array_set(array, 2, &p2);
 
-  char* str = array_to_string(array, (ToStringFn) position_to_string);
+  char* str = array_to_string(array, (ToStringFn) position_to_string).ok;
   printf("%s\n", str);
 }
 

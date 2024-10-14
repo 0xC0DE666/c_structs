@@ -237,11 +237,18 @@ Result array_map(Array* const array, ArrayMapFn map) {
 }
 
 // TODO: rdlock && return Result
-char* array_to_string(Array* const array, ToStringFn const to_string) {
+Result array_to_string(Array* const array, ToStringFn const to_string) {
+  int e = pthread_rwlock_trywrlock(&array->lock);
+  if (e) return fail(e, ERR_WRLOCK_FAILED);
+
   if (array->size == 0) {
     char* buffer = malloc(sizeof(char) * 3);
     sprintf(buffer, "[]\0");
-    return buffer;
+
+    e = pthread_rwlock_unlock(&array->lock);
+    if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+
+    return success(buffer);
   }
 
   int capacity = array->capacity;
@@ -250,7 +257,7 @@ char* array_to_string(Array* const array, ToStringFn const to_string) {
   int sum_lengths = 0;
 
   for (int i = 0; i < capacity; ++i) {
-    void* element = array_get(array, i).ok;
+    void* element = array->elements[i];
     elements[i] = element != NULL ? to_string(element) : "NULL";
     lengths[i] = strlen(elements[i]);
     sum_lengths += lengths[i];
@@ -260,7 +267,10 @@ char* array_to_string(Array* const array, ToStringFn const to_string) {
   char* buffer = malloc(sizeof(char) * total_length);
 
   if (buffer == NULL) {
-    return NULL;
+    e = pthread_rwlock_unlock(&array->lock);
+    if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+
+    return fail(1, ERR_MALLOC_FAILED);
   }
 
   sprintf(buffer, "[");
@@ -272,5 +282,8 @@ char* array_to_string(Array* const array, ToStringFn const to_string) {
   }
   strcat(buffer, "]\0");
 
-  return buffer;
+  e = pthread_rwlock_unlock(&array->lock);
+  if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+
+  return success(buffer);
 }
