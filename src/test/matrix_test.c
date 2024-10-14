@@ -293,6 +293,8 @@ Test(matrix_remove, _1) {
 // ####################
 Test(matrix_for_each, _1) {
   Matrix* matrix = matrix_new(3, 3).ok;
+  int e = matrix_for_each(matrix, (ArrayEachFn) point_double);
+  cr_assert_eq(e, 0);
 
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
@@ -301,7 +303,8 @@ Test(matrix_for_each, _1) {
     }
   }
 
-  matrix_for_each(matrix, (MatrixEachFn) point_double);
+  e = matrix_for_each(matrix, (MatrixEachFn) point_double);
+  cr_assert_eq(e, 0);
 
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
@@ -319,18 +322,13 @@ Test(matrix_for_each, _1) {
 // matrix_map
 // ####################
 Test(matrix_map, _1) {
-  Matrix* matrix = matrix_new(3, 3).ok;
-  Matrix* empty = matrix_map(matrix, (MatrixMapFn) NULL).ok;
+  Matrix* points = matrix_new(3, 3).ok;
+  Matrix* empty = matrix_map(points, (MatrixMapFn) NULL).ok;
 
   cr_assert_eq(empty != NULL, true);
   cr_assert_eq(empty->size, 0);
-
-  matrix_free(&matrix, NULL);
   matrix_free(&empty, NULL);
-}
 
-Test(matrix_map, _2) {
-  Matrix* points = matrix_new(3, 3).ok;
   
   for (int r = 0; r < points->rows; ++r) {
     for (int c = 0; c < points->columns; ++c) {

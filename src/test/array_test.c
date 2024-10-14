@@ -184,6 +184,7 @@ Test(array_set, _1) {
       cr_assert_eq(err != NULL, true);
       cr_assert_eq(err->code, 1);
       cr_assert_eq(strcmp(err->message, ERR_INVALID_INDEX), 0);
+      error_free(&err);
     }
   }
   cr_assert_eq(sze, array->capacity);
@@ -231,7 +232,14 @@ Test(array_get, _1) {
     if (!array_index_valid(array, i)) {
       cr_assert_eq(res, 1);
       cr_assert_eq(array->size, sze);
-      cr_assert_eq(array_get(array, i).ok, NULL);
+      Result res = array_get(array, i);
+      void* ok = res.ok;
+      Error* err = res.error;
+      cr_assert_eq(ok, NULL);
+      cr_assert_eq(err != NULL, true);
+      cr_assert_eq(err->code, 1);
+      cr_assert_eq(strcmp(err->message, ERR_INVALID_INDEX), 0);
+      error_free(&err);
     }
   }
   cr_assert_eq(sze, array->capacity);
@@ -268,6 +276,7 @@ Test(array_remove, _1) {
       cr_assert_eq(err != NULL, true);
       cr_assert_eq(err->code, 1);
       cr_assert_eq(strcmp(err->message, ERR_INVALID_INDEX), 0);
+      error_free(&err);
     }
   }
 
@@ -307,6 +316,7 @@ Test(array_map, _2) {
 
   cr_assert_eq(empty != NULL, true);
   cr_assert_eq(empty->size, 0);
+  array_free(&empty, NULL);
 
   
   for (int i = 0; i < points->capacity; ++i) {
