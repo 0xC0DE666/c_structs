@@ -95,7 +95,7 @@ typedef struct Matrix {
 bool matrix_position_valid(Matrix* const matrix, Position* const position);
 bool matrix_has_capacity(Matrix* const matrix);
 
-Matrix* matrix_new(int rows, int columns);
+Result matrix_new(int rows, int columns);
 int matrix_clear(Matrix* const matrix, FreeFn const free_element);
 int matrix_free(Matrix** const matrix, FreeFn const free_element);
 

@@ -32,12 +32,22 @@ bool matrix_has_capacity(Matrix* const matrix) {
   return matrix->size < matrix->capacity;
 }
 
-Matrix* matrix_new(int rows, int columns) {
+Result matrix_new(int rows, int columns) {
   Matrix* matrix = malloc(sizeof(Matrix) + rows * columns * sizeof(void*));
 
   if (matrix == NULL) {
-    return NULL;
+    return fail(1, ERR_MALLOC_FAILED);
   }
+
+  int e = pthread_rwlock_init(&matrix->lock, NULL);
+  if (e) {
+    free(matrix);
+    return fail(e, ERR_RWLOCK_INIT_FAILED);
+  }
+  matrix->size = 0;
+  matrix->capacity = rows * columns;
+  matrix->rows = rows;
+  matrix->columns = columns;
 
   for (int r = 0; r < rows; ++r) {
     void** row  = matrix->elements + r * columns;
@@ -46,13 +56,7 @@ Matrix* matrix_new(int rows, int columns) {
     }
   }
 
-  pthread_rwlock_init(&matrix->lock, NULL);
-  matrix->size = 0;
-  matrix->capacity = rows * columns;
-  matrix->rows = rows;
-  matrix->columns = columns;
-
-  return matrix;
+  return success(matrix);
 }
 
 int matrix_clear(Matrix* const matrix, FreeFn const free_element) {
@@ -151,7 +155,7 @@ void matrix_for_each(Matrix* const matrix, MatrixEachFn const each) {
 }
 
 Matrix* matrix_map(Matrix* const matrix, MatrixMapFn const map) {
-  Matrix* mapped = matrix_new(matrix->rows, matrix->columns);
+  Matrix* mapped = matrix_new(matrix->rows, matrix->columns).ok;
   if (mapped == NULL) {
     return NULL;
   }

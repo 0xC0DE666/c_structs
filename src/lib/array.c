@@ -236,7 +236,6 @@ Result array_map(Array* const array, ArrayMapFn map) {
   return success(mapped);
 }
 
-// TODO: rdlock && return Result
 Result array_to_string(Array* const array, ToStringFn const to_string) {
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return fail(e, ERR_WRLOCK_FAILED);

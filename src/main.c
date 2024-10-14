@@ -54,7 +54,7 @@ void array_fun() {
 }
 
 void old_code() {
-  Matrix* trix = matrix_new(3, 3);
+  Matrix* trix = matrix_new(3, 3).ok;
   Position values[9];
 
   int i = 0;
@@ -87,7 +87,7 @@ void array_to_string_test() {
 }
 
 void matrix_to_string_test() {
-  Matrix* matrix = matrix_new(2, 2);
+  Matrix* matrix = matrix_new(2, 2).ok;
   Position pos[matrix->rows][matrix->columns] = {};
 
   for (int r = 0; r < matrix->rows; ++r) {

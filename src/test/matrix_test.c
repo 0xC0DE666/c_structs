@@ -40,7 +40,7 @@ Test(position_to_string, _1) {
 // ####################
 Test(matrix_new, _1) {
   int rows = 5, columns = 5;
-  Matrix* matrix = matrix_new(rows, columns);
+  Matrix* matrix = matrix_new(rows, columns).ok;
 
   cr_assert_eq(matrix->capacity, rows * columns);
   cr_assert_eq(matrix->rows, rows);
@@ -61,7 +61,7 @@ Test(matrix_new, _1) {
 // matrix_clear
 // ####################
 Test(matrix_clear, _1) {
-  Matrix* matrix = matrix_new(5, 6);
+  Matrix* matrix = matrix_new(5, 6).ok;
 
   int sze = 0;
   for (int r = 0; r < matrix->rows; ++r) {
@@ -93,7 +93,7 @@ Test(matrix_clear, _1) {
 // matrix_free
 // ####################
 Test(matrix_free, _1) {
-  Matrix* matrix = matrix_new(5, 5);
+  Matrix* matrix = matrix_new(5, 5).ok;
 
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
@@ -112,7 +112,7 @@ Test(matrix_free, _1) {
 // matrix_set
 // ####################
 Test(matrix_set, _1) {
-  Matrix* matrix = matrix_new(5, 5);
+  Matrix* matrix = matrix_new(5, 5).ok;
 
   int sze = 0;
   for (int r = -5; r < matrix->rows * 2; ++r) {
@@ -167,7 +167,7 @@ Test(matrix_set, _1) {
 // matrix_get
 // ####################
 Test(matrix_get, _1) {
-  Matrix* matrix = matrix_new(5, 5);
+  Matrix* matrix = matrix_new(5, 5).ok;
 
   int sze = 0;
   for (int r = -5; r < matrix->rows * 2; ++r) {
@@ -201,7 +201,7 @@ Test(matrix_get, _1) {
 // matrix_remove
 // ####################
 Test(matrix_remove, _1) {
-  Matrix* matrix = matrix_new(5, 2);
+  Matrix* matrix = matrix_new(5, 2).ok;
 
   int sze = 0;
   for (int r = -5; r < matrix->rows * 2; ++r) {
@@ -237,7 +237,7 @@ Test(matrix_remove, _1) {
 // matrix_for_each
 // ####################
 Test(matrix_for_each, _1) {
-  Matrix* matrix = matrix_new(3, 3);
+  Matrix* matrix = matrix_new(3, 3).ok;
 
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
@@ -264,7 +264,7 @@ Test(matrix_for_each, _1) {
 // matrix_map
 // ####################
 Test(matrix_map, _1) {
-  Matrix* matrix = matrix_new(3, 3);
+  Matrix* matrix = matrix_new(3, 3).ok;
   Matrix* empty = matrix_map(matrix, (MatrixMapFn) NULL);
 
   cr_assert_eq(empty != NULL, true);
@@ -275,7 +275,7 @@ Test(matrix_map, _1) {
 }
 
 Test(matrix_map, _2) {
-  Matrix* points = matrix_new(3, 3);
+  Matrix* points = matrix_new(3, 3).ok;
   
   for (int r = 0; r < points->rows; ++r) {
     for (int c = 0; c < points->columns; ++c) {
@@ -307,7 +307,7 @@ Test(matrix_map, _2) {
 // matrix_to_string
 // ####################
 Test(matrix_to_string, empty) {
-  Matrix* matrix = matrix_new(2, 2);
+  Matrix* matrix = matrix_new(2, 2).ok;
 
   char* result = matrix_to_string(matrix, (ToStringFn) position_to_string);
   char* expected = "[]";
@@ -318,7 +318,7 @@ Test(matrix_to_string, empty) {
 }
 
 Test(matrix_to_string, single_element) {
-  Matrix* matrix = matrix_new(1, 1);
+  Matrix* matrix = matrix_new(1, 1).ok;
   Position pos = position_new(0, 0);
 
   matrix_set(matrix, &pos, &pos);
@@ -332,7 +332,7 @@ Test(matrix_to_string, single_element) {
 }
 
 Test(matrix_to_string, single_row) {
-  Matrix* matrix = matrix_new(1, 2);
+  Matrix* matrix = matrix_new(1, 2).ok;
 
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
@@ -350,7 +350,7 @@ Test(matrix_to_string, single_row) {
 }
 
 Test(matrix_to_string, single_column) {
-  Matrix* matrix = matrix_new(2, 1);
+  Matrix* matrix = matrix_new(2, 1).ok;
 
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
@@ -368,7 +368,7 @@ Test(matrix_to_string, single_column) {
 }
 
 Test(matrix_to_string, multi) {
-  Matrix* matrix = matrix_new(2, 2);
+  Matrix* matrix = matrix_new(2, 2).ok;
 
   int i = 1;
   for (int r = 0; r < matrix->rows; ++r) {
@@ -391,7 +391,7 @@ Test(matrix_to_string, multi) {
 // matrix_position_valid
 // ####################
 Test(matrix_position_valid, _1) {
-  Matrix* matrix = matrix_new(3, 3);
+  Matrix* matrix = matrix_new(3, 3).ok;
 
   for (int r = -3; r < matrix->rows * 2; ++r) {
     for (int c = -3; c < matrix->columns * 2; ++c) {
@@ -410,7 +410,7 @@ Test(matrix_position_valid, _1) {
 // matrix_has_capacity
 // ####################
 Test(matrix_has_capacity, _1) {
-  Matrix* matrix = matrix_new(3, 3);
+  Matrix* matrix = matrix_new(3, 3).ok;
 
   for (int r = 0; r < matrix->rows * 2; ++r) {
     for (int c = 0; c < matrix->columns * 2; ++c) {
