@@ -61,7 +61,7 @@ Result array_get(Array* const array, int index);
 Result array_remove(Array* const array, int index);
 
 typedef void (*ArrayEachFn)(void* const);
-void array_for_each(Array* const array, ArrayEachFn const each);
+int array_for_each(Array* const array, ArrayEachFn const each);
 
 typedef void* (*ArrayMapFn)(void* const);
 Array* array_map(Array* const array, ArrayMapFn const map);

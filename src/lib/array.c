@@ -151,7 +151,6 @@ Result array_get(Array* const array, int index) {
   return success(array->elements[index]);
 }
 
-// TODO: wrlock && return Result
 Result array_remove(Array* const array, int index) {
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return fail(e, ERR_WRLOCK_FAILED); 
@@ -181,9 +180,15 @@ Result array_remove(Array* const array, int index) {
 }
 
 // TODO: rdlock && return int
-void array_for_each(Array* const array, ArrayEachFn each) {
+int array_for_each(Array* const array, ArrayEachFn each) {
+  int e = pthread_rwlock_tryrdlock(&array->lock);
+  if (e) return e;
+
   if (array->size == 0) {
-    return;
+    e = pthread_rwlock_unlock(&array->lock);
+    if (e) return e;
+
+    return 0;
   }
 
   for (int i = 0; i < array->capacity; ++i) {
@@ -192,6 +197,11 @@ void array_for_each(Array* const array, ArrayEachFn each) {
       each(element);
     }
   }
+
+  e = pthread_rwlock_unlock(&array->lock);
+  if (e) return e;
+
+  return 0;
 }
 
 // TODO: rdlock && return Result

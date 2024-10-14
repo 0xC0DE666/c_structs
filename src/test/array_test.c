@@ -247,12 +247,15 @@ Test(array_remove, _1) {
 // ####################
 Test(array_for_each, _1) {
   Array* array = array_new(5).ok;
+  int e = array_for_each(array, (ArrayEachFn) point_double);
+  cr_assert_eq(e, 0);
   
   for (int i = 0; i < array->capacity; ++i) {
     array_append(array, point_new(i, i));
   }
 
-  array_for_each(array, (ArrayEachFn) point_double);
+  e = array_for_each(array, (ArrayEachFn) point_double);
+  cr_assert_eq(e, 0);
   
   for (int i = 0; i < array->capacity; ++i) {
     Point* p = array_get(array, i).ok;
