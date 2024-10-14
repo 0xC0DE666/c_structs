@@ -150,6 +150,7 @@ Test(array_set, _1) {
       Error* err = res.error;
       cr_assert_eq(ok, NULL);
       cr_assert_eq(err != NULL, true);
+      cr_assert_eq(err->code, 1);
       cr_assert_eq(strcmp(err->message, ERR_INDEX_OUT_OF_BOUNDS), 0);
     }
   }
@@ -220,7 +221,7 @@ Test(array_remove, _1) {
 
   for (int i = -5; i <= array->capacity * 2; ++i) {
     if (array_index_valid(array, i)) {
-      Point* p = array_remove(array, 0);
+      Point* p = array_remove(array, 0).ok;
       cr_assert_eq(p != NULL, true);
       cr_assert_eq(p->x, i);
       cr_assert_eq(p->y, i);
@@ -228,9 +229,13 @@ Test(array_remove, _1) {
     }
 
     if (!array_index_valid(array, i)) {
-      void* v = array_remove(array, i);
-      cr_assert_eq(v, NULL);
-      cr_assert_eq(array->size, i < 0 ? array->capacity : 0);
+      Result res = array_remove(array, i);
+      void* ok = res.ok;
+      Error* err = res.error;
+      cr_assert_eq(ok, NULL);
+      cr_assert_eq(err != NULL, true);
+      cr_assert_eq(err->code, 1);
+      cr_assert_eq(strcmp(err->message, ERR_INDEX_OUT_OF_BOUNDS), 0);
     }
   }
 

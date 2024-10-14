@@ -58,7 +58,7 @@ int array_prepend(Array* const array, void* const element);
 int array_set(Array* const array, int index, void* const element);
 
 Result array_get(Array* const array, int index);
-void* array_remove(Array* const array, int index);
+Result array_remove(Array* const array, int index);
 
 typedef void (*ArrayEachFn)(void* const);
 void array_for_each(Array* const array, ArrayEachFn const each);

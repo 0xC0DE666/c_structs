@@ -152,11 +152,15 @@ Result array_get(Array* const array, int index) {
 }
 
 // TODO: wrlock && return Result
-void* array_remove(Array* const array, int index) {
-  pthread_rwlock_trywrlock(&array->lock);
+Result array_remove(Array* const array, int index) {
+  int e = pthread_rwlock_trywrlock(&array->lock);
+  if (e) return fail(e, ERR_WRLOCK_FAILED); 
+
   if (!array_index_valid(array, index)) {
-    pthread_rwlock_unlock(&array->lock);
-    return NULL;
+    e = pthread_rwlock_unlock(&array->lock);
+    if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+
+    return fail(1, ERR_INDEX_OUT_OF_BOUNDS);
   }
 
   void* removed = array->elements[index];
@@ -170,8 +174,10 @@ void* array_remove(Array* const array, int index) {
   }
   array->size--;
 
-  pthread_rwlock_unlock(&array->lock);
-  return removed;
+  e = pthread_rwlock_unlock(&array->lock);
+  if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+
+  return success(removed);
 }
 
 // TODO: rdlock && return int
