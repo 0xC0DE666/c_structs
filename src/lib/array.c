@@ -179,7 +179,6 @@ Result array_remove(Array* const array, int index) {
   return success(removed);
 }
 
-// TODO: rdlock && return int
 int array_for_each(Array* const array, ArrayEachFn each) {
   int e = pthread_rwlock_tryrdlock(&array->lock);
   if (e) return e;
@@ -204,26 +203,37 @@ int array_for_each(Array* const array, ArrayEachFn each) {
   return 0;
 }
 
-// TODO: rdlock && return Result
-Array* array_map(Array* const array, ArrayMapFn map) {
+Result array_map(Array* const array, ArrayMapFn map) {
+  int e = pthread_rwlock_trywrlock(&array->lock);
+  if (e) return fail(e, ERR_WRLOCK_FAILED);
+
   Array* mapped = array_new(array->capacity).ok;
   if (mapped == NULL) {
-    return NULL;
+    e = pthread_rwlock_unlock(&array->lock);
+    if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+
+    return fail(1, ERR_MALLOC_FAILED);
   }
 
   if (array->size == 0) {
-    return mapped;
+    e = pthread_rwlock_unlock(&array->lock);
+    if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+
+    return success(mapped);
   }
 
   for (int i = 0; i < array->capacity; ++i) {
-    void* element = array_get(array, i).ok;
-    if (element != NULL) {
-      void* val = map(element);
-      array_append(mapped, val);
+    void* element = array->elements[i];
+    if (element) {
+      array_append(mapped, map(element));
     }
   }
   
-  return mapped;
+
+  e = pthread_rwlock_unlock(&array->lock);
+  if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+
+  return success(mapped);
 }
 
 // TODO: rdlock && return Result

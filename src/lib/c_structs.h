@@ -49,6 +49,9 @@ typedef struct Array {
   void* elements[];
 } Array;
 
+bool array_index_valid(Array* const array, int index);
+bool array_has_capacity(Array* const array);
+
 Result array_new(int capacity);
 int array_clear(Array* const array, FreeFn const free_element);
 int array_free(Array** const array, FreeFn const free_element);
@@ -64,12 +67,9 @@ typedef void (*ArrayEachFn)(void* const);
 int array_for_each(Array* const array, ArrayEachFn const each);
 
 typedef void* (*ArrayMapFn)(void* const);
-Array* array_map(Array* const array, ArrayMapFn const map);
+Result array_map(Array* const array, ArrayMapFn const map);
 
 char* array_to_string(Array* const array, ToStringFn const to_string);
-
-bool array_index_valid(Array* const array, int index);
-bool array_has_capacity(Array* const array);
 
 
 //####################
@@ -92,6 +92,9 @@ typedef struct Matrix {
   void* elements[];
 } Matrix;
 
+bool matrix_position_valid(Matrix* const matrix, Position* const position);
+bool matrix_has_capacity(Matrix* const matrix);
+
 Matrix* matrix_new(int rows, int columns);
 int matrix_clear(Matrix* const matrix, FreeFn const free_element);
 int matrix_free(Matrix** const matrix, FreeFn const free_element);
@@ -108,9 +111,6 @@ typedef void* (*MatrixMapFn)(void* const);
 Matrix* matrix_map(Matrix* const matrix, MatrixMapFn const map);
 
 char* matrix_to_string(Matrix* const matrix, ToStringFn const to_string);
-
-bool matrix_position_valid(Matrix* const matrix, Position* const position);
-bool matrix_has_capacity(Matrix* const matrix);
 
 
 //####################

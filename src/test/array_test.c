@@ -269,25 +269,20 @@ Test(array_for_each, _1) {
 // ####################
 // array_map
 // ####################
-Test(array_map, _1) {
-  Array* array = array_new(5).ok;
-  Array* empty = array_map(array, (ArrayMapFn) NULL);
+Test(array_map, _2) {
+  Array* points = array_new(5).ok;
+  Array* empty = array_map(points, (ArrayMapFn) NULL).ok;
 
   cr_assert_eq(empty != NULL, true);
   cr_assert_eq(empty->size, 0);
 
-  array_free(&array, NULL);
-  array_free(&empty, NULL);
-}
-
-Test(array_map, _2) {
-  Array* points = array_new(5).ok;
   
   for (int i = 0; i < points->capacity; ++i) {
-    array_append(points, point_new(i, i));
+    int e = array_append(points, point_new(i, i));
+    cr_assert_eq(e, 0);
   }
 
-  Array* strings = array_map(points, (ArrayMapFn) point_to_string);
+  Array* strings = array_map(points, (ArrayMapFn) point_to_string).ok;
 
   cr_assert_eq(strings->capacity, points->capacity);
   cr_assert_eq(strings->size, points->size);
