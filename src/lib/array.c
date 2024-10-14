@@ -13,6 +13,7 @@ bool array_has_capacity(Array* const array) {
   return array->size < array->capacity;
 }
 
+// TODO: make this return Result
 Array* array_new(int capacity) {
   Array* array = malloc(sizeof(Array) + capacity * sizeof(void*));
 
@@ -32,7 +33,9 @@ Array* array_new(int capacity) {
 }
 
 int array_clear(Array* const array, FreeFn free_element) {
-  pthread_rwlock_trywrlock(&array->lock);
+  int e = pthread_rwlock_trywrlock(&array->lock);
+  if (e) return e;
+
   for (int i = 0; i < array->capacity; i++) {
     void** el = array->elements + i;
 
@@ -44,13 +47,16 @@ int array_clear(Array* const array, FreeFn free_element) {
   }
   array->size = 0;
 
-  pthread_rwlock_unlock(&array->lock);
+  e = pthread_rwlock_unlock(&array->lock);
+  if (e) return e;
+
   return 0;
 }
 
 int array_free(Array** const array, FreeFn free_element) {
   array_clear(*array, free_element);
 
+  // TODO: handle
   pthread_rwlock_destroy(&(*array)->lock);
   free(*array);
   *array = NULL;
@@ -59,23 +65,33 @@ int array_free(Array** const array, FreeFn free_element) {
 }
 
 int array_append(Array* const array, void* const element) {
-  pthread_rwlock_trywrlock(&array->lock);
+  int e = pthread_rwlock_trywrlock(&array->lock);
+  if (e) return e;
+
   if (!array_has_capacity(array)) {
-    pthread_rwlock_unlock(&array->lock);
+    e = pthread_rwlock_unlock(&array->lock);
+    if (e) return e;
+
     return 1;
   }
 
   array->elements[array->size] = element;
   array->size++;
 
-  pthread_rwlock_unlock(&array->lock);
+  e = pthread_rwlock_unlock(&array->lock);
+  if (e) return e;
+
   return 0;
 }
 
 int array_prepend(Array* const array, void* const element) {
-  pthread_rwlock_trywrlock(&array->lock);
+  int e = pthread_rwlock_trywrlock(&array->lock);
+  if (e) return e;
+
   if (!array_has_capacity(array)) {
-    pthread_rwlock_unlock(&array->lock);
+    e = pthread_rwlock_unlock(&array->lock);
+    if (e) return e;
+
     return 1;
   }
 
@@ -86,13 +102,20 @@ int array_prepend(Array* const array, void* const element) {
   array->elements[0] = element;
   array->size++;
 
-  pthread_rwlock_unlock(&array->lock);
+  e = pthread_rwlock_unlock(&array->lock);
+  if (e) return e;
+
   return 0;
 }
 
 int array_set(Array* const array, int index, void* const element) {
+  int e = pthread_rwlock_trywrlock(&array->lock);
+  if (e) return e;
+
   if (!array_index_valid(array, index)) {
-    pthread_rwlock_unlock(&array->lock);
+    e = pthread_rwlock_unlock(&array->lock);
+    if (e) return e;
+
     return 1;
   }
 
@@ -101,10 +124,13 @@ int array_set(Array* const array, int index, void* const element) {
   }
   array->elements[index] = element;
 
-  pthread_rwlock_unlock(&array->lock);
+  e = pthread_rwlock_unlock(&array->lock);
+  if (e) return e;
+
   return 0;
 }
 
+// TODO: rdlock && return Result
 void* array_get(Array* const array, int index) {
   if (!array_index_valid(array, index)) {
     return NULL;
@@ -113,6 +139,7 @@ void* array_get(Array* const array, int index) {
   return array->elements[index];
 }
 
+// TODO: wrlock && return Result
 void* array_remove(Array* const array, int index) {
   pthread_rwlock_trywrlock(&array->lock);
   if (!array_index_valid(array, index)) {
@@ -135,6 +162,7 @@ void* array_remove(Array* const array, int index) {
   return removed;
 }
 
+// TODO: rdlock && return int
 void array_for_each(Array* const array, ArrayEachFn each) {
   if (array->size == 0) {
     return;
@@ -148,6 +176,7 @@ void array_for_each(Array* const array, ArrayEachFn each) {
   }
 }
 
+// TODO: rdlock && return Result
 Array* array_map(Array* const array, ArrayMapFn map) {
   Array* mapped = array_new(array->capacity);
   if (mapped == NULL) {
@@ -169,6 +198,7 @@ Array* array_map(Array* const array, ArrayMapFn map) {
   return mapped;
 }
 
+// TODO: rdlock && return Result
 char* array_to_string(Array* const array, ToStringFn const to_string) {
   if (array->size == 0) {
     char* buffer = malloc(sizeof(char) * 3);
