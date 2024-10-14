@@ -87,7 +87,9 @@ int matrix_clear(Matrix* const matrix, FreeFn const free_element) {
 int matrix_free(Matrix** const matrix, FreeFn const free_element) {
   matrix_clear(*matrix, free_element);
 
-  pthread_rwlock_destroy(&(*matrix)->lock);
+  int e = pthread_rwlock_destroy(&(*matrix)->lock);
+  if (e) return e;
+
   free(*matrix);
   *matrix = NULL;
 
@@ -96,10 +98,13 @@ int matrix_free(Matrix** const matrix, FreeFn const free_element) {
 
 
 int matrix_set(Matrix* const matrix, Position* const position, void* const value) {
-  pthread_rwlock_trywrlock(&matrix->lock);
+  int e = pthread_rwlock_trywrlock(&matrix->lock);
+  if (e) return e;
 
   if (!matrix_position_valid(matrix, position)) {
-    pthread_rwlock_unlock(&matrix->lock);
+    e = pthread_rwlock_unlock(&matrix->lock);
+    if (e) return e;
+
     return 1;
   }
 
@@ -110,8 +115,9 @@ int matrix_set(Matrix* const matrix, Position* const position, void* const value
   }
   row[position->column] = value;
 
+  e = pthread_rwlock_unlock(&matrix->lock);
+  if (e) return e;
 
-  pthread_rwlock_unlock(&matrix->lock);
   return 0;
 }
 
