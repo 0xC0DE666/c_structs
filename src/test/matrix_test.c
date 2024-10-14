@@ -70,7 +70,7 @@ Test(matrix_clear, _1) {
       int res = matrix_set(matrix, &p, point_new(r, c));
       res == 0 ? ++sze : 0;
       cr_assert_eq(matrix->size, sze);
-      cr_assert_eq(matrix_get(matrix, &p) != NULL, true);
+      cr_assert_eq(matrix_get(matrix, &p).ok != NULL, true);
     }
   }
   cr_assert_eq(matrix->size, matrix->capacity);
@@ -99,7 +99,7 @@ Test(matrix_free, _1) {
     for (int c = 0; c < matrix->columns; ++c) {
       Position p = position_new(r, c);
       matrix_set(matrix, &p, point_new(r, c));
-      cr_assert_eq(matrix_get(matrix, &p) != NULL, true);
+      cr_assert_eq(matrix_get(matrix, &p).ok != NULL, true);
     }
   }
   cr_assert_eq(matrix->size, matrix->capacity);
@@ -124,7 +124,7 @@ Test(matrix_set, _1) {
       if (matrix_position_valid(matrix, &p)) {
         cr_assert_eq(res, 0);
         cr_assert_eq(matrix->size, sze);
-        Point* pt = matrix_get(matrix, &p);
+        Point* pt = matrix_get(matrix, &p).ok;
         cr_assert_eq(pt != NULL, true);
         cr_assert_eq(pt->x, r);
         cr_assert_eq(pt->y, c);
@@ -133,7 +133,7 @@ Test(matrix_set, _1) {
       if (!matrix_position_valid(matrix, &p)) {
         cr_assert_eq(res, 1);
         cr_assert_eq(matrix->size, sze);
-        cr_assert_eq(matrix_get(matrix, &p), NULL);
+        cr_assert_eq(matrix_get(matrix, &p).ok, NULL);
       }
     }
   }
@@ -144,13 +144,13 @@ Test(matrix_set, _1) {
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
       Position p = {r, c};
-      points[idx] = matrix_get(matrix, &p);
+      points[idx] = matrix_get(matrix, &p).ok;
       ++idx;
       int res = matrix_set(matrix, &p, point_new((r + 1) * 2, (c + 1) * 2));
 
       cr_assert_eq(res, 0);
       cr_assert_eq(matrix->size, matrix->capacity);
-      Point* pt = matrix_get(matrix, &p);
+      Point* pt = matrix_get(matrix, &p).ok;
       cr_assert_eq(pt != NULL, true);
       cr_assert_eq(pt->x, (r + 1) * 2);
       cr_assert_eq(pt->y, (c + 1) * 2);
@@ -179,7 +179,7 @@ Test(matrix_get, _1) {
       if (matrix_position_valid(matrix, &p)) {
         cr_assert_eq(res, 0);
         cr_assert_eq(matrix->size, sze);
-        Point* pt = matrix_get(matrix, &p);
+        Point* pt = matrix_get(matrix, &p).ok;
         cr_assert_eq(pt != NULL, true);
         cr_assert_eq(pt->x, r);
         cr_assert_eq(pt->y, c);
@@ -188,7 +188,7 @@ Test(matrix_get, _1) {
       if (!matrix_position_valid(matrix, &p)) {
         cr_assert_eq(res, 1);
         cr_assert_eq(matrix->size, sze);
-        cr_assert_eq(matrix_get(matrix, &p), NULL);
+        cr_assert_eq(matrix_get(matrix, &p).ok, NULL);
       }
     }
   }
@@ -218,7 +218,7 @@ Test(matrix_remove, _1) {
         cr_assert_eq(pt != NULL, true);
         cr_assert_eq(pt->x, r);
         cr_assert_eq(pt->y, c);
-        cr_assert_eq(matrix_get(matrix, &p), NULL);
+        cr_assert_eq(matrix_get(matrix, &p).ok, NULL);
         cr_assert_eq(matrix->size, sze);
         point_free(&pt);
       }
@@ -251,7 +251,7 @@ Test(matrix_for_each, _1) {
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
       Position pos = {r, c};
-      Point* p = matrix_get(matrix, &pos);
+      Point* p = matrix_get(matrix, &pos).ok;
       cr_assert_eq(p->x, r * 2);
       cr_assert_eq(p->y, c * 2);
     }
@@ -293,8 +293,8 @@ Test(matrix_map, _2) {
   for (int r = 0; r < points->rows; ++r) {
     for (int c = 0; c < points->columns; ++c) {
       Position pos = {r, c};
-      char* result = matrix_get(strings, &pos);
-      char* expected = point_to_string(matrix_get(points, &pos));
+      char* result = matrix_get(strings, &pos).ok;
+      char* expected = point_to_string(matrix_get(points, &pos).ok);
       cr_assert_eq(strcmp(result, expected), 0);
     }
   }

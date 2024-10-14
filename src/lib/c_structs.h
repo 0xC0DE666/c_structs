@@ -32,7 +32,8 @@ Result fail(int code, char* message);
 #define ERR_WRLOCK_FAILED "wrlock failed"
 #define ERR_RWLOCK_UNLOCK_FAILED "rwlock unlock failed"
 
-#define ERR_INDEX_OUT_OF_BOUNDS "index out of bounds"
+#define ERR_INVALID_INDEX "invalid index"
+#define ERR_INVALID_POSITION "invalid position"
 
 typedef void (*FreeFn)(void** const);
 typedef bool (*PredicateFn)(void* const);
@@ -101,7 +102,7 @@ int matrix_free(Matrix** const matrix, FreeFn const free_element);
 
 int matrix_set(Matrix* const matrix, Position* const position, void* const element);
 
-void* matrix_get(Matrix* const matrix, Position* const position);
+Result matrix_get(Matrix* const matrix, Position* const position);
 void* matrix_remove(Matrix* const matrix, Position* const position);
 
 typedef void (*MatrixEachFn)(void* const);

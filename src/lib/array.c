@@ -142,7 +142,7 @@ Result array_get(Array* const array, int index) {
     e = pthread_rwlock_unlock(&array->lock);
     if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
 
-    return fail(1, ERR_INDEX_OUT_OF_BOUNDS);
+    return fail(1, ERR_INVALID_INDEX);
   }
 
   e = pthread_rwlock_unlock(&array->lock);
@@ -159,7 +159,7 @@ Result array_remove(Array* const array, int index) {
     e = pthread_rwlock_unlock(&array->lock);
     if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
 
-    return fail(1, ERR_INDEX_OUT_OF_BOUNDS);
+    return fail(1, ERR_INVALID_INDEX);
   }
 
   void* removed = array->elements[index];

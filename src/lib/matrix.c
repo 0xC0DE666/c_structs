@@ -121,13 +121,22 @@ int matrix_set(Matrix* const matrix, Position* const position, void* const value
   return 0;
 }
 
-void* matrix_get(Matrix* const matrix, Position* const position) {
+Result matrix_get(Matrix* const matrix, Position* const position) {
+  int e = pthread_rwlock_tryrdlock(&matrix->lock);
+  if (e) return fail(e, ERR_RDLOCK_FAILED);
+
   if (!matrix_position_valid(matrix, position)) {
-    return NULL;
+    e = pthread_rwlock_unlock(&matrix->lock);
+    if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+
+    return fail(1, ERR_INVALID_POSITION);
   }
 
+  e = pthread_rwlock_unlock(&matrix->lock);
+  if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+
   void** row = matrix->elements + position->row * matrix->columns;
-  return row[position->column];
+  return success(row[position->column]);
 }
 
 void* matrix_remove(Matrix* const matrix, Position* const position) {
@@ -156,7 +165,7 @@ void matrix_for_each(Matrix* const matrix, MatrixEachFn const each) {
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
       Position p = position_new(r, c);
-      void* element = matrix_get(matrix, &p);
+      void* element = matrix_get(matrix, &p).ok;
       if (element != NULL) {
         each(element);
       }
@@ -178,7 +187,7 @@ Matrix* matrix_map(Matrix* const matrix, MatrixMapFn const map) {
   for (int r = 0; r < matrix->rows; ++r) {
     for (int c = 0; c < matrix->columns; ++c) {
       pos = position_new(r, c);
-      void* element = matrix_get(matrix, &pos);
+      void* element = matrix_get(matrix, &pos).ok;
       if (element != NULL) {
         void* val = map(element);
         matrix_set(mapped, &pos, val);
@@ -206,7 +215,7 @@ char* matrix_to_string(Matrix* const matrix, ToStringFn const to_string) {
   for (int r = 0; r < rows; ++r) {
     for (int c = 0; c < columns; ++c) {
       Position p = position_new(r, c);
-      void* element = matrix_get(matrix, &p);
+      void* element = matrix_get(matrix, &p).ok;
       bool not_null = element != NULL;
       elements[r][c] = not_null ? to_string(element) : "NULL";
       lengths[r][c] = not_null ? strlen(elements[r][c]) : strlen("NULL");
