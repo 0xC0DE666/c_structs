@@ -21,4 +21,4 @@ Result success(void* value) {
 
 Result fail(int code, char* message) {
   return (Result) { NULL, error(code, message) };
-}  
+}

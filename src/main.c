@@ -48,7 +48,7 @@ void array_fun() {
   array_set(arr, 10, &values[4]);
 
   for (int i = 0; i < arr->size; ++i) {
-    int* x = (int*) array_get(arr, i);
+    int* x = (int*) array_get(arr, i).ok;
     printf("%d %d\n", i, *x);
   }
 }

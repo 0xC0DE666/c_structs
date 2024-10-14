@@ -17,13 +17,13 @@ Result array_new(int capacity) {
   Array* array = malloc(sizeof(Array) + capacity * sizeof(void*));
 
   if (array == NULL) {
-    return fail(1, "malloc failed");
+    return fail(1, ERR_MALLOC_FAILED);
   }
 
   int e = pthread_rwlock_init(&array->lock, NULL);
   if (e) {
     free(array);
-    return fail(e, "rwlock init failed");
+    return fail(e, ERR_RWLOCK_INIT_FAILED);
   }
   array->capacity = capacity;
   array->size = 0;
@@ -59,8 +59,9 @@ int array_clear(Array* const array, FreeFn free_element) {
 int array_free(Array** const array, FreeFn free_element) {
   array_clear(*array, free_element);
 
-  // TODO: handle
-  pthread_rwlock_destroy(&(*array)->lock);
+  int e = pthread_rwlock_destroy(&(*array)->lock);
+  if (e) return e;
+
   free(*array);
   *array = NULL;
 
@@ -133,13 +134,21 @@ int array_set(Array* const array, int index, void* const element) {
   return 0;
 }
 
-// TODO: rdlock && return Result
-void* array_get(Array* const array, int index) {
+Result array_get(Array* const array, int index) {
+  int e = pthread_rwlock_tryrdlock(&array->lock);
+  if (e) return fail(e, ERR_RDLOCK_FAILED);
+
   if (!array_index_valid(array, index)) {
-    return NULL;
+    e = pthread_rwlock_unlock(&array->lock);
+    if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+
+    return fail(1, ERR_INDEX_OUT_OF_BOUNDS);
   }
 
-  return array->elements[index];
+  e = pthread_rwlock_unlock(&array->lock);
+  if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+
+  return success(array->elements[index]);
 }
 
 // TODO: wrlock && return Result
@@ -172,7 +181,7 @@ void array_for_each(Array* const array, ArrayEachFn each) {
   }
 
   for (int i = 0; i < array->capacity; ++i) {
-    void* element = array_get(array, i);
+    void* element = array_get(array, i).ok;
     if (element != NULL) {
       each(element);
     }
@@ -191,7 +200,7 @@ Array* array_map(Array* const array, ArrayMapFn map) {
   }
 
   for (int i = 0; i < array->capacity; ++i) {
-    void* element = array_get(array, i);
+    void* element = array_get(array, i).ok;
     if (element != NULL) {
       void* val = map(element);
       array_append(mapped, val);
@@ -215,7 +224,7 @@ char* array_to_string(Array* const array, ToStringFn const to_string) {
   int sum_lengths = 0;
 
   for (int i = 0; i < capacity; ++i) {
-    void* element = array_get(array, i);
+    void* element = array_get(array, i).ok;
     elements[i] = element != NULL ? to_string(element) : "NULL";
     lengths[i] = strlen(elements[i]);
     sum_lengths += lengths[i];
