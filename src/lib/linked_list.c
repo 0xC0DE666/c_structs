@@ -5,18 +5,18 @@
 
 #include "c_structs.h"
 
-Node* node_new(void* const value) {
+Result node_new(void* const value) {
   Node* node = malloc(sizeof(Node));
 
   if (node == NULL) {
-    return NULL;
+    return fail(1, ERR_MALLOC_FAILED);
   }
 
   node->value = value;
   node->next = NULL;
   node->previous = NULL;
   
-  return node;
+  return success(node);
 }
 
 int node_free(Node** node, FreeFn const free_value) {
@@ -41,18 +41,18 @@ int linked_list_size(LinkedList* list) {
   return sze;
 }
 
-LinkedList* linked_list_new() {
+Result linked_list_new() {
   LinkedList* list = malloc(sizeof(LinkedList));
 
   if (list == NULL) {
-    return NULL;
+    return fail(1, ERR_MALLOC_FAILED);
   }
 
   pthread_rwlock_init(&list->lock, NULL);
   list->head = NULL;
   list->tail = NULL;
   
-  return list;
+  return success(list);
 }
 
 
@@ -117,7 +117,7 @@ int linked_list_append(LinkedList* list, void* value) {
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return e;
 
-  Node* node = node_new(value);
+  Node* node = node_new(value).ok;
   if (list->head == NULL && list->tail == NULL) {
     list->head = node;
     list->tail = node;
@@ -142,7 +142,7 @@ int linked_list_prepend(LinkedList* list, void* value) {
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return e;
 
-  Node* node = node_new(value);
+  Node* node = node_new(value).ok;
   if (list->head == NULL && list->tail == NULL) {
     list->head = node;
     list->tail = node;
@@ -167,7 +167,7 @@ int linked_list_insert_before(LinkedList* const list, Node* const node, void* co
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return e;
   
-  Node* new_node = node_new(value);
+  Node* new_node = node_new(value).ok;
   // insert before head
   if (node == list->head) {
     list->head->previous = new_node;
@@ -197,7 +197,7 @@ int linked_list_insert_before(LinkedList* const list, Node* const node, void* co
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return e;
   
-  Node* new_node = node_new(value);
+  Node* new_node = node_new(value).ok;
   // insert after tail
   if (node == list->tail) {
     new_node->previous = list->tail;

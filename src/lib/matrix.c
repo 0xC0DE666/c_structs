@@ -12,6 +12,10 @@ Position position_new(int row, int column) {
 char* position_to_string(Position* position) {
   char* buffer = malloc(14);
 
+  if (buffer == NULL) {
+    return NULL;
+  }
+
   sprintf(
     buffer,
     "(%d, %d)",

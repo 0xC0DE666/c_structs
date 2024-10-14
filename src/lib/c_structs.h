@@ -124,7 +124,7 @@ typedef struct Node {
   struct Node* previous;
 } Node;
 
-Node* node_new(void* const value);
+Result node_new(void* const value);
 int node_free(Node** const node, FreeFn const free_value);
 
 typedef struct LinkedList {
@@ -135,7 +135,7 @@ typedef struct LinkedList {
 
 int linked_list_size(LinkedList* const list);
 
-LinkedList* linked_list_new();
+Result linked_list_new();
 int linked_list_clear(LinkedList* const list, FreeFn const free_value);
 int linked_list_free(LinkedList** const list, FreeFn const free_value);
 
