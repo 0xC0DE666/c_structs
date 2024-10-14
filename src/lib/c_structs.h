@@ -38,7 +38,7 @@
     void* elements[];
   } Array;
 
-  Array* array_new(int capacity);
+  Result array_new(int capacity);
   int array_clear(Array* const array, FreeFn const free_element);
   int array_free(Array** const array, FreeFn const free_element);
 

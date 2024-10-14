@@ -13,15 +13,18 @@ bool array_has_capacity(Array* const array) {
   return array->size < array->capacity;
 }
 
-// TODO: make this return Result
-Array* array_new(int capacity) {
+Result array_new(int capacity) {
   Array* array = malloc(sizeof(Array) + capacity * sizeof(void*));
 
   if (array == NULL) {
-    return NULL;
+    return fail(1, "malloc failed");
   }
 
-  pthread_rwlock_init(&array->lock, NULL);
+  int e = pthread_rwlock_init(&array->lock, NULL);
+  if (e) {
+    free(array);
+    return fail(e, "rwlock init failed");
+  }
   array->capacity = capacity;
   array->size = 0;
 
@@ -29,7 +32,7 @@ Array* array_new(int capacity) {
     array->elements[i] = NULL;
   }
 
-  return array;
+  return success(array);
 }
 
 int array_clear(Array* const array, FreeFn free_element) {
@@ -178,7 +181,7 @@ void array_for_each(Array* const array, ArrayEachFn each) {
 
 // TODO: rdlock && return Result
 Array* array_map(Array* const array, ArrayMapFn map) {
-  Array* mapped = array_new(array->capacity);
+  Array* mapped = array_new(array->capacity).ok;
   if (mapped == NULL) {
     return NULL;
   }

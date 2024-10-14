@@ -13,7 +13,7 @@
 // array_new
 // ####################
 Test(array_new, _1) {
-  Array* array = array_new(10);
+  Array* array = array_new(10).ok;
 
   cr_assert_eq(array->capacity, 10);
   cr_assert_eq(array->size, 0);
@@ -30,7 +30,7 @@ Test(array_new, _1) {
 // array_clear
 // ####################
 Test(array_clear, _1) {
-  Array* array = array_new(5);
+  Array* array = array_new(5).ok;
 
   for (int i = 0; i < array->capacity; ++i) {
     array_append(array, point_new(i, i + 1));
@@ -54,7 +54,7 @@ Test(array_clear, _1) {
 // array_free
 // ####################
 Test(array_free, _1) {
-  Array* array = array_new(5);
+  Array* array = array_new(5).ok;
 
   for (int i = 0; i < array->capacity; ++i) {
     array_append(array, point_new(i, i + 1));
@@ -70,7 +70,7 @@ Test(array_free, _1) {
 // array_append
 // ####################
 Test(array_append, _1) {
-  Array* array = array_new(5);
+  Array* array = array_new(5).ok;
 
   for (int i = 0; i < array->capacity * 2; ++i) {
     int res = array_append(array, point_new(i, i));
@@ -98,7 +98,7 @@ Test(array_append, _1) {
 // array_prepend
 // ####################
 Test(array_prepend, _1) {
-  Array* array = array_new(5);
+  Array* array = array_new(5).ok;
 
   for (int i = 0; i < array->capacity * 2; ++i) {
     int res = array_prepend(array, point_new(i, i));
@@ -126,7 +126,7 @@ Test(array_prepend, _1) {
 // array_set
 // ####################
 Test(array_set, _1) {
-  Array* array = array_new(5);
+  Array* array = array_new(5).ok;
 
   int sze = 0;
   for (int i = -5; i < array->capacity * 2; ++i) {
@@ -173,7 +173,7 @@ Test(array_set, _1) {
 // array_get
 // ####################
 Test(array_get, _1) {
-  Array* array = array_new(5);
+  Array* array = array_new(5).ok;
 
   int sze = 0;
   for (int i = -5; i < array->capacity * 2; ++i) {
@@ -204,7 +204,7 @@ Test(array_get, _1) {
 // array_remove
 // ####################
 Test(array_remove, _1) {
-  Array* array = array_new(5);
+  Array* array = array_new(5).ok;
 
   for (int i = 0; i < array->capacity; ++i) {
     int res = array_append(array, point_new(i, i));
@@ -235,7 +235,7 @@ Test(array_remove, _1) {
 // array_for_each
 // ####################
 Test(array_for_each, _1) {
-  Array* array = array_new(5);
+  Array* array = array_new(5).ok;
   
   for (int i = 0; i < array->capacity; ++i) {
     array_append(array, point_new(i, i));
@@ -256,7 +256,7 @@ Test(array_for_each, _1) {
 // array_map
 // ####################
 Test(array_map, _1) {
-  Array* array = array_new(5);
+  Array* array = array_new(5).ok;
   Array* empty = array_map(array, (ArrayMapFn) NULL);
 
   cr_assert_eq(empty != NULL, true);
@@ -267,7 +267,7 @@ Test(array_map, _1) {
 }
 
 Test(array_map, _2) {
-  Array* points = array_new(5);
+  Array* points = array_new(5).ok;
   
   for (int i = 0; i < points->capacity; ++i) {
     array_append(points, point_new(i, i));
@@ -293,7 +293,7 @@ Test(array_map, _2) {
 // array_to_string
 // ####################
 Test(array_to_string, _1) {
-  Array* array = array_new(2);
+  Array* array = array_new(2).ok;
 
   char* result = array_to_string(array, (ToStringFn) NULL);
   char* expected = "[]";
@@ -304,7 +304,7 @@ Test(array_to_string, _1) {
 }
 
 Test(array_to_string, _2) {
-  Array* array = array_new(3);
+  Array* array = array_new(3).ok;
 
   array_append(array, point_new(0, 0));
   array_set(array, 2, point_new(1, 1));
@@ -321,7 +321,7 @@ Test(array_to_string, _2) {
 // array_index_valid
 // ####################
 Test(array_index_valid, _1) {
-  Array* array = array_new(5);
+  Array* array = array_new(5).ok;
 
   for (int i = -5; i < array->capacity * 2; ++i) {
     bool result = array_index_valid(array, i);
@@ -336,7 +336,7 @@ Test(array_index_valid, _1) {
 // array_has_capacity
 // ####################
 Test(array_has_capacity, _1) {
-  Array* array = array_new(5);
+  Array* array = array_new(5).ok;
   char* values[] = {"one", "two", "three", "four", "five"};
 
   for (int i = 0; i < array->capacity * 2; ++i) {

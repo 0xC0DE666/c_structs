@@ -37,7 +37,7 @@ void matrix_fun() {
 }
 
 void array_fun() {
-  Array* arr = array_new(5);
+  Array* arr = array_new(5).ok;
   int values[arr->capacity];
 
   for (int i = 0; i < arr->capacity - 1; ++i) {
@@ -75,7 +75,7 @@ void old_code() {
 }
 
 void array_to_string_test() {
-  Array* array = array_new(4);
+  Array* array = array_new(4).ok;
   Position p1 = position_new(0, 0);
   Position p2 = position_new(0, 1);
 
@@ -114,7 +114,7 @@ void prev() {
   printf("mutex + node = %ld\n", sizeof(pthread_mutex_t) + sizeof(Node));
   printf("node = %ld\n", sizeof(Node));
   printf("linked_list = %ld\n", sizeof(LinkedList));
-  Array* arr = array_new(3);
+  Array* arr = array_new(3).ok;
   int values[arr->capacity] = {};
   
   for (int i = 0; i < arr->capacity; ++i) {
