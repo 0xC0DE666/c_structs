@@ -103,7 +103,7 @@ int matrix_free(Matrix** const matrix, FreeFn const free_element);
 int matrix_set(Matrix* const matrix, Position* const position, void* const element);
 
 Result matrix_get(Matrix* const matrix, Position* const position);
-void* matrix_remove(Matrix* const matrix, Position* const position);
+Result matrix_remove(Matrix* const matrix, Position* const position);
 
 typedef void (*MatrixEachFn)(void* const);
 void matrix_for_each(Matrix* const matrix, MatrixEachFn const each);

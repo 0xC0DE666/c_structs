@@ -213,7 +213,7 @@ Test(matrix_remove, _1) {
       cr_assert_eq(matrix->size, sze);
 
       if (matrix_position_valid(matrix, &p)) {
-        Point* pt = matrix_remove(matrix, &p);
+        Point* pt = matrix_remove(matrix, &p).ok;
         pt != NULL ? --sze : 0;
         cr_assert_eq(pt != NULL, true);
         cr_assert_eq(pt->x, r);
@@ -224,7 +224,7 @@ Test(matrix_remove, _1) {
       }
 
       if (!matrix_position_valid(matrix, &p)) {
-        Point* pt = matrix_remove(matrix, &p);
+        Point* pt = matrix_remove(matrix, &p).ok;
         cr_assert_eq(pt == NULL, true);
       }
     }

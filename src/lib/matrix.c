@@ -139,11 +139,15 @@ Result matrix_get(Matrix* const matrix, Position* const position) {
   return success(row[position->column]);
 }
 
-void* matrix_remove(Matrix* const matrix, Position* const position) {
-  pthread_rwlock_trywrlock(&matrix->lock);
+Result matrix_remove(Matrix* const matrix, Position* const position) {
+  int e = pthread_rwlock_trywrlock(&matrix->lock);
+  if (e) return fail(e, ERR_WRLOCK_FAILED); 
+
   if (!matrix_position_valid(matrix, position)) {
-    pthread_rwlock_unlock(&matrix->lock);
-    return NULL;
+    e = pthread_rwlock_unlock(&matrix->lock);
+    if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+
+    return fail(1, ERR_INVALID_POSITION);
   }
 
   void** row = matrix->elements + position->row * matrix->columns;
@@ -152,8 +156,10 @@ void* matrix_remove(Matrix* const matrix, Position* const position) {
   row[position->column] = NULL;
   matrix->size--;
 
-  pthread_rwlock_unlock(&matrix->lock);
-  return removed;
+  e = pthread_rwlock_unlock(&matrix->lock);
+  if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+
+  return success(removed);
 }
 
 
