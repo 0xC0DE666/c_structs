@@ -44,10 +44,10 @@ Result matrix_new(int rows, int columns) {
     free(matrix);
     return fail(e, ERR_RWLOCK_INIT_FAILED);
   }
-  matrix->size = 0;
-  matrix->capacity = rows * columns;
   matrix->rows = rows;
   matrix->columns = columns;
+  matrix->capacity = rows * columns;
+  matrix->size = 0;
 
   for (int r = 0; r < rows; ++r) {
     void** row  = matrix->elements + r * columns;
@@ -60,7 +60,9 @@ Result matrix_new(int rows, int columns) {
 }
 
 int matrix_clear(Matrix* const matrix, FreeFn const free_element) {
-  pthread_rwlock_trywrlock(&matrix->lock);
+  int e = pthread_rwlock_trywrlock(&matrix->lock);
+  if (e) return e;
+
   for (int r = 0; r < matrix->rows; r++) {
     void** row = matrix->elements + r * matrix->columns;
 
@@ -76,7 +78,9 @@ int matrix_clear(Matrix* const matrix, FreeFn const free_element) {
   }
   matrix->size = 0;
 
-  pthread_rwlock_unlock(&matrix->lock);
+  e = pthread_rwlock_unlock(&matrix->lock);
+  if (e) return e;
+
   return 0;
 }
 
