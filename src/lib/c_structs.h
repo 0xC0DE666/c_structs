@@ -32,6 +32,7 @@ Result fail(int code, char* message);
 #define ERR_WRLOCK_FAILED "wrlock failed"
 #define ERR_RWLOCK_UNLOCK_FAILED "rwlock unlock failed"
 
+#define ERR_AT_CAPACITY "at capacity"
 #define ERR_INVALID_INDEX "invalid index"
 #define ERR_INVALID_POSITION "invalid position"
 

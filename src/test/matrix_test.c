@@ -36,6 +36,45 @@ Test(position_to_string, _1) {
 }
 
 // ####################
+// matrix_position_valid
+// ####################
+Test(matrix_position_valid, _1) {
+  Matrix* matrix = matrix_new(3, 3).ok;
+
+  for (int r = -3; r < matrix->rows * 2; ++r) {
+    for (int c = -3; c < matrix->columns * 2; ++c) {
+      Position p = {r, c};
+      bool result = matrix_position_valid(matrix, &p);
+      bool expected =
+        r >= 0 && c >= 0 && r < matrix->rows && c < matrix->columns ? true : false;
+      cr_assert_eq(result, expected);
+    }
+  }
+
+  matrix_free(&matrix, NULL);
+}
+
+// ####################
+// matrix_has_capacity
+// ####################
+Test(matrix_has_capacity, _1) {
+  Matrix* matrix = matrix_new(3, 3).ok;
+
+  for (int r = 0; r < matrix->rows * 2; ++r) {
+    for (int c = 0; c < matrix->columns * 2; ++c) {
+      bool result = matrix_has_capacity(matrix);
+      bool expected = matrix->size < matrix->capacity ? true : false;
+      cr_assert_eq(result, expected);
+      Position p = {r, c};
+      matrix_set(matrix, &p, point_new(r, c));
+    }
+  }
+  cr_assert_eq(matrix->size, matrix->capacity);
+
+  matrix_free(&matrix, (FreeFn) point_free);
+}
+
+// ####################
 // matrix_new
 // ####################
 Test(matrix_new, _1) {
@@ -133,7 +172,12 @@ Test(matrix_set, _1) {
       if (!matrix_position_valid(matrix, &p)) {
         cr_assert_eq(res, 1);
         cr_assert_eq(matrix->size, sze);
-        cr_assert_eq(matrix_get(matrix, &p).ok, NULL);
+        Result res = matrix_get(matrix, &p);
+        Error* err = res.error;
+        cr_assert_eq(res.ok, NULL);
+        cr_assert_eq(err->code, 1);
+        cr_assert_eq(strcmp(err->message, ERR_INVALID_POSITION), 0);
+        error_free(&err);
       }
     }
   }
@@ -188,7 +232,12 @@ Test(matrix_get, _1) {
       if (!matrix_position_valid(matrix, &p)) {
         cr_assert_eq(res, 1);
         cr_assert_eq(matrix->size, sze);
-        cr_assert_eq(matrix_get(matrix, &p).ok, NULL);
+        Result res = matrix_get(matrix, &p);
+        Error* err = res.error;
+        cr_assert_eq(res.ok, NULL);
+        cr_assert_eq(err->code, 1);
+        cr_assert_eq(strcmp(err->message, ERR_INVALID_POSITION), 0);
+        error_free(&err);
       }
     }
   }
@@ -224,8 +273,14 @@ Test(matrix_remove, _1) {
       }
 
       if (!matrix_position_valid(matrix, &p)) {
-        Point* pt = matrix_remove(matrix, &p).ok;
-        cr_assert_eq(pt == NULL, true);
+        cr_assert_eq(res, 1);
+        cr_assert_eq(matrix->size, sze);
+        Result res = matrix_get(matrix, &p);
+        Error* err = res.error;
+        cr_assert_eq(res.ok, NULL);
+        cr_assert_eq(err->code, 1);
+        cr_assert_eq(strcmp(err->message, ERR_INVALID_POSITION), 0);
+        error_free(&err);
       }
     }
   }
@@ -384,44 +439,5 @@ Test(matrix_to_string, multi) {
   cr_assert_eq(strcmp(result, expected), 0);
 
   free(result);
-  matrix_free(&matrix, (FreeFn) point_free);
-}
-
-// ####################
-// matrix_position_valid
-// ####################
-Test(matrix_position_valid, _1) {
-  Matrix* matrix = matrix_new(3, 3).ok;
-
-  for (int r = -3; r < matrix->rows * 2; ++r) {
-    for (int c = -3; c < matrix->columns * 2; ++c) {
-      Position p = {r, c};
-      bool result = matrix_position_valid(matrix, &p);
-      bool expected =
-        r >= 0 && c >= 0 && r < matrix->rows && c < matrix->columns ? true : false;
-      cr_assert_eq(result, expected);
-    }
-  }
-
-  matrix_free(&matrix, NULL);
-}
-
-// ####################
-// matrix_has_capacity
-// ####################
-Test(matrix_has_capacity, _1) {
-  Matrix* matrix = matrix_new(3, 3).ok;
-
-  for (int r = 0; r < matrix->rows * 2; ++r) {
-    for (int c = 0; c < matrix->columns * 2; ++c) {
-      bool result = matrix_has_capacity(matrix);
-      bool expected = matrix->size < matrix->capacity ? true : false;
-      cr_assert_eq(result, expected);
-      Position p = {r, c};
-      matrix_set(matrix, &p, point_new(r, c));
-    }
-  }
-  cr_assert_eq(matrix->size, matrix->capacity);
-
   matrix_free(&matrix, (FreeFn) point_free);
 }
