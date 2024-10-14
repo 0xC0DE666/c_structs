@@ -265,7 +265,7 @@ Test(matrix_for_each, _1) {
 // ####################
 Test(matrix_map, _1) {
   Matrix* matrix = matrix_new(3, 3).ok;
-  Matrix* empty = matrix_map(matrix, (MatrixMapFn) NULL);
+  Matrix* empty = matrix_map(matrix, (MatrixMapFn) NULL).ok;
 
   cr_assert_eq(empty != NULL, true);
   cr_assert_eq(empty->size, 0);
@@ -284,7 +284,7 @@ Test(matrix_map, _2) {
     }
   }
 
-  Matrix* strings = matrix_map(points, (MatrixMapFn) point_to_string);
+  Matrix* strings = matrix_map(points, (MatrixMapFn) point_to_string).ok;
 
   cr_assert_eq(strings->capacity, points->capacity);
   cr_assert_eq(strings->size, points->size);

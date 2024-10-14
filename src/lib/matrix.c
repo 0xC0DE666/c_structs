@@ -190,21 +190,31 @@ int matrix_for_each(Matrix* const matrix, MatrixEachFn const each) {
   return 0;
 }
 
-Matrix* matrix_map(Matrix* const matrix, MatrixMapFn const map) {
+Result matrix_map(Matrix* const matrix, MatrixMapFn const map) {
+  int e = pthread_rwlock_trywrlock(&matrix->lock);
+  if (e) return fail(e, ERR_WRLOCK_FAILED);
+
   Matrix* mapped = matrix_new(matrix->rows, matrix->columns).ok;
   if (mapped == NULL) {
-    return NULL;
+    e = pthread_rwlock_unlock(&matrix->lock);
+    if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+
+    return fail(1, ERR_MALLOC_FAILED);
   }
 
   if (matrix->size == 0) {
-    return mapped;
+    e = pthread_rwlock_unlock(&matrix->lock);
+    if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+
+    return success(mapped);
   }
 
   Position pos;
   for (int r = 0; r < matrix->rows; ++r) {
+    void** row = matrix->elements + r * matrix->columns;
     for (int c = 0; c < matrix->columns; ++c) {
       pos = position_new(r, c);
-      void* element = matrix_get(matrix, &pos).ok;
+      void* element = row[c];
       if (element != NULL) {
         void* val = map(element);
         matrix_set(mapped, &pos, val);
@@ -212,7 +222,10 @@ Matrix* matrix_map(Matrix* const matrix, MatrixMapFn const map) {
     }
   }
 
-  return mapped;
+  e = pthread_rwlock_unlock(&matrix->lock);
+  if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+
+  return success(mapped);
 }
 
 char* matrix_to_string(Matrix* const matrix, ToStringFn const to_string) {
