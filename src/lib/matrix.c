@@ -228,11 +228,21 @@ Result matrix_map(Matrix* const matrix, MatrixMapFn const map) {
   return success(mapped);
 }
 
-char* matrix_to_string(Matrix* const matrix, ToStringFn const to_string) {
+Result matrix_to_string(Matrix* const matrix, ToStringFn const to_string) {
+  int e = pthread_rwlock_trywrlock(&matrix->lock);
+  if (e) return fail(e, ERR_WRLOCK_FAILED);
+
   if (matrix->size == 0) {
     char* buffer = malloc(sizeof(char) * 3);
     sprintf(buffer, "[]\0");
-    return buffer;
+
+    e = pthread_rwlock_unlock(&matrix->lock);
+    if (e) {
+      free(buffer);
+      return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+    };
+
+    return success(buffer);
   }
 
   int rows = matrix->rows;
@@ -243,9 +253,10 @@ char* matrix_to_string(Matrix* const matrix, ToStringFn const to_string) {
   int sum_lengths = 0;
 
   for (int r = 0; r < rows; ++r) {
+    void** row = matrix->elements + r * matrix->columns;
     for (int c = 0; c < columns; ++c) {
       Position p = position_new(r, c);
-      void* element = matrix_get(matrix, &p).ok;
+      void* element = row[c];
       bool not_null = element != NULL;
       elements[r][c] = not_null ? to_string(element) : "NULL";
       lengths[r][c] = not_null ? strlen(elements[r][c]) : strlen("NULL");
@@ -258,7 +269,10 @@ char* matrix_to_string(Matrix* const matrix, ToStringFn const to_string) {
   char* buffer = malloc(sizeof(char) * total_length);
 
   if (buffer == NULL) {
-    return NULL;
+    e = pthread_rwlock_unlock(&matrix->lock);
+    if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+
+    return fail(1, ERR_MALLOC_FAILED);
   }
 
   sprintf(buffer, "[");
@@ -275,5 +289,11 @@ char* matrix_to_string(Matrix* const matrix, ToStringFn const to_string) {
     strcat(buffer, "]\n\0");
   }
 
-  return buffer;
+  e = pthread_rwlock_unlock(&matrix->lock);
+  if (e) {
+    free(buffer);
+    return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+  }
+
+  return success(buffer);
 }

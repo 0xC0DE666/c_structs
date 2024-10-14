@@ -98,7 +98,7 @@ void matrix_to_string_test() {
     }
   }
 
-  char* str = matrix_to_string(matrix, (ToStringFn) position_to_string);
+  char* str = matrix_to_string(matrix, (ToStringFn) position_to_string).ok;
   printf("%s", str);
 }
 

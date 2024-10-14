@@ -245,7 +245,10 @@ Result array_to_string(Array* const array, ToStringFn const to_string) {
     sprintf(buffer, "[]\0");
 
     e = pthread_rwlock_unlock(&array->lock);
-    if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+    if (e) {
+      free(buffer);
+      return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+    };
 
     return success(buffer);
   }
@@ -282,7 +285,10 @@ Result array_to_string(Array* const array, ToStringFn const to_string) {
   strcat(buffer, "]\0");
 
   e = pthread_rwlock_unlock(&array->lock);
-  if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+  if (e) {
+    free(buffer);
+    return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+  }
 
   return success(buffer);
 }

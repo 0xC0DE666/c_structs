@@ -309,7 +309,7 @@ Test(matrix_map, _2) {
 Test(matrix_to_string, empty) {
   Matrix* matrix = matrix_new(2, 2).ok;
 
-  char* result = matrix_to_string(matrix, (ToStringFn) position_to_string);
+  char* result = matrix_to_string(matrix, (ToStringFn) position_to_string).ok;
   char* expected = "[]";
   cr_assert_eq(strcmp(result, expected), 0);
 
@@ -323,7 +323,7 @@ Test(matrix_to_string, single_element) {
 
   matrix_set(matrix, &pos, &pos);
 
-  char* result = matrix_to_string(matrix, (ToStringFn) position_to_string);
+  char* result = matrix_to_string(matrix, (ToStringFn) position_to_string).ok;
   char* expected = "[(0, 0)]\n";
   cr_assert_eq(strcmp(result, expected), 0);
 
@@ -341,7 +341,7 @@ Test(matrix_to_string, single_row) {
     }
   }
 
-  char* result = matrix_to_string(matrix, (ToStringFn) point_to_string);
+  char* result = matrix_to_string(matrix, (ToStringFn) point_to_string).ok;
   char* expected = "[(0, 0), (0, 1)]\n";
   cr_assert_eq(strcmp(result, expected), 0);
 
@@ -359,7 +359,7 @@ Test(matrix_to_string, single_column) {
     }
   }
 
-  char* result = matrix_to_string(matrix, (ToStringFn) point_to_string);
+  char* result = matrix_to_string(matrix, (ToStringFn) point_to_string).ok;
   char* expected = "[(0, 0)]\n[(1, 0)]\n";
   cr_assert_eq(strcmp(result, expected), 0);
 
@@ -379,7 +379,7 @@ Test(matrix_to_string, multi) {
     }
   }
 
-  char* result = matrix_to_string(matrix, (ToStringFn) position_to_string);
+  char* result = matrix_to_string(matrix, (ToStringFn) position_to_string).ok;
   char* expected = "[NULL, (0, 1)]\n[NULL, (1, 1)]\n";
   cr_assert_eq(strcmp(result, expected), 0);
 
