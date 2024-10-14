@@ -163,9 +163,15 @@ Result matrix_remove(Matrix* const matrix, Position* const position) {
 }
 
 
-void matrix_for_each(Matrix* const matrix, MatrixEachFn const each) {
+int matrix_for_each(Matrix* const matrix, MatrixEachFn const each) {
+  int e = pthread_rwlock_tryrdlock(&matrix->lock);
+  if (e) return e;
+
   if (matrix->size == 0) {
-    return;
+    e = pthread_rwlock_unlock(&matrix->lock);
+    if (e) return e;
+
+    return 0;
   }
 
   for (int r = 0; r < matrix->rows; ++r) {
@@ -177,6 +183,11 @@ void matrix_for_each(Matrix* const matrix, MatrixEachFn const each) {
       }
     }
   }
+
+  e = pthread_rwlock_unlock(&matrix->lock);
+  if (e) return e;
+
+  return 0;
 }
 
 Matrix* matrix_map(Matrix* const matrix, MatrixMapFn const map) {

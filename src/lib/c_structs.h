@@ -106,7 +106,7 @@ Result matrix_get(Matrix* const matrix, Position* const position);
 Result matrix_remove(Matrix* const matrix, Position* const position);
 
 typedef void (*MatrixEachFn)(void* const);
-void matrix_for_each(Matrix* const matrix, MatrixEachFn const each);
+int matrix_for_each(Matrix* const matrix, MatrixEachFn const each);
 
 typedef void* (*MatrixMapFn)(void* const);
 Matrix* matrix_map(Matrix* const matrix, MatrixMapFn const map);
