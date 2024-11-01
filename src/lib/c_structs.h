@@ -85,34 +85,34 @@ typedef struct Position {
 Position position_new(int row, int column);
 char* position_to_string(Position* position);
 
-typedef struct Matrix {
+typedef struct Grid {
   pthread_rwlock_t lock;
   int rows;
   int columns;
   int capacity;
   int size;
   void* elements[];
-} Matrix;
+} Grid;
 
-bool matrix_position_valid(Matrix* const matrix, Position* const position);
-bool matrix_has_capacity(Matrix* const matrix);
+bool grid_position_valid(Grid* const grid, Position* const position);
+bool grid_has_capacity(Grid* const grid);
 
-Result matrix_new(int rows, int columns);
-int matrix_clear(Matrix* const matrix, FreeFn const free_element);
-int matrix_free(Matrix** const matrix, FreeFn const free_element);
+Result grid_new(int rows, int columns);
+int grid_clear(Grid* const grid, FreeFn const free_element);
+int grid_free(Grid** const grid, FreeFn const free_element);
 
-int matrix_set(Matrix* const matrix, Position* const position, void* const element);
+int grid_set(Grid* const grid, Position* const position, void* const element);
 
-Result matrix_get(Matrix* const matrix, Position* const position);
-Result matrix_remove(Matrix* const matrix, Position* const position);
+Result grid_get(Grid* const grid, Position* const position);
+Result grid_remove(Grid* const grid, Position* const position);
 
-typedef void (*MatrixEachFn)(void* const);
-int matrix_for_each(Matrix* const matrix, MatrixEachFn const each);
+typedef void (*GridEachFn)(void* const);
+int grid_for_each(Grid* const grid, GridEachFn const each);
 
-typedef void* (*MatrixMapFn)(void* const);
-Result matrix_map(Matrix* const matrix, MatrixMapFn const map);
+typedef void* (*GridMapFn)(void* const);
+Result grid_map(Grid* const grid, GridMapFn const map);
 
-Result matrix_to_string(Matrix* const matrix, ToStringFn const to_string);
+Result grid_to_string(Grid* const grid, ToStringFn const to_string);
 
 
 //####################

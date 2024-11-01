@@ -26,51 +26,51 @@ char* position_to_string(Position* position) {
   return buffer;
 }
 
-bool matrix_position_valid(Matrix* const matrix, Position* const position) {
-  bool valid_row = position->row >= 0 && position->row < matrix->rows;
-  bool valid_col = position->column >= 0 && position->column < matrix->columns;
+bool grid_position_valid(Grid* const grid, Position* const position) {
+  bool valid_row = position->row >= 0 && position->row < grid->rows;
+  bool valid_col = position->column >= 0 && position->column < grid->columns;
   return valid_row && valid_col;
 }
 
-bool matrix_has_capacity(Matrix* const matrix) {
-  return matrix->size < matrix->capacity;
+bool grid_has_capacity(Grid* const grid) {
+  return grid->size < grid->capacity;
 }
 
-Result matrix_new(int rows, int columns) {
-  Matrix* matrix = malloc(sizeof(Matrix) + rows * columns * sizeof(void*));
+Result grid_new(int rows, int columns) {
+  Grid* grid = malloc(sizeof(Grid) + rows * columns * sizeof(void*));
 
-  if (matrix == NULL) {
+  if (grid == NULL) {
     return fail(1, ERR_MALLOC_FAILED);
   }
 
-  int e = pthread_rwlock_init(&matrix->lock, NULL);
+  int e = pthread_rwlock_init(&grid->lock, NULL);
   if (e) {
-    free(matrix);
+    free(grid);
     return fail(e, ERR_RWLOCK_INIT_FAILED);
   }
-  matrix->rows = rows;
-  matrix->columns = columns;
-  matrix->capacity = rows * columns;
-  matrix->size = 0;
+  grid->rows = rows;
+  grid->columns = columns;
+  grid->capacity = rows * columns;
+  grid->size = 0;
 
   for (int r = 0; r < rows; ++r) {
-    void** row  = matrix->elements + r * columns;
+    void** row  = grid->elements + r * columns;
     for (int c = 0; c < columns; ++c) {
       row[c] = NULL;
     }
   }
 
-  return success(matrix);
+  return success(grid);
 }
 
-int matrix_clear(Matrix* const matrix, FreeFn const free_element) {
-  int e = pthread_rwlock_trywrlock(&matrix->lock);
+int grid_clear(Grid* const grid, FreeFn const free_element) {
+  int e = pthread_rwlock_trywrlock(&grid->lock);
   if (e) return e;
 
-  for (int r = 0; r < matrix->rows; r++) {
-    void** row = matrix->elements + r * matrix->columns;
+  for (int r = 0; r < grid->rows; r++) {
+    void** row = grid->elements + r * grid->columns;
 
-    for (int c = 0; c < matrix->columns; c++) {
+    for (int c = 0; c < grid->columns; c++) {
       void** el = &row[c];
 
       if (*el != NULL && free_element) {
@@ -80,167 +80,167 @@ int matrix_clear(Matrix* const matrix, FreeFn const free_element) {
       }
     }
   }
-  matrix->size = 0;
+  grid->size = 0;
 
-  e = pthread_rwlock_unlock(&matrix->lock);
+  e = pthread_rwlock_unlock(&grid->lock);
   if (e) return e;
 
   return 0;
 }
 
-int matrix_free(Matrix** const matrix, FreeFn const free_element) {
-  matrix_clear(*matrix, free_element);
+int grid_free(Grid** const grid, FreeFn const free_element) {
+  grid_clear(*grid, free_element);
 
-  int e = pthread_rwlock_destroy(&(*matrix)->lock);
+  int e = pthread_rwlock_destroy(&(*grid)->lock);
   if (e) return e;
 
-  free(*matrix);
-  *matrix = NULL;
+  free(*grid);
+  *grid = NULL;
 
   return 0;
 }
 
 
-int matrix_set(Matrix* const matrix, Position* const position, void* const value) {
-  int e = pthread_rwlock_trywrlock(&matrix->lock);
+int grid_set(Grid* const grid, Position* const position, void* const value) {
+  int e = pthread_rwlock_trywrlock(&grid->lock);
   if (e) return e;
 
-  if (!matrix_position_valid(matrix, position)) {
-    e = pthread_rwlock_unlock(&matrix->lock);
+  if (!grid_position_valid(grid, position)) {
+    e = pthread_rwlock_unlock(&grid->lock);
     if (e) return e;
 
     return 1;
   }
 
-  void** row = matrix->elements + position->row * matrix->columns;
+  void** row = grid->elements + position->row * grid->columns;
 
   if (row[position->column] == NULL) {
-    matrix->size++;
+    grid->size++;
   }
   row[position->column] = value;
 
-  e = pthread_rwlock_unlock(&matrix->lock);
+  e = pthread_rwlock_unlock(&grid->lock);
   if (e) return e;
 
   return 0;
 }
 
-Result matrix_get(Matrix* const matrix, Position* const position) {
-  int e = pthread_rwlock_tryrdlock(&matrix->lock);
+Result grid_get(Grid* const grid, Position* const position) {
+  int e = pthread_rwlock_tryrdlock(&grid->lock);
   if (e) return fail(e, ERR_RDLOCK_FAILED);
 
-  if (!matrix_position_valid(matrix, position)) {
-    e = pthread_rwlock_unlock(&matrix->lock);
+  if (!grid_position_valid(grid, position)) {
+    e = pthread_rwlock_unlock(&grid->lock);
     if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
 
     return fail(1, ERR_INVALID_POSITION);
   }
 
-  e = pthread_rwlock_unlock(&matrix->lock);
+  e = pthread_rwlock_unlock(&grid->lock);
   if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
 
-  void** row = matrix->elements + position->row * matrix->columns;
+  void** row = grid->elements + position->row * grid->columns;
   return success(row[position->column]);
 }
 
-Result matrix_remove(Matrix* const matrix, Position* const position) {
-  int e = pthread_rwlock_trywrlock(&matrix->lock);
+Result grid_remove(Grid* const grid, Position* const position) {
+  int e = pthread_rwlock_trywrlock(&grid->lock);
   if (e) return fail(e, ERR_WRLOCK_FAILED); 
 
-  if (!matrix_position_valid(matrix, position)) {
-    e = pthread_rwlock_unlock(&matrix->lock);
+  if (!grid_position_valid(grid, position)) {
+    e = pthread_rwlock_unlock(&grid->lock);
     if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
 
     return fail(1, ERR_INVALID_POSITION);
   }
 
-  void** row = matrix->elements + position->row * matrix->columns;
+  void** row = grid->elements + position->row * grid->columns;
   void* removed = row[position->column];
 
   row[position->column] = NULL;
-  matrix->size--;
+  grid->size--;
 
-  e = pthread_rwlock_unlock(&matrix->lock);
+  e = pthread_rwlock_unlock(&grid->lock);
   if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
 
   return success(removed);
 }
 
 
-int matrix_for_each(Matrix* const matrix, MatrixEachFn const each) {
-  int e = pthread_rwlock_tryrdlock(&matrix->lock);
+int grid_for_each(Grid* const grid, GridEachFn const each) {
+  int e = pthread_rwlock_tryrdlock(&grid->lock);
   if (e) return e;
 
-  if (matrix->size == 0) {
-    e = pthread_rwlock_unlock(&matrix->lock);
+  if (grid->size == 0) {
+    e = pthread_rwlock_unlock(&grid->lock);
     if (e) return e;
 
     return 0;
   }
 
-  for (int r = 0; r < matrix->rows; ++r) {
-    for (int c = 0; c < matrix->columns; ++c) {
+  for (int r = 0; r < grid->rows; ++r) {
+    for (int c = 0; c < grid->columns; ++c) {
       Position p = position_new(r, c);
-      void* element = matrix_get(matrix, &p).ok;
+      void* element = grid_get(grid, &p).ok;
       if (element != NULL) {
         each(element);
       }
     }
   }
 
-  e = pthread_rwlock_unlock(&matrix->lock);
+  e = pthread_rwlock_unlock(&grid->lock);
   if (e) return e;
 
   return 0;
 }
 
-Result matrix_map(Matrix* const matrix, MatrixMapFn const map) {
-  int e = pthread_rwlock_trywrlock(&matrix->lock);
+Result grid_map(Grid* const grid, GridMapFn const map) {
+  int e = pthread_rwlock_trywrlock(&grid->lock);
   if (e) return fail(e, ERR_WRLOCK_FAILED);
 
-  Matrix* mapped = matrix_new(matrix->rows, matrix->columns).ok;
+  Grid* mapped = grid_new(grid->rows, grid->columns).ok;
   if (mapped == NULL) {
-    e = pthread_rwlock_unlock(&matrix->lock);
+    e = pthread_rwlock_unlock(&grid->lock);
     if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
 
     return fail(1, ERR_MALLOC_FAILED);
   }
 
-  if (matrix->size == 0) {
-    e = pthread_rwlock_unlock(&matrix->lock);
+  if (grid->size == 0) {
+    e = pthread_rwlock_unlock(&grid->lock);
     if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
 
     return success(mapped);
   }
 
   Position pos;
-  for (int r = 0; r < matrix->rows; ++r) {
-    void** row = matrix->elements + r * matrix->columns;
-    for (int c = 0; c < matrix->columns; ++c) {
+  for (int r = 0; r < grid->rows; ++r) {
+    void** row = grid->elements + r * grid->columns;
+    for (int c = 0; c < grid->columns; ++c) {
       pos = position_new(r, c);
       void* element = row[c];
       if (element != NULL) {
         void* val = map(element);
-        matrix_set(mapped, &pos, val);
+        grid_set(mapped, &pos, val);
       }
     }
   }
 
-  e = pthread_rwlock_unlock(&matrix->lock);
+  e = pthread_rwlock_unlock(&grid->lock);
   if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
 
   return success(mapped);
 }
 
-Result matrix_to_string(Matrix* const matrix, ToStringFn const to_string) {
-  int e = pthread_rwlock_trywrlock(&matrix->lock);
+Result grid_to_string(Grid* const grid, ToStringFn const to_string) {
+  int e = pthread_rwlock_trywrlock(&grid->lock);
   if (e) return fail(e, ERR_WRLOCK_FAILED);
 
-  if (matrix->size == 0) {
+  if (grid->size == 0) {
     char* buffer = malloc(sizeof(char) * 3);
     sprintf(buffer, "[]\0");
 
-    e = pthread_rwlock_unlock(&matrix->lock);
+    e = pthread_rwlock_unlock(&grid->lock);
     if (e) {
       free(buffer);
       return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
@@ -249,15 +249,15 @@ Result matrix_to_string(Matrix* const matrix, ToStringFn const to_string) {
     return success(buffer);
   }
 
-  int rows = matrix->rows;
-  int columns = matrix->columns;
-  int capacity = matrix->capacity;
+  int rows = grid->rows;
+  int columns = grid->columns;
+  int capacity = grid->capacity;
   char* elements[rows][columns] = {};
   int lengths[rows][columns] = {};
   int sum_lengths = 0;
 
   for (int r = 0; r < rows; ++r) {
-    void** row = matrix->elements + r * matrix->columns;
+    void** row = grid->elements + r * grid->columns;
     for (int c = 0; c < columns; ++c) {
       Position p = position_new(r, c);
       void* element = row[c];
@@ -273,7 +273,7 @@ Result matrix_to_string(Matrix* const matrix, ToStringFn const to_string) {
   char* buffer = malloc(sizeof(char) * total_length);
 
   if (buffer == NULL) {
-    e = pthread_rwlock_unlock(&matrix->lock);
+    e = pthread_rwlock_unlock(&grid->lock);
     if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
 
     return fail(1, ERR_MALLOC_FAILED);
@@ -293,7 +293,7 @@ Result matrix_to_string(Matrix* const matrix, ToStringFn const to_string) {
     strcat(buffer, "]\n\0");
   }
 
-  e = pthread_rwlock_unlock(&matrix->lock);
+  e = pthread_rwlock_unlock(&grid->lock);
   if (e) {
     free(buffer);
     return fail(e, ERR_RWLOCK_UNLOCK_FAILED);

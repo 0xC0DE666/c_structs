@@ -9,15 +9,15 @@
  * Generic data structures implemnted in C.
  */
 
-void matrix_fun() {
- void** matrix =  malloc(3 * sizeof(void*)); 
+void grid_fun() {
+ void** grid =  malloc(3 * sizeof(void*)); 
  for (int i = 0; i < 3; ++i) {
-   matrix[i] = malloc(3 * sizeof(void*));
+   grid[i] = malloc(3 * sizeof(void*));
  }
 
  int i = 1;
  for (int r = 0; r < 3; ++r) {
-   char** row = matrix[r];
+   char** row = grid[r];
    for (int c = 0; c < 3; ++c) {
      char* str = malloc(32 * sizeof(char));
      sprintf(str, "Eat %d cupcake(s)!", i);
@@ -27,12 +27,12 @@ void matrix_fun() {
  }
 
  for (int r = 0; r < 3; ++r) {
-   char** row = matrix[r];
+   char** row = grid[r];
    for (int c = 0; c < 3; ++c) {
      printf("%s\n", row[c]);
      free(row[c]);
    }
-   free(matrix[r]);
+   free(grid[r]);
  }
 }
 
@@ -54,7 +54,7 @@ void array_fun() {
 }
 
 void old_code() {
-  Matrix* trix = matrix_new(3, 3).ok;
+  Grid* trix = grid_new(3, 3).ok;
   Position values[9];
 
   int i = 0;
@@ -64,7 +64,7 @@ void old_code() {
 
     for (int c = 0; c < 3; ++c) {
       values[i] = position_new(r, c);
-      matrix_set(trix, &values[i], &values[i]);
+      grid_set(trix, &values[i], &values[i]);
 
       void** col = row[c];
       printf("elements[%d][%d] -> %p\n", r, c, col);
@@ -86,19 +86,19 @@ void array_to_string_test() {
   printf("%s\n", str);
 }
 
-void matrix_to_string_test() {
-  Matrix* matrix = matrix_new(2, 2).ok;
-  Position pos[matrix->rows][matrix->columns] = {};
+void grid_to_string_test() {
+  Grid* grid = grid_new(2, 2).ok;
+  Position pos[grid->rows][grid->columns] = {};
 
-  for (int r = 0; r < matrix->rows; ++r) {
-    for (int c = 0; c < matrix->columns; ++c) {
+  for (int r = 0; r < grid->rows; ++r) {
+    for (int c = 0; c < grid->columns; ++c) {
       pos[r][c] = position_new(r, c); 
-      matrix_set(matrix, &pos[r][c], &pos[r][c]);
+      grid_set(grid, &pos[r][c], &pos[r][c]);
       printf("%u %u\n", r, c);
     }
   }
 
-  char* str = matrix_to_string(matrix, (ToStringFn) position_to_string).ok;
+  char* str = grid_to_string(grid, (ToStringFn) position_to_string).ok;
   printf("%s", str);
 }
 
