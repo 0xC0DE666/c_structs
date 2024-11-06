@@ -17,13 +17,13 @@ Result array_new(int capacity) {
   Array* array = malloc(sizeof(Array) + capacity * sizeof(void*));
 
   if (array == NULL) {
-    return fail(1, ERR_MALLOC_FAILED);
+    return result_error(1, ERR_MALLOC_FAILED);
   }
 
   int e = pthread_rwlock_init(&array->lock, NULL);
   if (e) {
     free(array);
-    return fail(e, ERR_RWLOCK_INIT_FAILED);
+    return result_error(e, ERR_RWLOCK_INIT_FAILED);
   }
   array->capacity = capacity;
   array->size = 0;
@@ -32,7 +32,7 @@ Result array_new(int capacity) {
     array->elements[i] = NULL;
   }
 
-  return success(array);
+  return result_ok(array);
 }
 
 int array_clear(Array* const array, FreeFn free_element) {
@@ -136,30 +136,30 @@ int array_set(Array* const array, int index, void* const element) {
 
 Result array_get(Array* const array, int index) {
   int e = pthread_rwlock_tryrdlock(&array->lock);
-  if (e) return fail(e, ERR_RDLOCK_FAILED);
+  if (e) return result_error(e, ERR_RDLOCK_FAILED);
 
   if (!array_index_valid(array, index)) {
     e = pthread_rwlock_unlock(&array->lock);
-    if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+    if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
 
-    return fail(1, ERR_INVALID_INDEX);
+    return result_error(1, ERR_INVALID_INDEX);
   }
 
   e = pthread_rwlock_unlock(&array->lock);
-  if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+  if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
 
-  return success(array->elements[index]);
+  return result_ok(array->elements[index]);
 }
 
 Result array_remove(Array* const array, int index) {
   int e = pthread_rwlock_trywrlock(&array->lock);
-  if (e) return fail(e, ERR_WRLOCK_FAILED); 
+  if (e) return result_error(e, ERR_WRLOCK_FAILED); 
 
   if (!array_index_valid(array, index)) {
     e = pthread_rwlock_unlock(&array->lock);
-    if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+    if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
 
-    return fail(1, ERR_INVALID_INDEX);
+    return result_error(1, ERR_INVALID_INDEX);
   }
 
   void* removed = array->elements[index];
@@ -174,9 +174,9 @@ Result array_remove(Array* const array, int index) {
   array->size--;
 
   e = pthread_rwlock_unlock(&array->lock);
-  if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+  if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
 
-  return success(removed);
+  return result_ok(removed);
 }
 
 int array_for_each(Array* const array, ArrayEachFn each) {
@@ -205,21 +205,21 @@ int array_for_each(Array* const array, ArrayEachFn each) {
 
 Result array_map(Array* const array, ArrayMapFn map) {
   int e = pthread_rwlock_trywrlock(&array->lock);
-  if (e) return fail(e, ERR_WRLOCK_FAILED);
+  if (e) return result_error(e, ERR_WRLOCK_FAILED);
 
   Array* mapped = array_new(array->capacity).ok;
   if (mapped == NULL) {
     e = pthread_rwlock_unlock(&array->lock);
-    if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+    if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
 
-    return fail(1, ERR_MALLOC_FAILED);
+    return result_error(1, ERR_MALLOC_FAILED);
   }
 
   if (array->size == 0) {
     e = pthread_rwlock_unlock(&array->lock);
-    if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+    if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
 
-    return success(mapped);
+    return result_ok(mapped);
   }
 
   for (int i = 0; i < array->capacity; ++i) {
@@ -231,14 +231,14 @@ Result array_map(Array* const array, ArrayMapFn map) {
   
 
   e = pthread_rwlock_unlock(&array->lock);
-  if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+  if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
 
-  return success(mapped);
+  return result_ok(mapped);
 }
 
 Result array_to_string(Array* const array, ToStringFn const to_string) {
   int e = pthread_rwlock_trywrlock(&array->lock);
-  if (e) return fail(e, ERR_WRLOCK_FAILED);
+  if (e) return result_error(e, ERR_WRLOCK_FAILED);
 
   if (array->size == 0) {
     char* buffer = malloc(sizeof(char) * 3);
@@ -247,10 +247,10 @@ Result array_to_string(Array* const array, ToStringFn const to_string) {
     e = pthread_rwlock_unlock(&array->lock);
     if (e) {
       free(buffer);
-      return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+      return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
     };
 
-    return success(buffer);
+    return result_ok(buffer);
   }
 
   int capacity = array->capacity;
@@ -270,9 +270,9 @@ Result array_to_string(Array* const array, ToStringFn const to_string) {
 
   if (buffer == NULL) {
     e = pthread_rwlock_unlock(&array->lock);
-    if (e) return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+    if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
 
-    return fail(1, ERR_MALLOC_FAILED);
+    return result_error(1, ERR_MALLOC_FAILED);
   }
 
   sprintf(buffer, "[");
@@ -287,8 +287,8 @@ Result array_to_string(Array* const array, ToStringFn const to_string) {
   e = pthread_rwlock_unlock(&array->lock);
   if (e) {
     free(buffer);
-    return fail(e, ERR_RWLOCK_UNLOCK_FAILED);
+    return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
   }
 
-  return success(buffer);
+  return result_ok(buffer);
 }

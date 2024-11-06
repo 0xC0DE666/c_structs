@@ -5,13 +5,29 @@ QUALIFIER := $(NAME)-$(VERSION)
 CC := gcc
 C_FLAGS := -g -Wall -Wextra -pthread
 
+DEPS_DIR := ./src/deps
 DIST_DIR := ./dist
 BIN_DIR := ./bin
 
 all: clean app test libc_structs.so libc_structs.a;
 
 clean:
-	rm -f ./src/main.o $(LIB_OBJS) $(TEST_OBJS) $(DIST_DIR)/* $(BIN_DIR)/*;
+	rm -f $(APP_OBJS) $(LIB_OBJS) $(TEST_OBJS) $(DIST_DIR)/* $(BIN_DIR)/*;
+
+#------------------------------
+# APP
+#------------------------------
+
+APP_DIR := ./src/app
+APP_SRCS := $(wildcard $(APP_DIR)/*.c)
+APP_OBJS := $(patsubst %.c, %.o, $(APP_SRCS))
+
+$(APP_SRCS):
+	$(CC) $(C_FLAGS) -c -o $(patsubst %.c, %.o, $@) $@;
+
+app: $(APP_OBJS) libc_structs.o;
+	echo '$(APP_OBJS)'
+	$(CC) $(C_FLAGS) -o $(BIN_DIR)/$@ $(APP_OBJS) $(DIST_DIR)/libc_structs.o;
 
 #------------------------------
 # LIB
@@ -26,20 +42,13 @@ $(LIB_SRCS):
 	$(CC) $(C_FLAGS) -c -o $(patsubst %.c, %.o, $@) $@;
 
 libc_structs.o: $(LIB_OBJS);
-	ld -relocatable -o $(DIST_DIR)/$@ $(LIB_OBJS);
+	ld -relocatable -o $(DIST_DIR)/$@ $(LIB_OBJS) $(DEPS_DIR)/libc_errors.o;
 
-libc_structs.so: $(LIB_OBJS) $(LIB_HDRS);
-	$(CC) $(C_FLAGS) -fPIC -shared -lc -o $(DIST_DIR)/$@ $(LIB_OBJS);
+libc_structs.so: $(LIB_OBJS);
+	$(CC) $(C_FLAGS) -fPIC -shared -lc -o $(DIST_DIR)/$@ $(LIB_OBJS) $(DEPS_DIR)/libc_errors.o;
 
 libc_structs.a: $(LIB_OBJS);
-	ar rcs $(DIST_DIR)/$@ $(LIB_OBJS);
-
-main.o:
-	$(CC) $(C_FLAGS) -c -o ./src/main.o ./src/main.c;
-
-app: main.o libc_structs.o;
-	$(CC) $(C_FLAGS) -o $(BIN_DIR)/$@ ./src/main.o $(DIST_DIR)/libc_structs.o;
-
+	ar rcs $(DIST_DIR)/$@ $(LIB_OBJS) $(DEPS_DIR)/libc_errors.o;
 
 #------------------------------
 # TESTS
@@ -53,9 +62,8 @@ TEST_OBJS := $(patsubst %.c, %.o, $(TEST_SRCS))
 $(TEST_SRCS):
 	$(CC) $(C_FLAGS) -c -o $(patsubst %.c, %.o, $@) $@;
 
-test: $(LIB_OBJS) $(TEST_OBJS);
-	$(CC) $(C_FLAGS) -lcriterion -o $(BIN_DIR)/$@ $(LIB_OBJS) $(TEST_OBJS);
-
+test: $(TEST_OBJS) libc_structs.o;
+	$(CC) $(C_FLAGS) -lcriterion -o $(BIN_DIR)/$@ $(TEST_OBJS) $(DIST_DIR)/libc_structs.o;
 
 #------------------------------
 # RELEASE

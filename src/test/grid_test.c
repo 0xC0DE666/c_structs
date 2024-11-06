@@ -177,7 +177,7 @@ Test(grid_set, _1) {
         cr_assert_eq(res.ok, NULL);
         cr_assert_eq(err->code, 1);
         cr_assert_eq(strcmp(err->message, ERR_INVALID_POSITION), 0);
-        error_free(&err);
+        free_error(&err);
       }
     }
   }
@@ -237,7 +237,7 @@ Test(grid_get, _1) {
         cr_assert_eq(res.ok, NULL);
         cr_assert_eq(err->code, 1);
         cr_assert_eq(strcmp(err->message, ERR_INVALID_POSITION), 0);
-        error_free(&err);
+        free_error(&err);
       }
     }
   }
@@ -280,7 +280,7 @@ Test(grid_remove, _1) {
         cr_assert_eq(res.ok, NULL);
         cr_assert_eq(err->code, 1);
         cr_assert_eq(strcmp(err->message, ERR_INVALID_POSITION), 0);
-        error_free(&err);
+        free_error(&err);
       }
     }
   }

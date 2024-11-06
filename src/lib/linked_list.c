@@ -9,14 +9,14 @@ Result node_new(void* const value) {
   Node* node = malloc(sizeof(Node));
 
   if (node == NULL) {
-    return fail(1, ERR_MALLOC_FAILED);
+    return result_error(1, ERR_MALLOC_FAILED);
   }
 
   node->value = value;
   node->next = NULL;
   node->previous = NULL;
   
-  return success(node);
+  return result_ok(node);
 }
 
 int node_free(Node** node, FreeFn const free_value) {
@@ -45,14 +45,14 @@ Result linked_list_new() {
   LinkedList* list = malloc(sizeof(LinkedList));
 
   if (list == NULL) {
-    return fail(1, ERR_MALLOC_FAILED);
+    return result_error(1, ERR_MALLOC_FAILED);
   }
 
   pthread_rwlock_init(&list->lock, NULL);
   list->head = NULL;
   list->tail = NULL;
   
-  return success(list);
+  return result_ok(list);
 }
 
 
@@ -224,14 +224,14 @@ int linked_list_insert_before(LinkedList* const list, Node* const node, void* co
 
 Result linked_list_remove_head(LinkedList* const list) {
   int e = pthread_rwlock_trywrlock(&list->lock);
-  if (e) return fail(e, "failed to lock");
+  if (e) return result_error(e, ERR_RDLOCK_FAILED);
 
   // empty
   if (list->head == NULL && list->tail == NULL) {
     e = pthread_rwlock_unlock(&list->lock);
-    if (e) return fail(e, "failed to unlock");
+    if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
 
-    return success(NULL);
+    return result_ok(NULL);
   }
 
   // sinlge node
@@ -241,9 +241,9 @@ Result linked_list_remove_head(LinkedList* const list) {
     list->tail = NULL;
 
     e = pthread_rwlock_unlock(&list->lock);
-    if (e) return fail(e, "failed to unlock");
+    if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
 
-    return success(n);
+    return result_ok(n);
   }
 
   // multiple mid
@@ -254,21 +254,21 @@ Result linked_list_remove_head(LinkedList* const list) {
   n->previous = NULL;
 
   e = pthread_rwlock_unlock(&list->lock);
-  if (e) return fail(e, "failed to unlock");
+  if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
 
-  return success(n);
+  return result_ok(n);
 }
 
 Result linked_list_remove_tail(LinkedList* const list) {
   int e = pthread_rwlock_trywrlock(&list->lock);
-  if (e) return fail(e, "failed to lock");
+  if (e) return result_error(e, ERR_RDLOCK_FAILED);
 
   // empty
   if (list->head == NULL && list->tail == NULL) {
     e = pthread_rwlock_unlock(&list->lock);
-    if (e) return fail(e, "failed to unlock");
+    if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
 
-    return success(NULL);
+    return result_ok(NULL);
   }
 
   // sinlge node
@@ -278,9 +278,9 @@ Result linked_list_remove_tail(LinkedList* const list) {
     list->tail = NULL;
 
     e = pthread_rwlock_unlock(&list->lock);
-    if (e) return fail(e, "failed to unlock");
+    if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
 
-    return success(n);
+    return result_ok(n);
   }
 
   // multiple mid
@@ -291,19 +291,19 @@ Result linked_list_remove_tail(LinkedList* const list) {
   n->previous = NULL;
 
   e = pthread_rwlock_unlock(&list->lock);
-  if (e) return fail(e, "failed to unlock");
+  if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
 
-  return success(n);
+  return result_ok(n);
 }
 
 Result linked_list_remove(LinkedList* const list, Node* node) {
   int e = pthread_rwlock_trywrlock(&list->lock);
-  if (e) return fail(e, "failed to lock");
+  if (e) return result_error(e, ERR_RDLOCK_FAILED);
 
   // sinlge
   if (list->head == list->tail) {
     e = pthread_rwlock_unlock(&list->lock);
-    if (e) return fail(e, "failed to unlock");
+    if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
 
     return linked_list_remove_head(list);
   }
@@ -311,7 +311,7 @@ Result linked_list_remove(LinkedList* const list, Node* node) {
   // head
   if (node == list->head) {
     e = pthread_rwlock_unlock(&list->lock);
-    if (e) return fail(e, "failed to unlock");
+    if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
 
     return linked_list_remove_head(list);
   }
@@ -319,7 +319,7 @@ Result linked_list_remove(LinkedList* const list, Node* node) {
   // tail
   if (node == list->tail) {
     e = pthread_rwlock_unlock(&list->lock);
-    if (e) return fail(e, "failed to unlock");
+    if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
 
     return linked_list_remove_tail(list);
   }
@@ -331,29 +331,29 @@ Result linked_list_remove(LinkedList* const list, Node* node) {
   node->previous = NULL;
 
   e = pthread_rwlock_unlock(&list->lock);
-  if (e) return fail(e, "failed to unlock");
+  if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
 
-  return success(node);
+  return result_ok(node);
 }
 
 
 Result linked_list_find(LinkedList* const list, PredicateFn const predicate) {
   int e = pthread_rwlock_trywrlock(&list->lock);
-  if (e) return fail(e, "failed to lock");
+  if (e) return result_error(e, ERR_RDLOCK_FAILED);
 
   Node* n = list->head;
   while (n) {
     if (predicate(n)) {
       e = pthread_rwlock_unlock(&list->lock);
-      if (e) return fail(e, "failed to unlock");
+      if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
 
-      return success(n);
+      return result_ok(n);
     }
     n = n->next;
   }
   
   e = pthread_rwlock_unlock(&list->lock);
-  if (e) return fail(e, "failed to unlock");
+  if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
 
-  return success(NULL);
+  return result_ok(NULL);
 }

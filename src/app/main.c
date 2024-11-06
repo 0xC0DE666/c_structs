@@ -3,7 +3,7 @@
 #include <string.h>
 #include <pthread.h>
 
-#include "./lib/c_structs.h"
+#include "../lib/c_structs.h"
 
 /*
  * Generic data structures implemnted in C.

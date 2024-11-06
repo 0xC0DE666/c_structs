@@ -1,29 +1,14 @@
 #include <stdbool.h>
 #include <pthread.h>
 
+#include "../deps/c_errors.h"
+
 #ifndef C_STRUCTS_H
 #define C_STRUCTS_H
 
 //####################
 // COMMON
 //####################
-typedef struct Error {
-  int code;
-  char* message;
-} Error;
-
-
-Error* error(int code, char* message);
-void error_free(Error** error);
-
-typedef struct Result {
-  void* ok;
-  Error* error;
-} Result;
-
-Result success(void* value);
-Result fail(int code, char* message);
-
 #define ERR_MALLOC_FAILED "malloc failed"
 
 #define ERR_RWLOCK_INIT_FAILED "rwlock init failed"
