@@ -184,7 +184,7 @@ Test(array_set, _1) {
       cr_assert_eq(err != NULL, true);
       cr_assert_eq(err->code, 1);
       cr_assert_eq(strcmp(err->message, ERR_INVALID_INDEX), 0);
-      free_error(&err);
+      error_free(&err);
     }
   }
   cr_assert_eq(sze, array->capacity);
@@ -239,7 +239,7 @@ Test(array_get, _1) {
       cr_assert_eq(err != NULL, true);
       cr_assert_eq(err->code, 1);
       cr_assert_eq(strcmp(err->message, ERR_INVALID_INDEX), 0);
-      free_error(&err);
+      error_free(&err);
     }
   }
   cr_assert_eq(sze, array->capacity);
@@ -276,7 +276,7 @@ Test(array_remove, _1) {
       cr_assert_eq(err != NULL, true);
       cr_assert_eq(err->code, 1);
       cr_assert_eq(strcmp(err->message, ERR_INVALID_INDEX), 0);
-      free_error(&err);
+      error_free(&err);
     }
   }
 
