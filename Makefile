@@ -71,7 +71,7 @@ test: $(TEST_OBJS) $(DIST_OBJS);
 #------------------------------
 
 release: C_FLAGS := -std=c99 -O2 -g -DNDDEBUG -Wall -Wextra
-release: clean app test libc_structs.so;
+release: clean libc_structs.o libc_structs.a libc_structs.so app test;
 
 clean:
 	rm -f $(APP_OBJS) $(LIB_OBJS) $(TEST_OBJS) $(DIST_DIR)/* $(BIN_DIR)/*;
