@@ -9,14 +9,6 @@
 //####################
 // COMMON
 //####################
-#define ERR_MALLOC_FAILED "malloc failed"
-
-#define ERR_RWLOCK_INIT_FAILED "rwlock init failed"
-#define ERR_RWLOCK_DESTROY_FAILED "rwlock destroy failed"
-#define ERR_RDLOCK_FAILED "rdlock failed"
-#define ERR_WRLOCK_FAILED "wrlock failed"
-#define ERR_RWLOCK_UNLOCK_FAILED "rwlock unlock failed"
-
 #define ERR_AT_CAPACITY "at capacity"
 #define ERR_INVALID_INDEX "invalid index"
 #define ERR_INVALID_POSITION "invalid position"

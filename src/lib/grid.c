@@ -40,13 +40,13 @@ Result grid_new(int rows, int columns) {
   Grid* grid = malloc(sizeof(Grid) + rows * columns * sizeof(void*));
 
   if (grid == NULL) {
-    return result_error(1, ERR_MALLOC_FAILED);
+    return result_std_error();
   }
 
   int e = pthread_rwlock_init(&grid->lock, NULL);
   if (e) {
     free(grid);
-    return result_error(e, ERR_RWLOCK_INIT_FAILED);
+    return result_std_error();
   }
   grid->rows = rows;
   grid->columns = columns;
@@ -127,17 +127,17 @@ int grid_set(Grid* const grid, Position* const position, void* const value) {
 
 Result grid_get(Grid* const grid, Position* const position) {
   int e = pthread_rwlock_tryrdlock(&grid->lock);
-  if (e) return result_error(e, ERR_RDLOCK_FAILED);
+  if (e) return result_std_error();
 
   if (!grid_position_valid(grid, position)) {
     e = pthread_rwlock_unlock(&grid->lock);
-    if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
+    if (e) return result_std_error();
 
     return result_error(1, ERR_INVALID_POSITION);
   }
 
   e = pthread_rwlock_unlock(&grid->lock);
-  if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
+  if (e) return result_std_error();
 
   void** row = grid->elements + position->row * grid->columns;
   return result_ok(row[position->column]);
@@ -145,11 +145,11 @@ Result grid_get(Grid* const grid, Position* const position) {
 
 Result grid_remove(Grid* const grid, Position* const position) {
   int e = pthread_rwlock_trywrlock(&grid->lock);
-  if (e) return result_error(e, ERR_WRLOCK_FAILED); 
+  if (e) return result_std_error();
 
   if (!grid_position_valid(grid, position)) {
     e = pthread_rwlock_unlock(&grid->lock);
-    if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
+    if (e) return result_std_error();
 
     return result_error(1, ERR_INVALID_POSITION);
   }
@@ -161,7 +161,7 @@ Result grid_remove(Grid* const grid, Position* const position) {
   grid->size--;
 
   e = pthread_rwlock_unlock(&grid->lock);
-  if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
+  if (e) return result_std_error();
 
   return result_ok(removed);
 }
@@ -196,19 +196,19 @@ int grid_for_each(Grid* const grid, GridEachFn const each) {
 
 Result grid_map(Grid* const grid, GridMapFn const map) {
   int e = pthread_rwlock_trywrlock(&grid->lock);
-  if (e) return result_error(e, ERR_WRLOCK_FAILED);
+  if (e) return result_std_error();
 
   Grid* mapped = grid_new(grid->rows, grid->columns).ok;
   if (mapped == NULL) {
     e = pthread_rwlock_unlock(&grid->lock);
-    if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
+    if (e) return result_std_error();
 
-    return result_error(1, ERR_MALLOC_FAILED);
+    return result_std_error();
   }
 
   if (grid->size == 0) {
     e = pthread_rwlock_unlock(&grid->lock);
-    if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
+    if (e) return result_std_error();
 
     return result_ok(mapped);
   }
@@ -227,14 +227,14 @@ Result grid_map(Grid* const grid, GridMapFn const map) {
   }
 
   e = pthread_rwlock_unlock(&grid->lock);
-  if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
+  if (e) return result_std_error();
 
   return result_ok(mapped);
 }
 
 Result grid_to_string(Grid* const grid, ToStringFn const to_string) {
   int e = pthread_rwlock_trywrlock(&grid->lock);
-  if (e) return result_error(e, ERR_WRLOCK_FAILED);
+  if (e) return result_std_error();
 
   if (grid->size == 0) {
     char* buffer = malloc(sizeof(char) * 3);
@@ -243,7 +243,7 @@ Result grid_to_string(Grid* const grid, ToStringFn const to_string) {
     e = pthread_rwlock_unlock(&grid->lock);
     if (e) {
       free(buffer);
-      return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
+      return result_std_error();
     };
 
     return result_ok(buffer);
@@ -273,9 +273,9 @@ Result grid_to_string(Grid* const grid, ToStringFn const to_string) {
 
   if (buffer == NULL) {
     e = pthread_rwlock_unlock(&grid->lock);
-    if (e) return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
+    if (e) return result_std_error();
 
-    return result_error(1, ERR_MALLOC_FAILED);
+    return result_std_error();
   }
 
   sprintf(buffer, "[");
@@ -295,7 +295,7 @@ Result grid_to_string(Grid* const grid, ToStringFn const to_string) {
   e = pthread_rwlock_unlock(&grid->lock);
   if (e) {
     free(buffer);
-    return result_error(e, ERR_RWLOCK_UNLOCK_FAILED);
+    return result_std_error();
   }
 
   return result_ok(buffer);
