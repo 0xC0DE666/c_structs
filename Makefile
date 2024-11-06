@@ -5,14 +5,11 @@ QUALIFIER := $(NAME)-$(VERSION)
 CC := gcc
 C_FLAGS := -g -Wall -Wextra -pthread
 
-DIST_DIR := ./dist
+BIN_DIR := ./build/bin
+DIST_DIR := ./build/dist
 DIST_OBJS := $(wildcard $(DIST_DIR)/*.o)
-BIN_DIR := ./bin
 
-all: clean libc_structs.o libc_structs.a libc_structs.so  app test;
-
-clean:
-	rm -f $(APP_OBJS) $(LIB_OBJS) $(TEST_OBJS) $(DIST_DIR)/* $(BIN_DIR)/*;
+all: clean libc_structs.o libc_structs.a libc_structs.so app test;
 
 DEPS_DIR := ./src/deps
 DEPS_OBJS := $(wildcard $(DEPS_DIR)/*.o)
@@ -73,3 +70,6 @@ test: $(TEST_OBJS) $(DIST_OBJS);
 
 release: C_FLAGS := -std=c99 -O2 -g -DNDDEBUG -Wall -Wextra
 release: clean app test libc_structs.so;
+
+clean:
+	rm -f $(APP_OBJS) $(LIB_OBJS) $(TEST_OBJS) $(DIST_DIR)/* $(BIN_DIR)/*;
