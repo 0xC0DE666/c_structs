@@ -1,18 +1,21 @@
-VERSION := 0.2.0
+VERSION := 0.0.0
 NAME := libc_structs
 QUALIFIER := $(NAME)-$(VERSION)
 
 CC := gcc
 C_FLAGS := -g -Wall -Wextra -pthread
 
-DEPS_DIR := ./src/deps
 DIST_DIR := ./dist
+DIST_OBJS := $(wildcard $(DIST_DIR)/*.o)
 BIN_DIR := ./bin
 
-all: clean app test libc_structs.so libc_structs.a;
+all: clean libc_structs.o libc_structs.a libc_structs.so  app test;
 
 clean:
 	rm -f $(APP_OBJS) $(LIB_OBJS) $(TEST_OBJS) $(DIST_DIR)/* $(BIN_DIR)/*;
+
+DEPS_DIR := ./src/deps
+DEPS_OBJS := $(wildcard $(DEPS_DIR)/*.o)
 
 #------------------------------
 # APP
@@ -25,9 +28,8 @@ APP_OBJS := $(patsubst %.c, %.o, $(APP_SRCS))
 $(APP_SRCS):
 	$(CC) $(C_FLAGS) -c -o $(patsubst %.c, %.o, $@) $@;
 
-app: $(APP_OBJS) libc_structs.o;
-	echo '$(APP_OBJS)'
-	$(CC) $(C_FLAGS) -o $(BIN_DIR)/$@ $(APP_OBJS) $(DIST_DIR)/libc_structs.o;
+app: $(APP_OBJS) $(DIST_OBJS);
+	$(CC) $(C_FLAGS) -o $(BIN_DIR)/$@ $(APP_OBJS) $(DIST_OBJS);
 
 #------------------------------
 # LIB
@@ -41,14 +43,14 @@ LIB_OBJS := $(patsubst %.c, %.o, $(LIB_SRCS))
 $(LIB_SRCS):
 	$(CC) $(C_FLAGS) -c -o $(patsubst %.c, %.o, $@) $@;
 
-libc_structs.o: $(LIB_OBJS);
-	ld -relocatable -o $(DIST_DIR)/$@ $(LIB_OBJS) $(DEPS_DIR)/libc_errors.o;
+libc_structs.o: $(LIB_OBJS) $(DEPS_OBJS);
+	ld -relocatable -o $(DIST_DIR)/$@ $(LIB_OBJS) $(DEPS_OBJS);
 
-libc_structs.so: $(LIB_OBJS);
-	$(CC) $(C_FLAGS) -fPIC -shared -lc -o $(DIST_DIR)/$@ $(LIB_OBJS) $(DEPS_DIR)/libc_errors.o;
+libc_structs.a: $(LIB_OBJS) $(DEPS_OBJS);
+	ar rcs $(DIST_DIR)/$@ $(LIB_OBJS) $(DEPS_OBJS);
 
-libc_structs.a: $(LIB_OBJS);
-	ar rcs $(DIST_DIR)/$@ $(LIB_OBJS) $(DEPS_DIR)/libc_errors.o;
+libc_structs.so: $(LIB_OBJS) $(DEPS_OBJS);
+	$(CC) $(C_FLAGS) -fPIC -shared -lc -o $(DIST_DIR)/$@ $(LIB_OBJS) $(DEPS_OBJS);
 
 #------------------------------
 # TESTS
@@ -62,8 +64,8 @@ TEST_OBJS := $(patsubst %.c, %.o, $(TEST_SRCS))
 $(TEST_SRCS):
 	$(CC) $(C_FLAGS) -c -o $(patsubst %.c, %.o, $@) $@;
 
-test: $(TEST_OBJS) libc_structs.o;
-	$(CC) $(C_FLAGS) -lcriterion -o $(BIN_DIR)/$@ $(TEST_OBJS) $(DIST_DIR)/libc_structs.o;
+test: $(TEST_OBJS) $(DIST_OBJS);
+	$(CC) $(C_FLAGS) -lcriterion -o $(BIN_DIR)/$@ $(TEST_OBJS) $(DIST_OBJS);
 
 #------------------------------
 # RELEASE
