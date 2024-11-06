@@ -60,7 +60,7 @@ Result array_to_string(Array* const array, ToStringFn const to_string);
 
 
 //####################
-// MATRIX
+// GRID
 //####################
 typedef struct Position {
   int row;
