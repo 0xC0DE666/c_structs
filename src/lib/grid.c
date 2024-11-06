@@ -238,7 +238,7 @@ Result grid_to_string(Grid* const grid, ToStringFn const to_string) {
 
   if (grid->size == 0) {
     char* buffer = malloc(sizeof(char) * 3);
-    sprintf(buffer, "[]\0");
+    sprintf(buffer, "[]");
 
     e = pthread_rwlock_unlock(&grid->lock);
     if (e) {
@@ -259,7 +259,6 @@ Result grid_to_string(Grid* const grid, ToStringFn const to_string) {
   for (int r = 0; r < rows; ++r) {
     void** row = grid->elements + r * grid->columns;
     for (int c = 0; c < columns; ++c) {
-      Position p = position_new(r, c);
       void* element = row[c];
       bool not_null = element != NULL;
       elements[r][c] = not_null ? to_string(element) : "NULL";

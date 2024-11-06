@@ -26,7 +26,7 @@ void point_free(Point** const point) {
 }
 
 char* point_to_string(Point* point) {
-  char* buffer = malloc(sizeof(char) * 5);
+  char* buffer = malloc(sizeof(char) * 14);
  
   sprintf(
     buffer,

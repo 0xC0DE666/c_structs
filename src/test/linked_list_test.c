@@ -281,6 +281,7 @@ Test(linked_list_insert_before, before_head) {
 
   int e = linked_list_append(list, point_new(1, 1));
   e = linked_list_insert_before(list, list->head, point_new(0, 0));
+  cr_assert_eq(e, 0);
   e = linked_list_append(list, point_new(2, 2));
 
   int sze = linked_list_size(list);
@@ -319,6 +320,7 @@ Test(linked_list_insert_before, before_mid_node) {
   int e = linked_list_append(list, point_new(0, 0));
   e = linked_list_append(list, point_new(2, 2));
   e = linked_list_insert_before(list, list->head->next, point_new(1, 1));
+  cr_assert_eq(e, 0);
   e = linked_list_append(list, point_new(3, 3));
 
   int sze = linked_list_size(list);
@@ -359,6 +361,7 @@ Test(linked_list_insert_after, after_tail) {
 
   int e = linked_list_append(list, point_new(0, 0));
   e = linked_list_insert_after(list, list->tail, point_new(1, 1));
+  cr_assert_eq(e, 0);
   e = linked_list_append(list, point_new(2, 2));
 
   int sze = linked_list_size(list);
@@ -397,6 +400,7 @@ Test(linked_list_insert_after, after_mid_node) {
   int e = linked_list_append(list, point_new(0, 0));
   e = linked_list_append(list, point_new(1, 1));
   e = linked_list_insert_after(list, list->head->next, point_new(2, 2));
+  cr_assert_eq(e, 0);
   e = linked_list_append(list, point_new(3, 3));
 
   int sze = linked_list_size(list);

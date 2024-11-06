@@ -242,7 +242,7 @@ Result array_to_string(Array* const array, ToStringFn const to_string) {
 
   if (array->size == 0) {
     char* buffer = malloc(sizeof(char) * 3);
-    sprintf(buffer, "[]\0");
+    sprintf(buffer, "[]");
 
     e = pthread_rwlock_unlock(&array->lock);
     if (e) {
