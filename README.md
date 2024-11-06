@@ -3,4 +3,5 @@
 ## Generic thread safe data structures implemnted in C.
 
 - array
-- matrix
+- grid (2d array)
+- linked list
