@@ -7,7 +7,8 @@ C_FLAGS := -g -Wall -Wextra -pthread
 
 BIN_DIR := ./build/bin
 DIST_DIR := ./build/dist
-DIST_OBJS := $(wildcard $(DIST_DIR)/*.o)
+# DIST_OBJS := $(wildcard $(DIST_DIR)/*.o)
+DIST_OBJS := $(DIST_DIR)/libc_structs.o
 
 all: clean libc_structs.o libc_structs.a libc_structs.so app test;
 
