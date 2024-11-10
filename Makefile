@@ -43,22 +43,50 @@ app: $(APP_OBJS) $(RELEASE_O);
 # LIB
 #------------------------------
 
-LIB_DIR := ./src/lib
-LIB_HDRS = $(wildcard $(LIB_DIR)/*.h)
-LIB_SRCS = $(wildcard $(LIB_DIR)/*.c)
-LIB_OBJS := $(patsubst %.c, %.o, $(LIB_SRCS))
+LIB_SRC_DIR := $(SRC_DIR)/lib
+LIB_OBJ_DIR := $(OBJ_DIR)/lib
+LIB_HDRS := $(wildcard $(LIB_SRC_DIR)/*.h)
+LIB_SRCS := $(wildcard $(LIB_SRC_DIR)/*.c)
+LIB_OBJS := $(patsubst $(LIB_SRC_DIR)/%.c, $(LIB_OBJ_DIR)/%.o, $(LIB_SRCS))
 
-$(LIB_OBJS):
-	$(CC) $(C_FLAGS) -c -o $@ $(patsubst %.o, %.c, $@);
+$(LIB_OBJ_DIR)/%.o: $(LIB_SRC_DIR)/%.c | $(LIB_OBJ_DIR)
+	$(CC) $(C_FLAGS) -c $< -o $@
 
-libc_structs.o: $(LIB_OBJS) $(DEPS_OBJS);
+# VERSIONED
+$(call GET_VERSIONED_NAME,o): $(LIB_OBJS) $(DEPS_OBJS);
 	ld -relocatable -o $(RELEASE_DIR)/$@ $(LIB_OBJS) $(DEPS_OBJS);
 
-libc_structs.a: $(LIB_OBJS) $(DEPS_OBJS);
+$(call GET_VERSIONED_NAME,a): $(LIB_OBJS) $(DEPS_OBJS);
 	ar rcs $(RELEASE_DIR)/$@ $(LIB_OBJS) $(DEPS_OBJS);
 
-libc_structs.so: $(LIB_OBJS) $(DEPS_OBJS);
+$(call GET_VERSIONED_NAME,so): $(LIB_OBJS) $(DEPS_OBJS);
 	$(CC) $(C_FLAGS) -fPIC -shared -lc -o $(RELEASE_DIR)/$@ $(LIB_OBJS) $(DEPS_OBJS);
+
+# UNVERSIONED
+$(NAME).o: $(LIB_OBJS) $(DEPS_OBJS);
+	ld -relocatable -o $(RELEASE_DIR)/$@ $(LIB_OBJS) $(DEPS_OBJS);
+
+$(NAME).a: $(LIB_OBJS) $(DEPS_OBJS);
+	ar rcs $(RELEASE_DIR)/$@ $(LIB_OBJS) $(DEPS_OBJS);
+
+$(NAME).so: $(LIB_OBJS) $(DEPS_OBJS);
+	$(CC) $(C_FLAGS) -fPIC -shared -lc -o $(RELEASE_DIR)/$@ $(LIB_OBJS) $(DEPS_OBJS);
+
+#------------------------------
+# TESTS
+#------------------------------
+
+TEST_SRC_DIR := $(SRC_DIR)/test
+TEST_OBJ_DIR := $(OBJ_DIR)/test
+TEST_HDRS := $(wildcard $(TEST_SRC_DIR)/*.h)
+TEST_SRCS := $(wildcard $(TEST_SRC_DIR)/*.c)
+TEST_OBJS := $(patsubst $(TEST_SRC_DIR)/%.c, $(TEST_OBJ_DIR)/%.o, $(TEST_SRCS))
+
+$(TEST_OBJ_DIR)/%.o: $(TEST_SRC_DIR)/%.c | $(TEST_OBJ_DIR)
+	$(CC) $(C_FLAGS) -c $< -o $@
+
+test: $(TEST_OBJS) $(RELEASE_O);
+	$(CC) $(C_FLAGS) -lcriterion -o $(BIN_DIR)/$@ $(TEST_OBJS) $(RELEASE_O);
 
 #------------------------------
 # TESTS
