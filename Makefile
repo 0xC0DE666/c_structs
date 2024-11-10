@@ -27,13 +27,14 @@ all: clean libc_structs.o libc_structs.a libc_structs.so app test;
 # APP
 #------------------------------
 
-APP_DIR := ./src/app
-APP_HDRS = $(wildcard $(APP_DIR)/*.h)
-APP_SRCS := $(wildcard $(APP_DIR)/*.c)
-APP_OBJS := $(patsubst %.c, %.o, $(APP_SRCS))
+APP_SRC_DIR := $(SRC_DIR)/app
+APP_OBJ_DIR := $(OBJ_DIR)/app
+APP_HDRS := $(wildcard $(APP_SRC_DIR)/*.h)
+APP_SRCS := $(wildcard $(APP_SRC_DIR)/*.c)
+APP_OBJS := $(patsubst $(APP_SRC_DIR)/%.c, $(APP_OBJ_DIR)/%.o, $(APP_SRCS))
 
-$(APP_OBJS):
-	$(CC) $(C_FLAGS) -c -o $@ $(patsubst %.o, %.c, $@);
+$(APP_OBJ_DIR)/%.o: $(APP_SRC_DIR)/%.c | $(APP_OBJ_DIR)
+	$(CC) $(C_FLAGS) -c $< -o $@
 
 app: $(APP_OBJS) $(RELEASE_O);
 	$(CC) $(C_FLAGS) -o $(BIN_DIR)/$@ $(APP_OBJS) $(RELEASE_O);
