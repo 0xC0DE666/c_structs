@@ -264,7 +264,7 @@ Result array_to_string(Array* const array, ToStringFn const to_string) {
     sum_lengths += lengths[i];
   }
 
-  int total_length = sum_lengths + (capacity - 1) * 2 + 2;
+  int total_length = sum_lengths + (capacity * 2) + 4;
   char* buffer = malloc(sizeof(char) * total_length);
 
   if (buffer == NULL) {
