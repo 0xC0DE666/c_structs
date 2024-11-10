@@ -1,6 +1,5 @@
 VERSION := 0.0.0
 NAME := libc_structs
-QUALIFIER := $(NAME)-$(VERSION)
 
 CC := gcc
 C_FLAGS := -g -Wall -Wextra -pthread
@@ -21,7 +20,7 @@ RELEASE_O := $(RELEASE_DIR)/$(NAME).o
 VERSIONED_RELEASE_ASSETS := $(call GET_VERSIONED_NAME,o) $(call GET_VERSIONED_NAME,a) $(call GET_VERSIONED_NAME,so)
 UNVERSIONED_RELEASE_ASSETS := $(NAME).o $(NAME).a $(NAME).so
 
-all: clean libc_structs.o libc_structs.a libc_structs.so app test;
+all: clean $(UNVERSIONED_RELEASE_ASSETS) app test;
 
 #------------------------------
 # APP
@@ -92,8 +91,11 @@ test: $(TEST_OBJS) $(RELEASE_O);
 # RELEASE
 #------------------------------
 
-release: C_FLAGS := -std=c99 -O2 -g -DNDDEBUG -Wall -Wextra
-release: clean libc_structs.o libc_structs.a libc_structs.so app test;
+release: C_FLAGS := -std=c99 -O2 -g -DNDDEBUG -Wall -Wextra -pthread
+release: clean $(VERSIONED_RELEASE_ASSETS) $(UNVERSIONED_RELEASE_ASSETS) app test;
+	cp $(LIB_HDRS) $(RELEASE_DIR);
+	echo $(VERSION) > $(RELEASE_DIR)/version.txt;
+	tar -czvf $(BUILD_DIR)/$(call GET_VERSIONED_NAME,tar.gz) -C $(RELEASE_DIR) .;
 
 clean:
-	rm -f $(APP_OBJS) $(LIB_OBJS) $(TEST_OBJS) $(RELEASE_DIR)/* $(BIN_DIR)/*;
+	rm -f $(APP_OBJS) $(LIB_OBJS) $(TEST_OBJS) $(RELEASE_DIR)/* $(BIN_DIR)/* $(BUILD_DIR)/$(call GET_VERSIONED_NAME,tar.gz);

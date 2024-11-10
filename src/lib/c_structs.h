@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include <pthread.h>
 
-#include "../deps/c_errors.h"
+#include "../deps/libc_errors/c_errors.h"
 
 #ifndef C_STRUCTS_H
 #define C_STRUCTS_H

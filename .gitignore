@@ -1,5 +1,9 @@
+.*.env
 build/bin/*
-build/dist/*
-.env
-*.o
+build/obj/*
+build/release/*
+*.o*
+*.a*
+*.so*
 *.vim
+*.tar.gz*
