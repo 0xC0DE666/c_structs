@@ -89,21 +89,6 @@ test: $(TEST_OBJS) $(RELEASE_O);
 	$(CC) $(C_FLAGS) -lcriterion -o $(BIN_DIR)/$@ $(TEST_OBJS) $(RELEASE_O);
 
 #------------------------------
-# TESTS
-#------------------------------
-
-TEST_DIR := ./src/test
-TEST_HDRS = $(wildcard $(TEST_DIR)/*.h)
-TEST_SRCS := $(wildcard $(TEST_DIR)/*.c)
-TEST_OBJS := $(patsubst %.c, %.o, $(TEST_SRCS))
-
-$(TEST_OBJS):
-	$(CC) $(C_FLAGS) -c -o $@ $(patsubst %.o, %.c, $@);
-
-test: $(TEST_OBJS) $(RELEASE_O);
-	$(CC) $(C_FLAGS) -lcriterion -o $(BIN_DIR)/$@ $(TEST_OBJS) $(RELEASE_O);
-
-#------------------------------
 # RELEASE
 #------------------------------
 
