@@ -5,15 +5,23 @@ QUALIFIER := $(NAME)-$(VERSION)
 CC := gcc
 C_FLAGS := -g -Wall -Wextra -pthread
 
-BIN_DIR := ./build/bin
-DIST_DIR := ./build/dist
-# DIST_OBJS := $(wildcard $(DIST_DIR)/*.o)
-DIST_OBJS := $(DIST_DIR)/libc_structs.o
+define GET_VERSIONED_NAME
+$(NAME).$(1).$(VERSION)
+endef
+
+SRC_DIR := ./src
+DEPS_ROOT_DIR := $(SRC_DIR)/deps
+DEPS_OBJS := $(shell find $(DEPS_ROOT_DIR) -type f -name "*.o")
+
+BUILD_DIR := ./build
+BIN_DIR := $(BUILD_DIR)/bin
+OBJ_DIR := $(BUILD_DIR)/obj
+RELEASE_DIR := $(BUILD_DIR)/release
+RELEASE_O := $(RELEASE_DIR)/$(NAME).o
+VERSIONED_RELEASE_ASSETS := $(call GET_VERSIONED_NAME,o) $(call GET_VERSIONED_NAME,a) $(call GET_VERSIONED_NAME,so)
+UNVERSIONED_RELEASE_ASSETS := $(NAME).o $(NAME).a $(NAME).so
 
 all: clean libc_structs.o libc_structs.a libc_structs.so app test;
-
-DEPS_DIR := ./src/deps
-DEPS_OBJS := $(wildcard $(DEPS_DIR)/*.o)
 
 #------------------------------
 # APP
@@ -27,8 +35,8 @@ APP_OBJS := $(patsubst %.c, %.o, $(APP_SRCS))
 $(APP_OBJS):
 	$(CC) $(C_FLAGS) -c -o $@ $(patsubst %.o, %.c, $@);
 
-app: $(APP_OBJS) $(DIST_OBJS);
-	$(CC) $(C_FLAGS) -o $(BIN_DIR)/$@ $(APP_OBJS) $(DIST_OBJS);
+app: $(APP_OBJS) $(RELEASE_O);
+	$(CC) $(C_FLAGS) -o $(BIN_DIR)/$@ $(APP_OBJS) $(RELEASE_O);
 
 #------------------------------
 # LIB
@@ -43,13 +51,13 @@ $(LIB_OBJS):
 	$(CC) $(C_FLAGS) -c -o $@ $(patsubst %.o, %.c, $@);
 
 libc_structs.o: $(LIB_OBJS) $(DEPS_OBJS);
-	ld -relocatable -o $(DIST_DIR)/$@ $(LIB_OBJS) $(DEPS_OBJS);
+	ld -relocatable -o $(RELEASE_DIR)/$@ $(LIB_OBJS) $(DEPS_OBJS);
 
 libc_structs.a: $(LIB_OBJS) $(DEPS_OBJS);
-	ar rcs $(DIST_DIR)/$@ $(LIB_OBJS) $(DEPS_OBJS);
+	ar rcs $(RELEASE_DIR)/$@ $(LIB_OBJS) $(DEPS_OBJS);
 
 libc_structs.so: $(LIB_OBJS) $(DEPS_OBJS);
-	$(CC) $(C_FLAGS) -fPIC -shared -lc -o $(DIST_DIR)/$@ $(LIB_OBJS) $(DEPS_OBJS);
+	$(CC) $(C_FLAGS) -fPIC -shared -lc -o $(RELEASE_DIR)/$@ $(LIB_OBJS) $(DEPS_OBJS);
 
 #------------------------------
 # TESTS
@@ -63,8 +71,8 @@ TEST_OBJS := $(patsubst %.c, %.o, $(TEST_SRCS))
 $(TEST_OBJS):
 	$(CC) $(C_FLAGS) -c -o $@ $(patsubst %.o, %.c, $@);
 
-test: $(TEST_OBJS) $(DIST_OBJS);
-	$(CC) $(C_FLAGS) -lcriterion -o $(BIN_DIR)/$@ $(TEST_OBJS) $(DIST_OBJS);
+test: $(TEST_OBJS) $(RELEASE_O);
+	$(CC) $(C_FLAGS) -lcriterion -o $(BIN_DIR)/$@ $(TEST_OBJS) $(RELEASE_O);
 
 #------------------------------
 # RELEASE
@@ -74,4 +82,4 @@ release: C_FLAGS := -std=c99 -O2 -g -DNDDEBUG -Wall -Wextra
 release: clean libc_structs.o libc_structs.a libc_structs.so app test;
 
 clean:
-	rm -f $(APP_OBJS) $(LIB_OBJS) $(TEST_OBJS) $(DIST_DIR)/* $(BIN_DIR)/*;
+	rm -f $(APP_OBJS) $(LIB_OBJS) $(TEST_OBJS) $(RELEASE_DIR)/* $(BIN_DIR)/*;
