@@ -199,7 +199,7 @@ Result array_remove(Array* const array, int index) {
 
 int array_for_each(Array* const array, ArrayEachFn each) {
   // TODO check each as well?
-  if (array == NULL) return ERR_CODE_GENERAL;
+  if (array == NULL || each == NULL) return ERR_CODE_GENERAL;
 
   int e = pthread_rwlock_tryrdlock(&array->lock);
   if (e) return e;
@@ -225,10 +225,9 @@ int array_for_each(Array* const array, ArrayEachFn each) {
 }
 
 Result array_map(Array* const array, ArrayMapFn map) {
-  if (array == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER("array"));
-
+  if (array == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER(array));
   // TODO check map as well?
-  // if (map == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER("map"));
+  if (map == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER(map));
 
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return result_std_error();
@@ -263,9 +262,9 @@ Result array_map(Array* const array, ArrayMapFn map) {
 }
 
 Result array_to_string(Array* const array, ToStringFn const to_string) {
-  if (array == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER("array"));
+  if (array == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER(array));
   // TODO check to_string as well?
-  // if (to_string == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER("to_string"));
+  if (to_string == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER(to_string));
 
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return result_std_error();

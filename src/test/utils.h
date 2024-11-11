@@ -14,7 +14,7 @@
   char* point_to_string(Point* const point);
   void point_double(Point* const point);
 
-  void print_string(char* str);
-  void* nothing(void* v);
+  void print_str(char* str);
+  void* as_is(void* v);
 
 #endif

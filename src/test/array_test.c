@@ -323,7 +323,7 @@ Test(array_for_each, _1) {
 // ####################
 Test(array_map, _2) {
   Array* points = array_new(5).ok;
-  Array* empty = array_map(points, (ArrayMapFn) NULL).ok;
+  Array* empty = array_map(points, (ArrayMapFn) as_is).ok;
 
   cr_assert_eq(empty != NULL, true);
   cr_assert_eq(empty->size, 0);
@@ -359,7 +359,7 @@ Test(array_map, _2) {
 Test(array_to_string, _1) {
   Array* array = array_new(3).ok;
 
-  char* result = array_to_string(array, (ToStringFn) NULL).ok;
+  char* result = array_to_string(array, (ToStringFn) point_to_string).ok;
   char* expected = "[]";
   cr_assert_eq(strcmp(result, expected), 0);
   safe_free((void**) &result);

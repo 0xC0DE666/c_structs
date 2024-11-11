@@ -25,6 +25,8 @@ Point* point_new(int x, int y) {
 }
 
 char* point_to_string(Point* point) {
+  if (point == NULL) return "";
+
   char* buffer = malloc(sizeof(char) * 14);
  
   sprintf(
@@ -42,10 +44,10 @@ void point_double(Point* point) {
   point->y = point->y * 2;
 }
 
-void print_string(char* str) {
+void print_str(char* str) {
   printf("%s", str);
 }
 
-void* nothing(void* v) {
+void* as_is(void* v) {
   return v;
 }
