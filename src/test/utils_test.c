@@ -9,15 +9,24 @@
 // safe_free
 // ####################
 Test(safe_free, _1) {
+  Point* point = point_new(5, 1);
+
+  cr_assert_eq(point != NULL, true);
+
+  safe_free((void**) &point);
+
+  cr_assert_eq(point, NULL);
+}
+
+Test(safe_free, _2) {
   char* str = malloc(sizeof(char) * 10);
 
   cr_assert_eq(str != NULL, true);
 
   safe_free((void**) &str);
 
-  cr_assert_eq(str == NULL, true);
+  cr_assert_eq(str, NULL);
 }
-
 
 // ####################
 // point_new
@@ -28,18 +37,7 @@ Test(point_new, _1) {
   cr_assert_eq(point->x, 0);
   cr_assert_eq(point->y, 1);
 
-  point_free(&point);
-}
-
-// ####################
-// point_free
-// ####################
-Test(point_free, _1) {
-  Point* point = point_new(5, 1);
-
-  point_free(&point);
-
-  cr_assert_eq(point, NULL);
+  safe_free((void**) &point);
 }
 
 // ####################
@@ -54,7 +52,7 @@ Test(point_to_str, _1) {
   cr_assert_eq(strcmp(result, expected), 0);
 
   free(result);
-  point_free(&point);
+  safe_free((void**) &point);
 }
 
 // ####################
@@ -68,5 +66,5 @@ Test(point_double, _1) {
   cr_assert_eq(point->x, 6);
   cr_assert_eq(point->y, 4);
 
-  point_free(&point);
+  safe_free((void**) &point);
 }

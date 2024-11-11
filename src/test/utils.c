@@ -24,11 +24,6 @@ Point* point_new(int x, int y) {
   return point;
 }
 
-void point_free(Point** const point) {
-  free(*point);
-  *point = NULL;
-}
-
 char* point_to_string(Point* point) {
   char* buffer = malloc(sizeof(char) * 14);
  

@@ -71,7 +71,7 @@ Test(grid_has_capacity, _1) {
   }
   cr_assert_eq(grid->size, grid->capacity);
 
-  grid_free(&grid, (FreeFn) point_free);
+  grid_free(&grid, (FreeFn) safe_free);
 }
 
 // ####################
@@ -114,7 +114,7 @@ Test(grid_clear, _1) {
   }
   cr_assert_eq(grid->size, grid->capacity);
 
-  grid_clear(grid, (FreeFn) point_free);
+  grid_clear(grid, (FreeFn) safe_free);
   cr_assert_eq(grid != NULL, true);
   cr_assert_eq(grid->size, 0);
 
@@ -143,7 +143,7 @@ Test(grid_free, _1) {
   }
   cr_assert_eq(grid->size, grid->capacity);
 
-  grid_free(&grid, (FreeFn) point_free);
+  grid_free(&grid, (FreeFn) safe_free);
   cr_assert_eq(grid, NULL);
 }
 
@@ -202,9 +202,9 @@ Test(grid_set, _1) {
   }
 
   for (int i = 0; i < grid->capacity; ++i) {
-    point_free(&points[i]);
+    safe_free((void**) &points[i]);
   }
-  grid_free(&grid, (FreeFn) point_free);
+  grid_free(&grid, (FreeFn) safe_free);
 }
 
 // ####################
@@ -243,7 +243,7 @@ Test(grid_get, _1) {
   }
   cr_assert_eq(sze, grid->capacity);
 
-  grid_free(&grid, (FreeFn) point_free);
+  grid_free(&grid, (FreeFn) safe_free);
 }
 
 // ####################
@@ -269,7 +269,7 @@ Test(grid_remove, _1) {
         cr_assert_eq(pt->y, c);
         cr_assert_eq(grid_get(grid, &p).ok, NULL);
         cr_assert_eq(grid->size, sze);
-        point_free(&pt);
+        safe_free((void**) &pt);
       }
 
       if (!grid_position_valid(grid, &p)) {
@@ -285,7 +285,7 @@ Test(grid_remove, _1) {
     }
   }
 
-  grid_free(&grid, (FreeFn) point_free);
+  grid_free(&grid, (FreeFn) safe_free);
 }
 
 // ####################
@@ -315,7 +315,7 @@ Test(grid_for_each, _1) {
     }
   }
 
-  grid_free(&grid, (FreeFn) point_free);
+  grid_free(&grid, (FreeFn) safe_free);
 }
 
 // ####################
@@ -352,7 +352,7 @@ Test(grid_map, _1) {
     }
   }
 
-  grid_free(&points, (FreeFn) point_free);
+  grid_free(&points, (FreeFn) safe_free);
   grid_free(&strings, (FreeFn) safe_free);
 }
 
@@ -399,7 +399,7 @@ Test(grid_to_string, single_row) {
   cr_assert_eq(strcmp(result, expected), 0);
 
   free(result);
-  grid_free(&grid, (FreeFn) point_free);
+  grid_free(&grid, (FreeFn) safe_free);
 }
 
 Test(grid_to_string, single_column) {
@@ -417,7 +417,7 @@ Test(grid_to_string, single_column) {
   cr_assert_eq(strcmp(result, expected), 0);
 
   free(result);
-  grid_free(&grid, (FreeFn) point_free);
+  grid_free(&grid, (FreeFn) safe_free);
 }
 
 Test(grid_to_string, multi) {
@@ -437,5 +437,5 @@ Test(grid_to_string, multi) {
   cr_assert_eq(strcmp(result, expected), 0);
 
   free(result);
-  grid_free(&grid, (FreeFn) point_free);
+  grid_free(&grid, (FreeFn) safe_free);
 }
