@@ -349,7 +349,7 @@ Test(array_to_string, _1) {
   char* result = array_to_string(array, (ToStringFn) NULL).ok;
   char* expected = "[]";
   cr_assert_eq(strcmp(result, expected), 0);
-  free(result);
+  ptr_free((void**) &result);
 
   array_append(array, point_new(0, 0));
   array_set(array, 2, point_new(1, 1));
@@ -358,6 +358,6 @@ Test(array_to_string, _1) {
   expected = "[(0, 0), NULL, (1, 1)]";
   cr_assert_eq(strcmp(result, expected), 0);
 
-  free(result);
-  array_free(&array, NULL);
+  ptr_free((void**) &result);
+  array_free(&array, (FreeFn) point_free);
 }

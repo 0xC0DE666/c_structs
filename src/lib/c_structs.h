@@ -13,10 +13,9 @@
 #define ERR_INVALID_INDEX "invalid index"
 #define ERR_INVALID_POSITION "invalid position"
 
-typedef void (*FreeFn)(void** const);
-typedef bool (*PredicateFn)(void* const);
-typedef char* (*ToStringFn)(void* const);
-
+typedef void (*const FreeFn)(void** const);
+typedef bool (*const PredicateFn)(void* const);
+typedef char* (*const ToStringFn)(void* const);
 
 //####################
 // ARRAY
@@ -127,5 +126,7 @@ Result linked_list_remove_tail(LinkedList* const list);
 Result linked_list_remove(LinkedList* const list, Node* node);
 
 Result linked_list_find(LinkedList* const list, PredicateFn const predicate);
+
+Result linked_list_to_string(LinkedList* const list, ToStringFn const to_string);
 
 #endif

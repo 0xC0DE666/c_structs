@@ -872,3 +872,25 @@ Test(linked_list_find, found) {
 
   linked_list_free(&list, (FreeFn) point_free);
 }
+
+// ####################
+// linked_list_to_string
+// ####################
+Test(linked_list_to_string, _1) {
+  LinkedList* list = linked_list_new(3).ok;
+
+  char* result = linked_list_to_string(list, (ToStringFn) NULL).ok;
+  char* expected = "{}";
+  cr_assert_eq(strcmp(result, expected), 0);
+  ptr_free((void**) &result);
+
+  linked_list_append(list, point_new(0, 0));
+  linked_list_append(list, point_new(1, 1));
+
+  result = linked_list_to_string(list, (ToStringFn) point_to_string).ok;
+  expected = "{(0, 0), (1, 1)}";
+  cr_assert_eq(strcmp(result, expected), 0);
+
+  ptr_free((void**) &result);
+  linked_list_free(&list, (FreeFn) point_free);
+}

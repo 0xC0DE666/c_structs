@@ -356,3 +356,64 @@ Result linked_list_find(LinkedList* const list, PredicateFn const predicate) {
 
   return result_ok(NULL);
 }
+
+Result linked_list_to_string(LinkedList* const list, ToStringFn const to_string) {
+  int e = pthread_rwlock_trywrlock(&list->lock);
+  if (e) return result_std_error();
+
+  int list_size = linked_list_size(list);
+  if (list_size == 0) {
+    char* buffer = malloc(sizeof(char) * 3);
+    sprintf(buffer, "{}");
+
+    e = pthread_rwlock_unlock(&list->lock);
+    if (e) {
+      free(buffer);
+      return result_std_error();
+    };
+
+    return result_ok(buffer);
+  }
+
+  char* values[list_size] = {};
+  int lengths[list_size] = {};
+  int sum_lengths = 0;
+
+  Node* n = list->head;
+  int i = 0;
+  while(n != NULL) {
+    void* value = n->value;
+    values[i] = value != NULL ? to_string(value) : "NULL";
+    lengths[i] = strlen(values[i]);
+    sum_lengths += lengths[i];
+    ++i;
+    n = n->next;
+  }
+
+  int total_length = sum_lengths + (list_size * 2) + 4;
+  char* buffer = malloc(sizeof(char) * total_length);
+
+  if (buffer == NULL) {
+    e = pthread_rwlock_unlock(&list->lock);
+    if (e) return result_std_error();
+
+    return result_std_error();
+  }
+
+  sprintf(buffer, "{");
+  for (int i = 0; i < list_size; ++i) {
+    strcat(buffer, values[i]);
+    if (i < list_size - 1) {
+      strcat(buffer, ", ");
+    }
+  }
+  strcat(buffer, "}\0");
+
+  e = pthread_rwlock_unlock(&list->lock);
+  if (e) {
+    free(buffer);
+    return result_std_error();
+  }
+
+  return result_ok(buffer);
+}
