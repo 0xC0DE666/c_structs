@@ -5,10 +5,14 @@
 #include "c_structs.h"
 
 bool array_index_valid(Array* const array, int index) {
+  if (array == NULL) return false;
+
   return index >= 0 && index <= array->capacity - 1;
 }
 
 bool array_has_capacity(Array* const array) {
+  if (array == NULL) return false;
+
   return array->size < array->capacity;
 }
 
@@ -35,6 +39,9 @@ Result array_new(int capacity) {
 }
 
 int array_clear(Array* const array, FreeFn free_element) {
+  // TODO check free_element as well?
+  if (array == NULL) return ERR_CODE_GENERAL;
+
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return e;
 
@@ -52,10 +59,13 @@ int array_clear(Array* const array, FreeFn free_element) {
   e = pthread_rwlock_unlock(&array->lock);
   if (e) return e;
 
-  return 0;
+  return SUC_CODE_GENERAL;
 }
 
 int array_free(Array** const array, FreeFn free_element) {
+  // TODO check free_element as well?
+  if (array == NULL || *array == NULL) return ERR_CODE_GENERAL;
+
   array_clear(*array, free_element);
 
   int e = pthread_rwlock_destroy(&(*array)->lock);
@@ -64,10 +74,12 @@ int array_free(Array** const array, FreeFn free_element) {
   free(*array);
   *array = NULL;
 
-  return 0;
+  return SUC_CODE_GENERAL;
 }
 
 int array_append(Array* const array, void* const element) {
+  if (array == NULL) return ERR_CODE_GENERAL;
+
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return e;
 
@@ -75,7 +87,7 @@ int array_append(Array* const array, void* const element) {
     e = pthread_rwlock_unlock(&array->lock);
     if (e) return e;
 
-    return 1;
+    return ERR_CODE_GENERAL;
   }
 
   array->elements[array->size] = element;
@@ -84,10 +96,12 @@ int array_append(Array* const array, void* const element) {
   e = pthread_rwlock_unlock(&array->lock);
   if (e) return e;
 
-  return 0;
+  return SUC_CODE_GENERAL;
 }
 
 int array_prepend(Array* const array, void* const element) {
+  if (array == NULL) return ERR_CODE_GENERAL;
+
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return e;
 
@@ -95,7 +109,7 @@ int array_prepend(Array* const array, void* const element) {
     e = pthread_rwlock_unlock(&array->lock);
     if (e) return e;
 
-    return 1;
+    return ERR_CODE_GENERAL;
   }
 
   for (int i = array->size; i >= 1; --i) {
@@ -108,10 +122,12 @@ int array_prepend(Array* const array, void* const element) {
   e = pthread_rwlock_unlock(&array->lock);
   if (e) return e;
 
-  return 0;
+  return SUC_CODE_GENERAL;
 }
 
 int array_set(Array* const array, int index, void* const element) {
+  if (array == NULL) return ERR_CODE_GENERAL;
+
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return e;
 
@@ -119,7 +135,7 @@ int array_set(Array* const array, int index, void* const element) {
     e = pthread_rwlock_unlock(&array->lock);
     if (e) return e;
 
-    return 1;
+    return ERR_CODE_GENERAL;
   }
 
   if (array->elements[index] == NULL) {
@@ -130,10 +146,12 @@ int array_set(Array* const array, int index, void* const element) {
   e = pthread_rwlock_unlock(&array->lock);
   if (e) return e;
 
-  return 0;
+  return SUC_CODE_GENERAL;
 }
 
 Result array_get(Array* const array, int index) {
+  if (array == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER("array"));
+
   int e = pthread_rwlock_tryrdlock(&array->lock);
   if (e) return result_std_error();
 
@@ -141,7 +159,7 @@ Result array_get(Array* const array, int index) {
     e = pthread_rwlock_unlock(&array->lock);
     if (e) return result_std_error();
 
-    return result_error(1, ERR_INVALID_INDEX);
+    return result_error(ERR_CODE_GENERAL, ERR_MSG_INVALID_INDEX);
   }
 
   e = pthread_rwlock_unlock(&array->lock);
@@ -151,6 +169,8 @@ Result array_get(Array* const array, int index) {
 }
 
 Result array_remove(Array* const array, int index) {
+  if (array == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER("array"));
+
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return result_std_error();
 
@@ -158,7 +178,7 @@ Result array_remove(Array* const array, int index) {
     e = pthread_rwlock_unlock(&array->lock);
     if (e) return result_std_error();
 
-    return result_error(1, ERR_INVALID_INDEX);
+    return result_error(ERR_CODE_GENERAL, ERR_MSG_INVALID_INDEX);
   }
 
   void* removed = array->elements[index];
@@ -179,6 +199,9 @@ Result array_remove(Array* const array, int index) {
 }
 
 int array_for_each(Array* const array, ArrayEachFn each) {
+  // TODO check each as well?
+  if (array == NULL) return ERR_CODE_GENERAL;
+
   int e = pthread_rwlock_tryrdlock(&array->lock);
   if (e) return e;
 
@@ -203,6 +226,11 @@ int array_for_each(Array* const array, ArrayEachFn each) {
 }
 
 Result array_map(Array* const array, ArrayMapFn map) {
+  if (array == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER("array"));
+
+  // TODO check map as well?
+  // if (map == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER("map"));
+
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return result_std_error();
 
@@ -236,6 +264,10 @@ Result array_map(Array* const array, ArrayMapFn map) {
 }
 
 Result array_to_string(Array* const array, ToStringFn const to_string) {
+  if (array == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER("array"));
+  // TODO check to_string as well?
+  // if (to_string == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER("to_string"));
+
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return result_std_error();
 

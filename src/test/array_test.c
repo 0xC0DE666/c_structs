@@ -117,7 +117,7 @@ Test(array_append, _1) {
     }
 
     if (i >= array->capacity) {
-      cr_assert_eq(res, 1);
+      cr_assert_eq(res, ERR_CODE_GENERAL);
       cr_assert_eq(array->size, array->capacity);
     }
   }
@@ -145,7 +145,7 @@ Test(array_prepend, _1) {
     }
 
     if (i >= array->capacity) {
-      cr_assert_eq(res, 1);
+      cr_assert_eq(res, ERR_CODE_GENERAL);
       cr_assert_eq(array->size, array->capacity);
     }
   }
@@ -175,15 +175,15 @@ Test(array_set, _1) {
     }
 
     if (!array_index_valid(array, i)) {
-      cr_assert_eq(res, 1);
+      cr_assert_eq(res, ERR_CODE_GENERAL);
       cr_assert_eq(array->size, sze);
       Result res = array_get(array, i);
       void* ok = res.ok;
       Error* err = res.error;
       cr_assert_eq(ok, NULL);
       cr_assert_eq(err != NULL, true);
-      cr_assert_eq(err->code, 1);
-      cr_assert_eq(strcmp(err->message, ERR_INVALID_INDEX), 0);
+      cr_assert_eq(err->code, ERR_CODE_GENERAL);
+      cr_assert_eq(strcmp(err->message, ERR_MSG_INVALID_INDEX), 0);
       error_free(&err);
     }
   }
@@ -230,15 +230,15 @@ Test(array_get, _1) {
     }
 
     if (!array_index_valid(array, i)) {
-      cr_assert_eq(res, 1);
+      cr_assert_eq(res, ERR_CODE_GENERAL);
       cr_assert_eq(array->size, sze);
       Result res = array_get(array, i);
       void* ok = res.ok;
       Error* err = res.error;
       cr_assert_eq(ok, NULL);
       cr_assert_eq(err != NULL, true);
-      cr_assert_eq(err->code, 1);
-      cr_assert_eq(strcmp(err->message, ERR_INVALID_INDEX), 0);
+      cr_assert_eq(err->code, ERR_CODE_GENERAL);
+      cr_assert_eq(strcmp(err->message, ERR_MSG_INVALID_INDEX), 0);
       error_free(&err);
     }
   }
@@ -274,8 +274,8 @@ Test(array_remove, _1) {
       Error* err = res.error;
       cr_assert_eq(ok, NULL);
       cr_assert_eq(err != NULL, true);
-      cr_assert_eq(err->code, 1);
-      cr_assert_eq(strcmp(err->message, ERR_INVALID_INDEX), 0);
+      cr_assert_eq(err->code, ERR_CODE_GENERAL);
+      cr_assert_eq(strcmp(err->message, ERR_MSG_INVALID_INDEX), 0);
       error_free(&err);
     }
   }

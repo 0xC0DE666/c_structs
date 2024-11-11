@@ -175,8 +175,8 @@ Test(grid_set, _1) {
         Result res = grid_get(grid, &p);
         Error* err = res.error;
         cr_assert_eq(res.ok, NULL);
-        cr_assert_eq(err->code, 1);
-        cr_assert_eq(strcmp(err->message, ERR_INVALID_POSITION), 0);
+        cr_assert_eq(err->code, ERR_CODE_GENERAL);
+        cr_assert_eq(strcmp(err->message, ERR_MSG_INVALID_POSITION), 0);
         error_free(&err);
       }
     }
@@ -235,8 +235,8 @@ Test(grid_get, _1) {
         Result res = grid_get(grid, &p);
         Error* err = res.error;
         cr_assert_eq(res.ok, NULL);
-        cr_assert_eq(err->code, 1);
-        cr_assert_eq(strcmp(err->message, ERR_INVALID_POSITION), 0);
+        cr_assert_eq(err->code, ERR_CODE_GENERAL);
+        cr_assert_eq(strcmp(err->message, ERR_MSG_INVALID_POSITION), 0);
         error_free(&err);
       }
     }
@@ -278,8 +278,8 @@ Test(grid_remove, _1) {
         Result res = grid_get(grid, &p);
         Error* err = res.error;
         cr_assert_eq(res.ok, NULL);
-        cr_assert_eq(err->code, 1);
-        cr_assert_eq(strcmp(err->message, ERR_INVALID_POSITION), 0);
+        cr_assert_eq(err->code, ERR_CODE_GENERAL);
+        cr_assert_eq(strcmp(err->message, ERR_MSG_INVALID_POSITION), 0);
         error_free(&err);
       }
     }

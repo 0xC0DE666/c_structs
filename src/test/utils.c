@@ -4,6 +4,8 @@
 #include "utils.h"
 
 void ptr_free(void** ptr) {
+  if (ptr == NULL || *ptr == NULL) return;
+
   free(*ptr);
   *ptr = NULL;
 }
