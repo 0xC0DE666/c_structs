@@ -2,8 +2,7 @@ VERSION := 0.0.0
 NAME := libc_structs
 
 CC := gcc
-# C_FLAGS := -std=c99 -g -Wall -Wextra -pthread
-C_FLAGS := -g -Wall -Wextra -pthread
+C_FLAGS := -std=gnu99 -g -Wall -Wextra -pthread
 
 define GET_VERSIONED_NAME
 $(NAME).$(1).$(VERSION)
@@ -92,8 +91,7 @@ test: $(TEST_OBJS) $(RELEASE_O);
 # RELEASE
 #------------------------------
 
-# release: C_FLAGS := -std=c99 -O2 -g -DNDDEBUG -Wall -Wextra -pthread
-release: C_FLAGS := -O2 -g -DNDDEBUG -Wall -Wextra -pthread
+release: C_FLAGS := -std=gnu99 -O2 -g -DNDDEBUG -Wall -Wextra -pthread
 release: clean $(VERSIONED_RELEASE_ASSETS) $(UNVERSIONED_RELEASE_ASSETS) app test;
 	cp $(LIB_HDRS) $(RELEASE_DIR);
 	echo $(VERSION) > $(RELEASE_DIR)/version.txt;
