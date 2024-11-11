@@ -882,7 +882,7 @@ Test(linked_list_to_string, _1) {
   char* result = linked_list_to_string(list, (ToStringFn) NULL).ok;
   char* expected = "{}";
   cr_assert_eq(strcmp(result, expected), 0);
-  ptr_free((void**) &result);
+  safe_free((void**) &result);
 
   linked_list_append(list, point_new(0, 0));
   linked_list_append(list, point_new(1, 1));
@@ -891,6 +891,6 @@ Test(linked_list_to_string, _1) {
   expected = "{(0, 0), (1, 1)}";
   cr_assert_eq(strcmp(result, expected), 0);
 
-  ptr_free((void**) &result);
+  safe_free((void**) &result);
   linked_list_free(&list, (FreeFn) point_free);
 }

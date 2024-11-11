@@ -1,7 +1,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-  void ptr_free(void** ptr);
+  void safe_free(void** ptr);
+  void need_not_free(void** ptr);
 
   typedef struct {
     int x;

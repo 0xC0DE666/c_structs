@@ -3,12 +3,14 @@
 
 #include "utils.h"
 
-void ptr_free(void** ptr) {
+void safe_free(void** ptr) {
   if (ptr == NULL || *ptr == NULL) return;
 
   free(*ptr);
   *ptr = NULL;
 }
+
+void need_not_free(void** ptr) {}
 
 Point* point_new(int x, int y) {
   Point* point = malloc(sizeof(Point));

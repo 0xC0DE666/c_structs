@@ -38,9 +38,8 @@ Result array_new(int capacity) {
   return result_ok(array);
 }
 
-int array_clear(Array* const array, FreeFn free_element) {
-  // TODO check free_element as well?
-  if (array == NULL) return ERR_CODE_GENERAL;
+int array_clear(Array* const array, const FreeFn free_element) {
+  if (array == NULL || free_element == NULL) return ERR_CODE_GENERAL;
 
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return e;
@@ -48,7 +47,7 @@ int array_clear(Array* const array, FreeFn free_element) {
   for (int i = 0; i < array->capacity; i++) {
     void** el = array->elements + i;
 
-    if (*el != NULL && free_element) {
+    if (*el != NULL) {
       free_element(el);
     } else {
       *el = NULL;
@@ -64,7 +63,7 @@ int array_clear(Array* const array, FreeFn free_element) {
 
 int array_free(Array** const array, FreeFn free_element) {
   // TODO check free_element as well?
-  if (array == NULL || *array == NULL) return ERR_CODE_GENERAL;
+  if (array == NULL || *array == NULL || free_element == NULL) return ERR_CODE_GENERAL;
 
   array_clear(*array, free_element);
 

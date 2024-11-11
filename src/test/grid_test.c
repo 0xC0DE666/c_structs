@@ -31,8 +31,8 @@ Test(position_to_string, _1) {
   cr_assert_eq(strcmp(str_a, "(1, 2)"), 0);
   cr_assert_eq(strcmp(str_b, "(2, 8)"), 0);
 
-  ptr_free((void*) &str_a);
-  ptr_free((void*) &str_b);
+  safe_free((void*) &str_a);
+  safe_free((void*) &str_b);
 }
 
 // ####################
@@ -353,7 +353,7 @@ Test(grid_map, _1) {
   }
 
   grid_free(&points, (FreeFn) point_free);
-  grid_free(&strings, (FreeFn) ptr_free);
+  grid_free(&strings, (FreeFn) safe_free);
 }
 
 // ####################

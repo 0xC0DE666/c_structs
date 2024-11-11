@@ -21,7 +21,8 @@ Test(array_index_valid, _1) {
     cr_assert_eq(result, expected);
   }
 
-  array_free(&array, NULL);
+  int e = array_free(&array, (FreeFn) need_not_free);
+  cr_assert_eq(e, 0);
 }
 
 // ####################
@@ -38,7 +39,8 @@ Test(array_has_capacity, _1) {
     array_append(array, values[i]);
   }
 
-  array_free(&array, NULL);
+  int e = array_free(&array, (FreeFn) need_not_free);
+  cr_assert_eq(e, 0);
 }
 
 // ####################
@@ -55,7 +57,8 @@ Test(array_new, _1) {
     cr_assert_eq(array->elements[i], NULL);
   }
 
-  array_free(&array, NULL);
+  int e = array_free(&array, (FreeFn) need_not_free);
+  cr_assert_eq(e, 0);
 }
 
 // ####################
@@ -79,7 +82,8 @@ Test(array_clear, _1) {
     cr_assert_eq(array->elements[i], NULL);
   }
 
-  array_free(&array, (FreeFn) point_free);
+  int e = array_free(&array, (FreeFn) point_free);
+  cr_assert_eq(e, 0);
 }
 
 // ####################
@@ -94,7 +98,8 @@ Test(array_free, _1) {
   }
   cr_assert_eq(array->size, array->capacity);
 
-  array_free(&array, (FreeFn) point_free);
+  int e = array_free(&array, (FreeFn) point_free);
+  cr_assert_eq(e, 0);
   cr_assert_eq(array, NULL);
 }
 
@@ -123,7 +128,8 @@ Test(array_append, _1) {
   }
   cr_assert_eq(array->size, array->capacity);
 
-  array_free(&array, (FreeFn) point_free);
+  int e = array_free(&array, (FreeFn) point_free);
+  cr_assert_eq(e, 0);
 }
 
 // ####################
@@ -151,7 +157,8 @@ Test(array_prepend, _1) {
   }
   cr_assert_eq(array->size, array->capacity);
 
-  array_free(&array, (FreeFn) point_free);
+  int e = array_free(&array, (FreeFn) point_free);
+  cr_assert_eq(e, 0);
 }
 
 // ####################
@@ -206,7 +213,8 @@ Test(array_set, _1) {
   for (int i = 0; i < array->capacity; ++i) {
     point_free(&points[i]);
   }
-  array_free(&array, (FreeFn) point_free);
+  int e = array_free(&array, (FreeFn) point_free);
+  cr_assert_eq(e, 0);
 }
 
 // ####################
@@ -244,7 +252,8 @@ Test(array_get, _1) {
   }
   cr_assert_eq(sze, array->capacity);
 
-  array_free(&array, (FreeFn) point_free);
+  int e = array_free(&array, (FreeFn) point_free);
+  cr_assert_eq(e, 0);
 }
 
 // ####################
@@ -280,7 +289,8 @@ Test(array_remove, _1) {
     }
   }
 
-  array_free(&array, (FreeFn) point_free);
+  int e = array_free(&array, (FreeFn) point_free);
+  cr_assert_eq(e, 0);
 }
 
 // ####################
@@ -304,7 +314,8 @@ Test(array_for_each, _1) {
     cr_assert_eq(p->y, i * 2);
   }
 
-  array_free(&array, (FreeFn) point_free);
+  e = array_free(&array, (FreeFn) point_free);
+  cr_assert_eq(e, 0);
 }
 
 // ####################
@@ -336,8 +347,10 @@ Test(array_map, _2) {
     cr_assert_eq(strcmp(result, expected), 0);
   }
 
-  array_free(&points, (FreeFn) point_free);
-  array_free(&strings, (FreeFn) ptr_free);
+  int e = array_free(&points, (FreeFn) point_free);
+  cr_assert_eq(e, 0);
+  e = array_free(&strings, (FreeFn) safe_free);
+  cr_assert_eq(e, 0);
 }
 
 // ####################
@@ -349,7 +362,7 @@ Test(array_to_string, _1) {
   char* result = array_to_string(array, (ToStringFn) NULL).ok;
   char* expected = "[]";
   cr_assert_eq(strcmp(result, expected), 0);
-  ptr_free((void**) &result);
+  safe_free((void**) &result);
 
   array_append(array, point_new(0, 0));
   array_set(array, 2, point_new(1, 1));
@@ -358,6 +371,7 @@ Test(array_to_string, _1) {
   expected = "[(0, 0), NULL, (1, 1)]";
   cr_assert_eq(strcmp(result, expected), 0);
 
-  ptr_free((void**) &result);
-  array_free(&array, (FreeFn) point_free);
+  safe_free((void**) &result);
+  int e = array_free(&array, (FreeFn) point_free);
+  cr_assert_eq(e, 0);
 }
