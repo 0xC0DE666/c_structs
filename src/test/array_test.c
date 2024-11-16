@@ -186,12 +186,10 @@ Test(array_set, _1) {
       cr_assert_eq(array->size, sze);
       Result res = array_get(array, i);
       void* ok = res.ok;
-      Error* err = res.error;
+      Error err = res.error;
       cr_assert_eq(ok, NULL);
-      cr_assert_eq(err != NULL, true);
-      cr_assert_eq(err->code, ERR_CODE_GENERAL);
-      cr_assert_eq(strcmp(err->message, ERR_MSG_INVALID_INDEX), 0);
-      error_free(&err);
+      cr_assert_eq(err.code, ERR_CODE_GENERAL);
+      cr_assert_eq(strcmp(err.message, ERR_MSG_INVALID_INDEX), 0);
     }
   }
   cr_assert_eq(sze, array->capacity);
@@ -242,12 +240,10 @@ Test(array_get, _1) {
       cr_assert_eq(array->size, sze);
       Result res = array_get(array, i);
       void* ok = res.ok;
-      Error* err = res.error;
+      Error err = res.error;
       cr_assert_eq(ok, NULL);
-      cr_assert_eq(err != NULL, true);
-      cr_assert_eq(err->code, ERR_CODE_GENERAL);
-      cr_assert_eq(strcmp(err->message, ERR_MSG_INVALID_INDEX), 0);
-      error_free(&err);
+      cr_assert_eq(err.code, ERR_CODE_GENERAL);
+      cr_assert_eq(strcmp(err.message, ERR_MSG_INVALID_INDEX), 0);
     }
   }
   cr_assert_eq(sze, array->capacity);
@@ -280,12 +276,10 @@ Test(array_remove, _1) {
     if (!array_index_valid(array, i)) {
       Result res = array_remove(array, i);
       void* ok = res.ok;
-      Error* err = res.error;
+      Error err = res.error;
       cr_assert_eq(ok, NULL);
-      cr_assert_eq(err != NULL, true);
-      cr_assert_eq(err->code, ERR_CODE_GENERAL);
-      cr_assert_eq(strcmp(err->message, ERR_MSG_INVALID_INDEX), 0);
-      error_free(&err);
+      cr_assert_eq(err.code, ERR_CODE_GENERAL);
+      cr_assert_eq(strcmp(err.message, ERR_MSG_INVALID_INDEX), 0);
     }
   }
 

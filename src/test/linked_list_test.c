@@ -440,7 +440,7 @@ Test(linked_list_remove_head, empty) {
   LinkedList* list = linked_list_new().ok;
   Result res = linked_list_remove_head(list);
   cr_assert_eq(res.ok, NULL); 
-  cr_assert_eq(res.error, NULL); 
+  cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
 
   linked_list_free(&list, NULL);
 }
@@ -453,7 +453,7 @@ Test(linked_list_remove_head, single) {
 
   Result res = linked_list_remove_head(list);
   cr_assert_eq(res.ok != NULL, true);
-  cr_assert_eq(res.error, NULL);
+  cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
   cr_assert_eq(list->head, NULL);
   cr_assert_eq(list->tail, NULL);
 
@@ -484,7 +484,7 @@ Test(linked_list_remove_head, multiple) {
 
   Result res = linked_list_remove_head(list);
   cr_assert_eq(res.ok != NULL, true);
-  cr_assert_eq(res.error, NULL);
+  cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
   cr_assert_eq(list->head != NULL, true);
   cr_assert_eq(list->tail != NULL, true);
 
@@ -535,7 +535,7 @@ Test(linked_list_remove_tail, empty) {
   LinkedList* list = linked_list_new().ok;
   Result res = linked_list_remove_tail(list);
   cr_assert_eq(res.ok, NULL); 
-  cr_assert_eq(res.error, NULL); 
+  cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
 
   linked_list_free(&list, NULL);
 }
@@ -548,7 +548,7 @@ Test(linked_list_remove_tail, single) {
 
   Result res = linked_list_remove_tail(list);
   cr_assert_eq(res.ok != NULL, true);
-  cr_assert_eq(res.error, NULL);
+  cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
   cr_assert_eq(list->head, NULL);
   cr_assert_eq(list->tail, NULL);
 
@@ -579,7 +579,7 @@ Test(linked_list_remove_tail, multiple) {
 
   Result res = linked_list_remove_tail(list);
   cr_assert_eq(res.ok != NULL, true);
-  cr_assert_eq(res.error, NULL);
+  cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
   cr_assert_eq(list->head != NULL, true);
   cr_assert_eq(list->tail != NULL, true);
 
@@ -635,7 +635,7 @@ Test(linked_list_remove, single) {
 
   Result res = linked_list_remove(list, list->head);
   cr_assert_eq(res.ok != NULL, true);
-  cr_assert_eq(res.error, NULL);
+  cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
   cr_assert_eq(list->head, NULL);
   cr_assert_eq(list->tail, NULL);
 
@@ -668,7 +668,7 @@ Test(linked_list_remove, multiple_head) {
 
   Result res = linked_list_remove(list, list->head);
   cr_assert_eq(res.ok != NULL, true);
-  cr_assert_eq(res.error, NULL);
+  cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
   cr_assert_eq(list->head != NULL, true);
   cr_assert_eq(list->tail != NULL, true);
 
@@ -728,7 +728,7 @@ Test(linked_list_remove, multiple_tail) {
 
   Result res = linked_list_remove(list, list->tail);
   cr_assert_eq(res.ok != NULL, true);
-  cr_assert_eq(res.error, NULL);
+  cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
   cr_assert_eq(list->head != NULL, true);
   cr_assert_eq(list->tail != NULL, true);
 
@@ -786,7 +786,7 @@ Test(linked_list_remove, multiple_mid) {
 
   Result res = linked_list_remove(list, list->head->next);
   cr_assert_eq(res.ok != NULL, true);
-  cr_assert_eq(res.error, NULL);
+  cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
   cr_assert_eq(list->head != NULL, true);
   cr_assert_eq(list->tail != NULL, true);
 
@@ -843,7 +843,7 @@ Test(linked_list_find, not_found) {
   
   Result res = linked_list_find(list, (PredicateFn) node_fun);
   cr_assert_eq(res.ok, NULL);
-  cr_assert_eq(res.error, NULL);
+  cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
 
   linked_list_free(&list, NULL);
 }
@@ -862,7 +862,7 @@ Test(linked_list_find, found) {
   
   Result res = linked_list_find(list, (PredicateFn) node_fun);
   cr_assert_eq(res.ok != NULL, true);
-  cr_assert_eq(res.error, NULL);
+  cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
 
   Node* n = res.ok;
   Point* p = n->value;

@@ -149,7 +149,7 @@ int array_set(Array* const array, int index, void* const element) {
 }
 
 Result array_get(Array* const array, int index) {
-  if (array == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER("array"));
+  if (array == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER(array_get, array));
 
   int e = pthread_rwlock_tryrdlock(&array->lock);
   if (e) return result_std_error();
@@ -168,7 +168,7 @@ Result array_get(Array* const array, int index) {
 }
 
 Result array_remove(Array* const array, int index) {
-  if (array == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER("array"));
+  if (array == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER(array_remove, array));
 
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return result_std_error();
@@ -225,9 +225,9 @@ int array_for_each(Array* const array, ArrayEachFn each) {
 }
 
 Result array_map(Array* const array, ArrayMapFn map) {
-  if (array == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER(array));
+  if (array == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER(array_map, array));
   // TODO check map as well?
-  if (map == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER(map));
+  if (map == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER(array_map, map));
 
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return result_std_error();
@@ -262,9 +262,9 @@ Result array_map(Array* const array, ArrayMapFn map) {
 }
 
 Result array_to_string(Array* const array, ToStringFn const to_string) {
-  if (array == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER(array));
+  if (array == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER(array_to_string, array));
   // TODO check to_string as well?
-  if (to_string == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER(to_string));
+  if (to_string == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER(array_to_string, to_string));
 
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return result_std_error();

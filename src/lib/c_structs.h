@@ -9,13 +9,9 @@
 //####################
 // COMMON
 //####################
-#define ERR_MSG_NULL_POINTER(ptr_name) "(" #ptr_name ") null pointer"
 #define ERR_MSG_AT_CAPACITY "at capacity"
 #define ERR_MSG_INVALID_INDEX "invalid index"
 #define ERR_MSG_INVALID_POSITION "invalid position"
-
-#define ERR_CODE_GENERAL -1
-#define SUC_CODE_GENERAL 0
 
 typedef void (*const FreeFn)(void** const);
 typedef bool (*const PredicateFn)(void* const);
