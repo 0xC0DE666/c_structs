@@ -65,6 +65,20 @@ Test(array_new, _1) {
 // array_clear
 // ####################
 Test(array_clear, _1) {
+  Array* array;
+
+  int e = array_clear(NULL, (FreeFn) safe_free);
+  cr_assert_eq(e, ERR_CODE_GENERAL);
+
+  array = array_new(1).ok;
+  e = array_clear(array, NULL);
+  cr_assert_eq(e, ERR_CODE_GENERAL);
+
+  e = array_free(&array, (FreeFn) safe_free);
+  cr_assert_eq(e, SUC_CODE_GENERAL);
+}
+
+Test(array_clear, _2) {
   Array* array = array_new(5).ok;
 
   for (int i = 0; i < array->capacity; ++i) {
@@ -90,6 +104,23 @@ Test(array_clear, _1) {
 // array_free
 // ####################
 Test(array_free, _1) {
+
+  int e = array_free(NULL, (FreeFn) safe_free);
+  cr_assert_eq(e, ERR_CODE_GENERAL);
+
+  Array* array = NULL;
+  e = array_free(&array, (FreeFn) safe_free);
+  cr_assert_eq(e, ERR_CODE_GENERAL);
+
+  array = array_new(1).ok;
+  e = array_free(&array, NULL);
+  cr_assert_eq(e, ERR_CODE_GENERAL);
+
+  e = array_free(&array, (FreeFn) safe_free);
+  cr_assert_eq(e, SUC_CODE_GENERAL);
+}
+
+Test(array_free, _2) {
   Array* array = array_new(5).ok;
 
   for (int i = 0; i < array->capacity; ++i) {

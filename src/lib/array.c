@@ -17,6 +17,7 @@ bool array_has_capacity(Array* const array) {
 }
 
 Result array_new(int capacity) {
+  // TODO handle invalid capacity
   Array* array = malloc(sizeof(Array) + capacity * sizeof(void*));
 
   if (array == NULL) {
@@ -39,7 +40,14 @@ Result array_new(int capacity) {
 }
 
 int array_clear(Array* const array, const FreeFn free_element) {
-  if (array == NULL || free_element == NULL) return ERR_CODE_GENERAL;
+  if (array == NULL) {
+    printf("%s\n", ERR_MSG_NULL_POINTER(array_clear, array));
+    return ERR_CODE_GENERAL;
+  }
+  if (free_element == NULL) {
+    printf("%s\n", ERR_MSG_NULL_POINTER(array_clear, free_element));
+    return ERR_CODE_GENERAL;
+  }
 
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return e;
@@ -62,8 +70,19 @@ int array_clear(Array* const array, const FreeFn free_element) {
 }
 
 int array_free(Array** const array, FreeFn free_element) {
-  // TODO check free_element as well?
-  if (array == NULL || *array == NULL || free_element == NULL) return ERR_CODE_GENERAL;
+  if (array == NULL) {
+    printf("%s\n", ERR_MSG_NULL_POINTER(array_free, array));
+    return ERR_CODE_GENERAL;
+  }
+  if (*array == NULL) {
+    printf("%s\n", ERR_MSG_NULL_POINTER(array_free, *array));
+    return ERR_CODE_GENERAL;
+  }
+
+  if (free_element == NULL) {
+    printf("%s\n", ERR_MSG_NULL_POINTER(array_free, free_element));
+    return ERR_CODE_GENERAL;
+  }
 
   array_clear(*array, free_element);
 
