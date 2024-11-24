@@ -5,14 +5,10 @@
 #include "c_structs.h"
 
 bool array_index_valid(Array* const array, int index) {
-  if (array == NULL) return false;
-
   return index >= 0 && index <= array->capacity - 1;
 }
 
 bool array_has_capacity(Array* const array) {
-  if (array == NULL) return false;
-
   return array->size < array->capacity;
 }
 
@@ -40,15 +36,6 @@ Result array_new(int capacity) {
 }
 
 int array_clear(Array* const array, const FreeFn free_element) {
-  if (array == NULL) {
-    printf("%s\n", ERR_MSG_NULL_POINTER(array_clear, array));
-    return ERR_CODE_GENERAL;
-  }
-  if (free_element == NULL) {
-    printf("%s\n", ERR_MSG_NULL_POINTER(array_clear, free_element));
-    return ERR_CODE_GENERAL;
-  }
-
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return e;
 
@@ -70,19 +57,6 @@ int array_clear(Array* const array, const FreeFn free_element) {
 }
 
 int array_free(Array** const array, FreeFn free_element) {
-  if (array == NULL) {
-    printf("%s\n", ERR_MSG_NULL_POINTER(array_free, array));
-    return ERR_CODE_GENERAL;
-  }
-  if (*array == NULL) {
-    printf("%s\n", ERR_MSG_NULL_POINTER(array_free, *array));
-    return ERR_CODE_GENERAL;
-  }
-  if (free_element == NULL) {
-    printf("%s\n", ERR_MSG_NULL_POINTER(array_free, free_element));
-    return ERR_CODE_GENERAL;
-  }
-
   array_clear(*array, free_element);
 
   int e = pthread_rwlock_destroy(&(*array)->lock);
@@ -95,8 +69,6 @@ int array_free(Array** const array, FreeFn free_element) {
 }
 
 int array_append(Array* const array, void* const element) {
-  if (array == NULL) return ERR_CODE_GENERAL;
-
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return e;
 
@@ -117,8 +89,6 @@ int array_append(Array* const array, void* const element) {
 }
 
 int array_prepend(Array* const array, void* const element) {
-  if (array == NULL) return ERR_CODE_GENERAL;
-
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return e;
 
@@ -143,8 +113,6 @@ int array_prepend(Array* const array, void* const element) {
 }
 
 int array_set(Array* const array, int index, void* const element) {
-  if (array == NULL) return ERR_CODE_GENERAL;
-
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return e;
 
@@ -167,8 +135,6 @@ int array_set(Array* const array, int index, void* const element) {
 }
 
 Result array_get(Array* const array, int index) {
-  if (array == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER(array_get, array));
-
   int e = pthread_rwlock_tryrdlock(&array->lock);
   if (e) return result_std_error();
 
@@ -186,8 +152,6 @@ Result array_get(Array* const array, int index) {
 }
 
 Result array_remove(Array* const array, int index) {
-  if (array == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER(array_remove, array));
-
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return result_std_error();
 
@@ -216,9 +180,6 @@ Result array_remove(Array* const array, int index) {
 }
 
 int array_for_each(Array* const array, ArrayEachFn each) {
-  // TODO check each as well?
-  if (array == NULL || each == NULL) return ERR_CODE_GENERAL;
-
   int e = pthread_rwlock_tryrdlock(&array->lock);
   if (e) return e;
 
@@ -243,14 +204,11 @@ int array_for_each(Array* const array, ArrayEachFn each) {
 }
 
 Result array_map(Array* const array, ArrayMapFn map) {
-  if (array == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER(array_map, array));
-  // TODO check map as well?
-  if (map == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER(array_map, map));
-
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return result_std_error();
 
   Array* mapped = array_new(array->capacity).ok;
+  // TODO handle potential error above
   if (mapped == NULL) {
     e = pthread_rwlock_unlock(&array->lock);
     if (e) return result_std_error();
@@ -280,10 +238,6 @@ Result array_map(Array* const array, ArrayMapFn map) {
 }
 
 Result array_to_string(Array* const array, ToStringFn const to_string) {
-  if (array == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER(array_to_string, array));
-  // TODO check to_string as well?
-  if (to_string == NULL) return result_error(ERR_CODE_GENERAL, ERR_MSG_NULL_POINTER(array_to_string, to_string));
-
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return result_std_error();
 
