@@ -78,7 +78,6 @@ int array_free(Array** const array, FreeFn free_element) {
     printf("%s\n", ERR_MSG_NULL_POINTER(array_free, *array));
     return ERR_CODE_GENERAL;
   }
-
   if (free_element == NULL) {
     printf("%s\n", ERR_MSG_NULL_POINTER(array_free, free_element));
     return ERR_CODE_GENERAL;

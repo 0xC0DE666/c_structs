@@ -64,7 +64,7 @@ Test(array_new, _1) {
 // ####################
 // array_clear
 // ####################
-Test(array_clear, _1) {
+Test(array_clear, null_args) {
   Array* array;
 
   int e = array_clear(NULL, (FreeFn) safe_free);
@@ -76,6 +76,7 @@ Test(array_clear, _1) {
 
   e = array_free(&array, (FreeFn) safe_free);
   cr_assert_eq(e, SUC_CODE_GENERAL);
+  cr_assert_eq(array, NULL);
 }
 
 Test(array_clear, _2) {
@@ -118,6 +119,7 @@ Test(array_free, _1) {
 
   e = array_free(&array, (FreeFn) safe_free);
   cr_assert_eq(e, SUC_CODE_GENERAL);
+  cr_assert_eq(array, NULL);
 }
 
 Test(array_free, _2) {
