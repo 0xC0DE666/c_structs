@@ -22,24 +22,24 @@ typedef char* (*const ToStringFn)(void* const);
 //####################
 typedef struct Array {
   pthread_rwlock_t lock;
-  int capacity;
-  int size;
+ unsigned int capacity;
+ unsigned int size;
   void* elements[];
 } Array;
 
-bool array_index_valid(Array* const array, int index);
-bool array_has_capacity(Array* const array);
+bool array_index_valid(const Array* array, unsigned int index);
+bool array_has_capacity(const Array* array);
 
-Result array_new(int capacity);
+Result array_new(uint capacity);
 int array_clear(Array* const array, FreeFn const free_element);
 int array_free(Array** const array, FreeFn const free_element);
 
 int array_append(Array* const array, void* const element);
 int array_prepend(Array* const array, void* const element);
-int array_set(Array* const array, int index, void* const element);
+int array_set(Array* const array, unsigned int index, void* const element);
 
-Result array_get(Array* const array, int index);
-Result array_remove(Array* const array, int index);
+Result array_get(Array* const array, unsigned int index);
+Result array_remove(Array* const array, unsigned int index);
 
 typedef void (*ArrayEachFn)(void* const);
 int array_for_each(Array* const array, ArrayEachFn const each);
@@ -54,26 +54,26 @@ Result array_to_string(Array* const array, ToStringFn const to_string);
 // GRID
 //####################
 typedef struct Position {
-  int row;
-  int column;
+ unsigned int row;
+ unsigned int column;
 } Position;
 
-Position position_new(int row, int column);
+Position position_new(unsigned int row, unsigned int column);
 char* position_to_string(Position* position);
 
 typedef struct Grid {
   pthread_rwlock_t lock;
-  int rows;
-  int columns;
-  int capacity;
-  int size;
+ unsigned int rows;
+ unsigned int columns;
+ unsigned int capacity;
+ unsigned int size;
   void* elements[];
 } Grid;
 
 bool grid_position_valid(Grid* const grid, Position* const position);
 bool grid_has_capacity(Grid* const grid);
 
-Result grid_new(int rows, int columns);
+Result grid_new(unsigned int rows, unsigned int columns);
 int grid_clear(Grid* const grid, FreeFn const free_element);
 int grid_free(Grid** const grid, FreeFn const free_element);
 

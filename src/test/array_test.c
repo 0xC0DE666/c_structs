@@ -167,8 +167,8 @@ Test(array_prepend, _1) {
 Test(array_set, _1) {
   Array* array = array_new(5).ok;
 
-  int sze = 0;
-  for (int i = -5; i < array->capacity * 2; ++i) {
+  unsigned int sze = 0;
+  for (unsigned int i = 0; i < array->capacity * 2; ++i) {
     int res = array_set(array, i, point_new(i, i));
     res == 0 ? ++sze : 0;
 
@@ -221,8 +221,8 @@ Test(array_set, _1) {
 Test(array_get, _1) {
   Array* array = array_new(5).ok;
 
-  int sze = 0;
-  for (int i = -5; i < array->capacity * 2; ++i) {
+  unsigned int sze = 0;
+  for (unsigned int i = 0; i < array->capacity * 2; ++i) {
     int res = array_set(array, i, point_new(i, i));
     res == 0 ? ++sze : 0;
 

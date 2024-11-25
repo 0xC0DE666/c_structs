@@ -153,9 +153,9 @@ Test(grid_free, _1) {
 Test(grid_set, _1) {
   Grid* grid = grid_new(5, 5).ok;
 
-  int sze = 0;
-  for (int r = -5; r < grid->rows * 2; ++r) {
-    for (int c = -5; c < grid->columns * 2; ++c) {
+  unsigned int sze = 0;
+  for (unsigned int r = 0; r < grid->rows * 2; ++r) {
+    for (unsigned int c = 0; c < grid->columns * 2; ++c) {
       Position p = {r, c};
       int res = grid_set(grid, &p, point_new(r, c));
       res == 0 ? ++sze : 0;
@@ -182,10 +182,10 @@ Test(grid_set, _1) {
   }
 
   Point* points[grid->capacity] = {};
-  int idx = 0;
+  unsigned int idx = 0;
   
-  for (int r = 0; r < grid->rows; ++r) {
-    for (int c = 0; c < grid->columns; ++c) {
+  for (unsigned int r = 0; r < grid->rows; ++r) {
+    for (unsigned int c = 0; c < grid->columns; ++c) {
       Position p = {r, c};
       points[idx] = grid_get(grid, &p).ok;
       ++idx;
@@ -212,9 +212,9 @@ Test(grid_set, _1) {
 Test(grid_get, _1) {
   Grid* grid = grid_new(5, 5).ok;
 
-  int sze = 0;
-  for (int r = -5; r < grid->rows * 2; ++r) {
-    for (int c = -5; c < grid->columns * 2; ++c) {
+  unsigned int sze = 0;
+  for (unsigned int r = 0; r < grid->rows * 2; ++r) {
+    for (unsigned int c = 0; c < grid->columns * 2; ++c) {
       Position p = {r, c};
       int res = grid_set(grid, &p, point_new(r, c));
       res == 0 ? ++sze : 0;

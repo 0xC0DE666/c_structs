@@ -97,5 +97,13 @@ release: clean $(VERSIONED_RELEASE_ASSETS) $(UNVERSIONED_RELEASE_ASSETS) app tes
 	echo $(VERSION) > $(RELEASE_DIR)/version.txt;
 	tar -czvf $(BUILD_DIR)/$(call GET_VERSIONED_NAME,tar.gz) -C $(RELEASE_DIR) .;
 
+.PHONY: exe_app exe_test;
+
+exe_app: app;
+	./build/bin/app;
+
+exe_test: test;
+	./build/bin/test;
+
 clean:
 	rm -f $(APP_OBJS) $(LIB_OBJS) $(TEST_OBJS) $(RELEASE_DIR)/* $(BIN_DIR)/* $(BUILD_DIR)/$(call GET_VERSIONED_NAME,tar.gz);

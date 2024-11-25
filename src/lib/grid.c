@@ -4,7 +4,7 @@
 
 #include "c_structs.h"
 
-Position position_new(int row, int column) {
+Position position_new(unsigned int row, unsigned int column) {
   return (Position) {row, column};
 }
 
@@ -26,8 +26,8 @@ char* position_to_string(Position* position) {
 }
 
 bool grid_position_valid(Grid* const grid, Position* const position) {
-  bool valid_row = position->row >= 0 && position->row < grid->rows;
-  bool valid_col = position->column >= 0 && position->column < grid->columns;
+  bool valid_row = position->row < grid->rows;
+  bool valid_col = position->column < grid->columns;
   return valid_row && valid_col;
 }
 
@@ -35,7 +35,7 @@ bool grid_has_capacity(Grid* const grid) {
   return grid->size < grid->capacity;
 }
 
-Result grid_new(int rows, int columns) {
+Result grid_new(unsigned int rows, unsigned int columns) {
   Grid* grid = malloc(sizeof(Grid) + rows * columns * sizeof(void*));
 
   if (grid == NULL) {
@@ -52,9 +52,9 @@ Result grid_new(int rows, int columns) {
   grid->capacity = rows * columns;
   grid->size = 0;
 
-  for (int r = 0; r < rows; ++r) {
+  for (unsigned int r = 0; r < rows; ++r) {
     void** row  = grid->elements + r * columns;
-    for (int c = 0; c < columns; ++c) {
+    for (unsigned int c = 0; c < columns; ++c) {
       row[c] = NULL;
     }
   }
@@ -66,10 +66,10 @@ int grid_clear(Grid* const grid, FreeFn const free_element) {
   int e = pthread_rwlock_trywrlock(&grid->lock);
   if (e) return e;
 
-  for (int r = 0; r < grid->rows; r++) {
+  for (unsigned int r = 0; r < grid->rows; r++) {
     void** row = grid->elements + r * grid->columns;
 
-    for (int c = 0; c < grid->columns; c++) {
+    for (unsigned int c = 0; c < grid->columns; c++) {
       void** el = &row[c];
 
       if (*el != NULL && free_element) {
@@ -177,8 +177,8 @@ int grid_for_each(Grid* const grid, GridEachFn const each) {
     return 0;
   }
 
-  for (int r = 0; r < grid->rows; ++r) {
-    for (int c = 0; c < grid->columns; ++c) {
+  for (unsigned int r = 0; r < grid->rows; ++r) {
+    for (unsigned int c = 0; c < grid->columns; ++c) {
       Position p = position_new(r, c);
       void* element = grid_get(grid, &p).ok;
       if (element != NULL) {
@@ -213,9 +213,9 @@ Result grid_map(Grid* const grid, GridMapFn const map) {
   }
 
   Position pos;
-  for (int r = 0; r < grid->rows; ++r) {
+  for (unsigned int r = 0; r < grid->rows; ++r) {
     void** row = grid->elements + r * grid->columns;
-    for (int c = 0; c < grid->columns; ++c) {
+    for (unsigned int c = 0; c < grid->columns; ++c) {
       pos = position_new(r, c);
       void* element = row[c];
       if (element != NULL) {
@@ -248,16 +248,16 @@ Result grid_to_string(Grid* const grid, ToStringFn const to_string) {
     return result_ok(buffer);
   }
 
-  int rows = grid->rows;
-  int columns = grid->columns;
-  int capacity = grid->capacity;
+  unsigned int rows = grid->rows;
+  unsigned int columns = grid->columns;
+  unsigned int capacity = grid->capacity;
   char* elements[rows][columns] = {};
-  int lengths[rows][columns] = {};
-  int sum_lengths = 0;
+  unsigned int lengths[rows][columns] = {};
+  unsigned int sum_lengths = 0;
 
-  for (int r = 0; r < rows; ++r) {
+  for (unsigned int r = 0; r < rows; ++r) {
     void** row = grid->elements + r * grid->columns;
-    for (int c = 0; c < columns; ++c) {
+    for (unsigned int c = 0; c < columns; ++c) {
       void* element = row[c];
       bool not_null = element != NULL;
       elements[r][c] = not_null ? to_string(element) : "NULL";
@@ -267,7 +267,7 @@ Result grid_to_string(Grid* const grid, ToStringFn const to_string) {
   }
   // rows: (2) brackets  + (1) newline
   // capacity: + (2) comma space
-  int total_length = sum_lengths + (rows * 3) + (capacity * 2) - rows;
+  unsigned int total_length = sum_lengths + (rows * 3) + (capacity * 2) - rows;
   char* buffer = malloc(sizeof(char) * total_length);
 
   if (buffer == NULL) {
@@ -278,11 +278,11 @@ Result grid_to_string(Grid* const grid, ToStringFn const to_string) {
   }
 
   sprintf(buffer, "[");
-  for (int r = 0; r < rows; ++r) {
+  for (unsigned int r = 0; r < rows; ++r) {
     if (r > 0) {
       strcat(buffer, "[");
     }
-    for (int c = 0; c < columns; ++c) {
+    for (unsigned int c = 0; c < columns; ++c) {
       strcat(buffer, elements[r][c]);
       if (c < columns - 1) {
         strcat(buffer, ", ");

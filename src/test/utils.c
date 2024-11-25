@@ -10,7 +10,9 @@ void safe_free(void** ptr) {
   *ptr = NULL;
 }
 
-void need_not_free(void** ptr) {}
+void need_not_free(void** ptr) {
+  if (*ptr == NULL) {}
+}
 
 Point* point_new(int x, int y) {
   Point* point = malloc(sizeof(Point));

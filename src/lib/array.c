@@ -4,15 +4,15 @@
 
 #include "c_structs.h"
 
-bool array_index_valid(Array* const array, int index) {
-  return index >= 0 && index <= array->capacity - 1;
+bool array_index_valid(const Array* array, unsigned int index) {
+  return index <= array->capacity - 1;
 }
 
-bool array_has_capacity(Array* const array) {
+bool array_has_capacity(const Array* array) {
   return array->size < array->capacity;
 }
 
-Result array_new(int capacity) {
+Result array_new(unsigned int capacity) {
   // TODO handle invalid capacity
   Array* array = malloc(sizeof(Array) + capacity * sizeof(void*));
 
@@ -26,9 +26,9 @@ Result array_new(int capacity) {
     return result_std_error();
   }
   array->capacity = capacity;
-  array->size = 0;
+  array->size = (unsigned int) 0;
 
-  for (int i = 0; i < capacity; ++i) {
+  for (unsigned int i = 0; i < capacity; ++i) {
     array->elements[i] = NULL;
   }
 
@@ -39,7 +39,7 @@ int array_clear(Array* const array, const FreeFn free_element) {
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return e;
 
-  for (int i = 0; i < array->capacity; i++) {
+  for (unsigned int i = 0; i < array->capacity; i++) {
     void** el = array->elements + i;
 
     if (*el != NULL) {
@@ -99,7 +99,7 @@ int array_prepend(Array* const array, void* const element) {
     return ERR_CODE_GENERAL;
   }
 
-  for (int i = array->size; i >= 1; --i) {
+  for (unsigned int i = array->size; i >= 1; --i) {
     array->elements[i] = array->elements[i - 1];
   }
 
@@ -112,7 +112,7 @@ int array_prepend(Array* const array, void* const element) {
   return SUC_CODE_GENERAL;
 }
 
-int array_set(Array* const array, int index, void* const element) {
+int array_set(Array* const array, unsigned int index, void* const element) {
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return e;
 
@@ -134,7 +134,7 @@ int array_set(Array* const array, int index, void* const element) {
   return SUC_CODE_GENERAL;
 }
 
-Result array_get(Array* const array, int index) {
+Result array_get(Array* const array, unsigned int index) {
   int e = pthread_rwlock_tryrdlock(&array->lock);
   if (e) return result_std_error();
 
@@ -151,7 +151,7 @@ Result array_get(Array* const array, int index) {
   return result_ok(array->elements[index]);
 }
 
-Result array_remove(Array* const array, int index) {
+Result array_remove(Array* const array, unsigned int index) {
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return result_std_error();
 
@@ -164,7 +164,7 @@ Result array_remove(Array* const array, int index) {
 
   void* removed = array->elements[index];
 
-  for (int i = index; i < array->capacity; ++i) {
+  for (unsigned int i = index; i < array->capacity; ++i) {
     if (i < array->capacity - 1) {
       array->elements[i] = array->elements[i + 1];
     } else {
@@ -190,7 +190,7 @@ int array_for_each(Array* const array, ArrayEachFn each) {
     return 0;
   }
 
-  for (int i = 0; i < array->capacity; ++i) {
+  for (unsigned int i = 0; i < array->capacity; ++i) {
     void* element = array_get(array, i).ok;
     if (element != NULL) {
       each(element);
@@ -223,7 +223,7 @@ Result array_map(Array* const array, ArrayMapFn map) {
     return result_ok(mapped);
   }
 
-  for (int i = 0; i < array->capacity; ++i) {
+  for (unsigned int i = 0; i < array->capacity; ++i) {
     void* element = array->elements[i];
     if (element) {
       array_append(mapped, map(element));
@@ -254,19 +254,19 @@ Result array_to_string(Array* const array, ToStringFn const to_string) {
     return result_ok(buffer);
   }
 
-  int capacity = array->capacity;
+  unsigned int capacity = array->capacity;
   char* elements[capacity] = {};
-  int lengths[capacity] = {};
-  int sum_lengths = 0;
+  unsigned int lengths[capacity] = {};
+  unsigned int sum_lengths = 0;
 
-  for (int i = 0; i < capacity; ++i) {
+  for (unsigned int i = 0; i < capacity; ++i) {
     void* element = array->elements[i];
     elements[i] = element != NULL ? to_string(element) : "NULL";
     lengths[i] = strlen(elements[i]);
     sum_lengths += lengths[i];
   }
 
-  int total_length = sum_lengths + (capacity * 2) + 4;
+  unsigned int total_length = sum_lengths + (capacity * 2) + 4;
   char* buffer = malloc(sizeof(char) * total_length);
 
   if (buffer == NULL) {
@@ -277,7 +277,7 @@ Result array_to_string(Array* const array, ToStringFn const to_string) {
   }
 
   sprintf(buffer, "[");
-  for (int i = 0; i < capacity; ++i) {
+  for (unsigned int i = 0; i < capacity; ++i) {
     strcat(buffer, elements[i]);
     if (i < capacity - 1) {
       strcat(buffer, ", ");
