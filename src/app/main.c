@@ -11,14 +11,14 @@
 
 void grid_fun() {
  void** grid =  malloc(3 * sizeof(void*)); 
- for (int i = 0; i < 3; ++i) {
+ for (unsigned int i = 0; i < 3; ++i) {
    grid[i] = malloc(3 * sizeof(void*));
  }
 
  int i = 1;
- for (int r = 0; r < 3; ++r) {
+ for (unsigned int r = 0; r < 3; ++r) {
    char** row = grid[r];
-   for (int c = 0; c < 3; ++c) {
+   for (unsigned int c = 0; c < 3; ++c) {
      char* str = malloc(32 * sizeof(char));
      sprintf(str, "Eat %d cupcake(s)!", i);
      row[c] = str;
@@ -26,9 +26,9 @@ void grid_fun() {
    }
  }
 
- for (int r = 0; r < 3; ++r) {
+ for (unsigned int r = 0; r < 3; ++r) {
    char** row = grid[r];
-   for (int c = 0; c < 3; ++c) {
+   for (unsigned int c = 0; c < 3; ++c) {
      printf("%s\n", row[c]);
      free(row[c]);
    }
@@ -40,14 +40,14 @@ void array_fun() {
   Array* arr = array_new(5).ok;
   int values[arr->capacity];
 
-  for (int i = 0; i < arr->capacity - 1; ++i) {
+  for (unsigned int i = 0; i < arr->capacity - 1; ++i) {
     values[i] = i + 1;
     array_append(arr, &values[i]);
   }
   values[4] = 10;
   array_set(arr, 10, &values[4]);
 
-  for (int i = 0; i < arr->size; ++i) {
+  for (unsigned int i = 0; i < arr->size; ++i) {
     int* x = (int*) array_get(arr, i).ok;
     printf("%d %d\n", i, *x);
   }
@@ -58,11 +58,11 @@ void old_code() {
   Position values[9];
 
   int i = 0;
-  for (int r = 0; r < 3; ++r) {
+  for (unsigned int r = 0; r < 3; ++r) {
     void** row = trix->elements[r];
     printf("row %d -> %p\n", r, row);
 
-    for (int c = 0; c < 3; ++c) {
+    for (unsigned int c = 0; c < 3; ++c) {
       values[i] = position_new(r, c);
       grid_set(trix, &values[i], &values[i]);
 
@@ -90,8 +90,8 @@ void grid_to_string_test() {
   Grid* grid = grid_new(2, 2).ok;
   Position pos[grid->rows][grid->columns] = {};
 
-  for (int r = 0; r < grid->rows; ++r) {
-    for (int c = 0; c < grid->columns; ++c) {
+  for (unsigned int r = 0; r < grid->rows; ++r) {
+    for (unsigned int c = 0; c < grid->columns; ++c) {
       pos[r][c] = position_new(r, c); 
       grid_set(grid, &pos[r][c], &pos[r][c]);
       printf("%u %u\n", r, c);
@@ -117,7 +117,7 @@ void prev() {
   Array* arr = array_new(3).ok;
   int values[arr->capacity] = {};
   
-  for (int i = 0; i < arr->capacity; ++i) {
+  for (unsigned int i = 0; i < arr->capacity; ++i) {
     values[i] = i + 1;
     array_append(arr, &values[i]);
   }

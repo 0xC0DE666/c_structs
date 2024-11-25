@@ -41,12 +41,11 @@ Test(position_to_string, _1) {
 Test(grid_position_valid, _1) {
   Grid* grid = grid_new(3, 3).ok;
 
-  for (int r = -3; r < grid->rows * 2; ++r) {
-    for (int c = -3; c < grid->columns * 2; ++c) {
+  for (unsigned int r = 0; r < grid->rows * 2; ++r) {
+    for (unsigned int c = 0; c < grid->columns * 2; ++c) {
       Position p = {r, c};
       bool result = grid_position_valid(grid, &p);
-      bool expected =
-        r >= 0 && c >= 0 && r < grid->rows && c < grid->columns ? true : false;
+      bool expected = r < grid->rows && c < grid->columns ? true : false;
       cr_assert_eq(result, expected);
     }
   }
@@ -60,8 +59,8 @@ Test(grid_position_valid, _1) {
 Test(grid_has_capacity, _1) {
   Grid* grid = grid_new(3, 3).ok;
 
-  for (int r = 0; r < grid->rows * 2; ++r) {
-    for (int c = 0; c < grid->columns * 2; ++c) {
+  for (unsigned int r = 0; r < grid->rows * 2; ++r) {
+    for (unsigned int c = 0; c < grid->columns * 2; ++c) {
       bool result = grid_has_capacity(grid);
       bool expected = grid->size < grid->capacity ? true : false;
       cr_assert_eq(result, expected);
@@ -78,7 +77,7 @@ Test(grid_has_capacity, _1) {
 // grid_new
 // ####################
 Test(grid_new, _1) {
-  int rows = 5, columns = 5;
+  unsigned int rows = 5, columns = 5;
   Grid* grid = grid_new(rows, columns).ok;
 
   cr_assert_eq(grid->capacity, rows * columns);
@@ -86,9 +85,9 @@ Test(grid_new, _1) {
   cr_assert_eq(grid->columns, columns);
   cr_assert_eq(grid->elements == NULL, false);
 
-  for (int r = 0; r < grid->rows; ++r) {
+  for (unsigned int r = 0; r < grid->rows; ++r) {
     void** row = grid->elements + r * columns;
-    for (int c = 0; c < grid->columns; ++c) {
+    for (unsigned int c = 0; c < grid->columns; ++c) {
       cr_assert_eq(row[c], NULL);
     }
   }
@@ -102,9 +101,9 @@ Test(grid_new, _1) {
 Test(grid_clear, _1) {
   Grid* grid = grid_new(5, 6).ok;
 
-  int sze = 0;
-  for (int r = 0; r < grid->rows; ++r) {
-    for (int c = 0; c < grid->columns; ++c) {
+  unsigned int sze = 0;
+  for (unsigned int r = 0; r < grid->rows; ++r) {
+    for (unsigned int c = 0; c < grid->columns; ++c) {
       Position p = {r, c};
       int res = grid_set(grid, &p, point_new(r, c));
       res == 0 ? ++sze : 0;
@@ -118,9 +117,9 @@ Test(grid_clear, _1) {
   cr_assert_eq(grid != NULL, true);
   cr_assert_eq(grid->size, 0);
 
-  for (int r = 0; r < grid->rows; ++r) {
+  for (unsigned int r = 0; r < grid->rows; ++r) {
     void** row = grid->elements + r * grid->columns;
-    for (int c = 0; c < grid->columns; ++c) {
+    for (unsigned int c = 0; c < grid->columns; ++c) {
       cr_assert_eq(row[c], NULL);
     }
   }
@@ -134,8 +133,8 @@ Test(grid_clear, _1) {
 Test(grid_free, _1) {
   Grid* grid = grid_new(5, 5).ok;
 
-  for (int r = 0; r < grid->rows; ++r) {
-    for (int c = 0; c < grid->columns; ++c) {
+  for (unsigned int r = 0; r < grid->rows; ++r) {
+    for (unsigned int c = 0; c < grid->columns; ++c) {
       Position p = position_new(r, c);
       grid_set(grid, &p, point_new(r, c));
       cr_assert_eq(grid_get(grid, &p).ok != NULL, true);
@@ -200,7 +199,7 @@ Test(grid_set, _1) {
     }
   }
 
-  for (int i = 0; i < grid->capacity; ++i) {
+  for (unsigned int i = 0; i < grid->capacity; ++i) {
     safe_free((void**) &points[i]);
   }
   grid_free(&grid, (FreeFn) safe_free);
@@ -250,9 +249,9 @@ Test(grid_get, _1) {
 Test(grid_remove, _1) {
   Grid* grid = grid_new(5, 2).ok;
 
-  int sze = 0;
-  for (int r = -5; r < grid->rows * 2; ++r) {
-    for (int c = -2; c < grid->columns * 2; ++c) {
+  unsigned int sze = 0;
+  for (unsigned int r = 0; r < grid->rows * 2; ++r) {
+    for (unsigned int c = 0; c < grid->columns * 2; ++c) {
       Position p = {r, c};
       int res = grid_set(grid, &p, point_new(r, c));
       res == 0 ? ++sze : 0;
@@ -293,8 +292,8 @@ Test(grid_for_each, _1) {
   int e = grid_for_each(grid, (ArrayEachFn) point_double);
   cr_assert_eq(e, 0);
 
-  for (int r = 0; r < grid->rows; ++r) {
-    for (int c = 0; c < grid->columns; ++c) {
+  for (unsigned int r = 0; r < grid->rows; ++r) {
+    for (unsigned int c = 0; c < grid->columns; ++c) {
       Position pos = {r, c};
       grid_set(grid, &pos, point_new(r, c));
     }
@@ -303,8 +302,8 @@ Test(grid_for_each, _1) {
   e = grid_for_each(grid, (GridEachFn) point_double);
   cr_assert_eq(e, 0);
 
-  for (int r = 0; r < grid->rows; ++r) {
-    for (int c = 0; c < grid->columns; ++c) {
+  for (unsigned int r = 0; r < grid->rows; ++r) {
+    for (unsigned int c = 0; c < grid->columns; ++c) {
       Position pos = {r, c};
       Point* p = grid_get(grid, &pos).ok;
       cr_assert_eq(p->x, r * 2);
@@ -327,8 +326,8 @@ Test(grid_map, _1) {
   grid_free(&empty, NULL);
 
   
-  for (int r = 0; r < points->rows; ++r) {
-    for (int c = 0; c < points->columns; ++c) {
+  for (unsigned int r = 0; r < points->rows; ++r) {
+    for (unsigned int c = 0; c < points->columns; ++c) {
       Position pos = {r, c};
       grid_set(points, &pos, point_new(r, c));
     }
@@ -340,8 +339,8 @@ Test(grid_map, _1) {
   cr_assert_eq(strings->size, points->size);
   cr_assert_eq(strings->elements != NULL, true);
 
-  for (int r = 0; r < points->rows; ++r) {
-    for (int c = 0; c < points->columns; ++c) {
+  for (unsigned int r = 0; r < points->rows; ++r) {
+    for (unsigned int c = 0; c < points->columns; ++c) {
       Position pos = {r, c};
       char* result = grid_get(strings, &pos).ok;
       char* expected = point_to_string(grid_get(points, &pos).ok);
@@ -384,8 +383,8 @@ Test(grid_to_string, single_element) {
 Test(grid_to_string, single_row) {
   Grid* grid = grid_new(1, 2).ok;
 
-  for (int r = 0; r < grid->rows; ++r) {
-    for (int c = 0; c < grid->columns; ++c) {
+  for (unsigned int r = 0; r < grid->rows; ++r) {
+    for (unsigned int c = 0; c < grid->columns; ++c) {
       Position pos = position_new(r, c);
       grid_set(grid, &pos, point_new(r, c));
     }
@@ -402,8 +401,8 @@ Test(grid_to_string, single_row) {
 Test(grid_to_string, single_column) {
   Grid* grid = grid_new(2, 1).ok;
 
-  for (int r = 0; r < grid->rows; ++r) {
-    for (int c = 0; c < grid->columns; ++c) {
+  for (unsigned int r = 0; r < grid->rows; ++r) {
+    for (unsigned int c = 0; c < grid->columns; ++c) {
       Position pos = position_new(r, c);
       grid_set(grid, &pos, point_new(r, c));
     }
@@ -421,8 +420,8 @@ Test(grid_to_string, multi) {
   Grid* grid = grid_new(2, 2).ok;
 
   int i = 1;
-  for (int r = 0; r < grid->rows; ++r) {
-    for (int c = 0; c < grid->columns; ++c) {
+  for (unsigned int r = 0; r < grid->rows; ++r) {
+    for (unsigned int c = 0; c < grid->columns; ++c) {
       Position pos = position_new(r, c);
       grid_set(grid, &pos, i % 2 == 0 ? point_new(r, c) : NULL);
       ++i;
