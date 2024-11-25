@@ -132,7 +132,7 @@ Result grid_get(Grid* const grid, Position* const position) {
     e = pthread_rwlock_unlock(&grid->lock);
     if (e) return result_std_error();
 
-    return result_error(ERR_CODE_GENERAL, ERR_MSG_INVALID_POSITION);
+    return result_error(ERR_CODE_GENERAL, ERR_MSG_GRID_POSITION_INVALID);
   }
 
   e = pthread_rwlock_unlock(&grid->lock);
@@ -150,7 +150,7 @@ Result grid_remove(Grid* const grid, Position* const position) {
     e = pthread_rwlock_unlock(&grid->lock);
     if (e) return result_std_error();
 
-    return result_error(ERR_CODE_GENERAL, ERR_MSG_INVALID_POSITION);
+    return result_error(ERR_CODE_GENERAL, ERR_MSG_GRID_POSITION_INVALID);
   }
 
   void** row = grid->elements + position->row * grid->columns;

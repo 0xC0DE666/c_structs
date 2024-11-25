@@ -13,7 +13,6 @@ bool array_has_capacity(const Array* array) {
 }
 
 Result array_new(unsigned int capacity) {
-  // TODO handle invalid capacity
   Array* array = malloc(sizeof(Array) + capacity * sizeof(void*));
 
   if (array == NULL) {
@@ -142,7 +141,7 @@ Result array_get(Array* const array, unsigned int index) {
     e = pthread_rwlock_unlock(&array->lock);
     if (e) return result_std_error();
 
-    return result_error(ERR_CODE_GENERAL, ERR_MSG_INVALID_INDEX);
+    return result_error(ERR_CODE_GENERAL, ERR_MSG_ARRAY_INDEX_INVALID);
   }
 
   e = pthread_rwlock_unlock(&array->lock);
@@ -159,7 +158,7 @@ Result array_remove(Array* const array, unsigned int index) {
     e = pthread_rwlock_unlock(&array->lock);
     if (e) return result_std_error();
 
-    return result_error(ERR_CODE_GENERAL, ERR_MSG_INVALID_INDEX);
+    return result_error(ERR_CODE_GENERAL, ERR_MSG_ARRAY_INDEX_INVALID);
   }
 
   void* removed = array->elements[index];
@@ -191,7 +190,13 @@ int array_for_each(Array* const array, ArrayEachFn each) {
   }
 
   for (unsigned int i = 0; i < array->capacity; ++i) {
-    void* element = array_get(array, i).ok;
+    Result res = array_get(array, i);
+    if (res.error.code != SUC_CODE_GENERAL) {
+      fprintf(stderr, res.error.message);
+      return res.error.code;
+    }
+
+    void* element = res.ok;
     if (element != NULL) {
       each(element);
     }
@@ -207,8 +212,13 @@ Result array_map(Array* const array, ArrayMapFn map) {
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return result_std_error();
 
-  Array* mapped = array_new(array->capacity).ok;
-  // TODO handle potential error above
+  Result res = array_new(array->capacity);
+  if (res.error.code != SUC_CODE_GENERAL) {
+    fprintf(stderr, res.error.message);
+    return res.error.code;
+  }
+
+  Array* array = res.ok;
   if (mapped == NULL) {
     e = pthread_rwlock_unlock(&array->lock);
     if (e) return result_std_error();

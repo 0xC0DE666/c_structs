@@ -9,9 +9,6 @@
 //####################
 // COMMON
 //####################
-#define ERR_MSG_AT_CAPACITY "at capacity"
-#define ERR_MSG_INVALID_INDEX "invalid index"
-#define ERR_MSG_INVALID_POSITION "invalid position"
 
 typedef void (*const FreeFn)(void** const);
 typedef bool (*const PredicateFn)(void* const);
@@ -20,6 +17,10 @@ typedef char* (*const ToStringFn)(void* const);
 //####################
 // ARRAY
 //####################
+
+#define ERR_MSG_ARRAY_AT_CAPACITY "Array is at capacity."
+#define ERR_MSG_ARRAY_INDEX_INVALID "Invalid array index."
+
 typedef struct Array {
   pthread_rwlock_t lock;
  unsigned int capacity;
@@ -53,6 +54,9 @@ Result array_to_string(Array* const array, ToStringFn const to_string);
 //####################
 // GRID
 //####################
+
+#define ERR_MSG_GRID_POSITION_INVALID "Invalid grid position."
+
 typedef struct Position {
  unsigned int row;
  unsigned int column;
