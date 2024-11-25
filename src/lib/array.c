@@ -214,11 +214,10 @@ Result array_map(Array* const array, ArrayMapFn map) {
 
   Result res = array_new(array->capacity);
   if (res.error.code != SUC_CODE_GENERAL) {
-    fprintf(stderr, res.error.message);
-    return res.error.code;
+    return res;
   }
 
-  Array* array = res.ok;
+  Array* mapped = res.ok;
   if (mapped == NULL) {
     e = pthread_rwlock_unlock(&array->lock);
     if (e) return result_std_error();

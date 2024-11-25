@@ -180,7 +180,13 @@ int grid_for_each(Grid* const grid, GridEachFn const each) {
   for (unsigned int r = 0; r < grid->rows; ++r) {
     for (unsigned int c = 0; c < grid->columns; ++c) {
       Position p = position_new(r, c);
-      void* element = grid_get(grid, &p).ok;
+      Result res = grid_get(grid, &p);
+      if (res.error.code != SUC_CODE_GENERAL) {
+        fprintf(stderr, res.error.message);
+        return res.error.code;
+      }
+
+      void* element = res.ok;
       if (element != NULL) {
         each(element);
       }
@@ -197,7 +203,12 @@ Result grid_map(Grid* const grid, GridMapFn const map) {
   int e = pthread_rwlock_trywrlock(&grid->lock);
   if (e) return result_std_error();
 
-  Grid* mapped = grid_new(grid->rows, grid->columns).ok;
+  Result res = grid_new(grid->rows, grid->columns);
+  if (res.error.code != SUC_CODE_GENERAL) {
+    return res;
+  }
+
+  Grid* mapped = res.ok;
   if (mapped == NULL) {
     e = pthread_rwlock_unlock(&grid->lock);
     if (e) return result_std_error();

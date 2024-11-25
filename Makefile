@@ -99,10 +99,10 @@ release: clean $(VERSIONED_RELEASE_ASSETS) $(UNVERSIONED_RELEASE_ASSETS) app tes
 
 .PHONY: exe_app exe_test;
 
-exe_app: app;
+exe_app: clean $(NAME).o app;
 	./build/bin/app;
 
-exe_test: test;
+exe_test: clean $(NAME).o test;
 	./build/bin/test;
 
 clean:
