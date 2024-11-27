@@ -34,7 +34,7 @@ Result array_new(unsigned int capacity) {
   return result_ok(array);
 }
 
-int array_clear(Array* const array, const FreeFn free_element) {
+int array_clear(Array* const array, const FnFree free_element) {
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return e;
 
@@ -55,7 +55,7 @@ int array_clear(Array* const array, const FreeFn free_element) {
   return SUC_CODE_GENERAL;
 }
 
-int array_free(Array** const array, FreeFn free_element) {
+int array_free(Array** const array, FnFree free_element) {
   array_clear(*array, free_element);
 
   int e = pthread_rwlock_destroy(&(*array)->lock);

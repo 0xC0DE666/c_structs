@@ -18,7 +18,7 @@ Result node_new(void* const value) {
   return result_ok(node);
 }
 
-int node_free(ListNode** node, FreeFn const free_value) {
+int node_free(ListNode** node, FnFree const free_value) {
   free_value(&(*node)->value); 
 
   (*node)->value = NULL;
@@ -55,7 +55,7 @@ Result list_new() {
 }
 
 
-int list_clear(List* const list, FreeFn const free_value) {
+int list_clear(List* const list, FnFree const free_value) {
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return e;
 
@@ -101,7 +101,7 @@ int list_clear(List* const list, FreeFn const free_value) {
   return 0;
 }
 
-int list_free(List** const list, FreeFn const free_value) {
+int list_free(List** const list, FnFree const free_value) {
   int e = list_clear(*list, free_value);
   if (e) return e;
 
@@ -336,7 +336,7 @@ Result list_remove(List* const list, ListNode* node) {
 }
 
 
-Result list_find(List* const list, PredicateFn const predicate) {
+Result list_find(List* const list, FnPredicate const predicate) {
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return result_std_error();
 

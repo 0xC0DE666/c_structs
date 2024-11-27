@@ -62,7 +62,7 @@ Result grid_new(unsigned int rows, unsigned int columns) {
   return result_ok(grid);
 }
 
-int grid_clear(Grid* const grid, FreeFn const free_element) {
+int grid_clear(Grid* const grid, FnFree const free_element) {
   int e = pthread_rwlock_trywrlock(&grid->lock);
   if (e) return e;
 
@@ -87,7 +87,7 @@ int grid_clear(Grid* const grid, FreeFn const free_element) {
   return 0;
 }
 
-int grid_free(Grid** const grid, FreeFn const free_element) {
+int grid_free(Grid** const grid, FnFree const free_element) {
   grid_clear(*grid, free_element);
 
   int e = pthread_rwlock_destroy(&(*grid)->lock);

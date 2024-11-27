@@ -25,7 +25,7 @@ Test(node_new, _1) {
   cr_assert_eq(p->x, 0);
   cr_assert_eq(p->y, 1);
 
-  node_free(&node, (FreeFn) safe_free);
+  node_free(&node, (FnFree) safe_free);
 }
 
 // ####################
@@ -37,7 +37,7 @@ Test(node_free, _1) {
   cr_assert_eq(node != NULL, true);
   cr_assert_eq(node->value != NULL, true);
 
-  int e = node_free(&node, (FreeFn) safe_free);
+  int e = node_free(&node, (FnFree) safe_free);
   cr_assert_eq(e, 0);
   cr_assert_eq(node, NULL);
 }
@@ -56,7 +56,7 @@ Test(list_size, _1) {
     cr_assert_eq(sze, i + 1);
   }
 
-  list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FnFree) safe_free);
 }
 
 // ####################
@@ -92,13 +92,13 @@ Test(list_clear, single) {
   list->head = node_new(point_new(0, 0)).ok;
   list->tail = list->head;
 
-  int e = list_clear(list, (FreeFn) safe_free);
+  int e = list_clear(list, (FnFree) safe_free);
   cr_assert_eq(e, 0);
   cr_assert_eq(list != NULL, true);
   cr_assert_eq(list->head, NULL);
   cr_assert_eq(list->tail, NULL);
 
-  list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FnFree) safe_free);
 }
 
 // TODO: check this, check a b c is freed
@@ -115,13 +115,13 @@ Test(list_clear, multiple) {
   list->head = a;
   list->tail = c;
 
-  int e = list_clear(list, (FreeFn) safe_free);
+  int e = list_clear(list, (FnFree) safe_free);
   cr_assert_eq(e, 0);
   cr_assert_eq(list != NULL, true);
   cr_assert_eq(list->head, NULL);
   cr_assert_eq(list->tail, NULL);
 
-  list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FnFree) safe_free);
 }
 
 
@@ -145,7 +145,7 @@ Test(list_free, _1) {
   cr_assert_eq(list->head, a);
   cr_assert_eq(list->tail, c);
 
-  list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FnFree) safe_free);
   cr_assert_eq(list, NULL);
 }
 
@@ -166,7 +166,7 @@ Test(list_append, empty) {
   cr_assert_eq(p->x, 0);
   cr_assert_eq(p->y, 0);
 
-  list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FnFree) safe_free);
 }
 
 Test(list_append, not_empty) {
@@ -208,7 +208,7 @@ Test(list_append, not_empty) {
   }
   cr_assert_eq(i, 0);
 
-  list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FnFree) safe_free);
 }
 
 // ####################
@@ -228,7 +228,7 @@ Test(list_prepend, empty) {
   cr_assert_eq(p->x, 0);
   cr_assert_eq(p->y, 0);
 
-  list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FnFree) safe_free);
 }
 
 Test(list_prepend, not_empty) {
@@ -270,7 +270,7 @@ Test(list_prepend, not_empty) {
   }
   cr_assert_eq(i, 0);
 
-  list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FnFree) safe_free);
 }
 
 // ####################
@@ -311,7 +311,7 @@ Test(list_insert_before, before_head) {
   }
   cr_assert_eq(i, 0);
 
-  list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FnFree) safe_free);
 }
 
 Test(list_insert_before, before_mid_node) {
@@ -350,7 +350,7 @@ Test(list_insert_before, before_mid_node) {
   }
   cr_assert_eq(i, 0);
 
-  list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FnFree) safe_free);
 }
 
 // ####################
@@ -391,7 +391,7 @@ Test(list_insert_after, after_tail) {
   }
   cr_assert_eq(i, 0);
 
-  list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FnFree) safe_free);
 }
 
 Test(list_insert_after, after_mid_node) {
@@ -430,7 +430,7 @@ Test(list_insert_after, after_mid_node) {
   }
   cr_assert_eq(i, 0);
 
-  list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FnFree) safe_free);
 }
 
 // ####################
@@ -466,7 +466,7 @@ Test(list_remove_head, single) {
   cr_assert_eq(p->x, 0);
   cr_assert_eq(p->y, 0);
 
-  node_free(&n, (FreeFn) safe_free);
+  node_free(&n, (FnFree) safe_free);
   list_free(&list, NULL);
 }
 
@@ -496,7 +496,7 @@ Test(list_remove_head, multiple) {
   cr_assert_eq(p != NULL, true);
   cr_assert_eq(p->x, 0);
   cr_assert_eq(p->y, 0);
-  node_free(&n, (FreeFn) safe_free);
+  node_free(&n, (FnFree) safe_free);
 
   int sze = list_size(list);
   cr_assert_eq(sze, 2);
@@ -525,7 +525,7 @@ Test(list_remove_head, multiple) {
   }
   cr_assert_eq(i, 0);
 
-  list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FnFree) safe_free);
 }
 
 // ####################
@@ -561,7 +561,7 @@ Test(list_remove_tail, single) {
   cr_assert_eq(p->x, 0);
   cr_assert_eq(p->y, 0);
 
-  node_free(&n, (FreeFn) safe_free);
+  node_free(&n, (FnFree) safe_free);
   list_free(&list, NULL);
 }
 
@@ -592,7 +592,7 @@ Test(list_remove_tail, multiple) {
   cr_assert_eq(p->x, 2);
   cr_assert_eq(p->y, 2);
 
-  node_free(&n, (FreeFn) safe_free);
+  node_free(&n, (FnFree) safe_free);
 
   int sze = list_size(list);
   cr_assert_eq(sze, 2);
@@ -621,7 +621,7 @@ Test(list_remove_tail, multiple) {
   }
   cr_assert_eq(i, 0);
 
-  list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FnFree) safe_free);
 }
 
 // ####################
@@ -650,7 +650,7 @@ Test(list_remove, single) {
   cr_assert_eq(n->next, NULL);
   cr_assert_eq(n->previous, NULL);
 
-  node_free(&n, (FreeFn) safe_free);
+  node_free(&n, (FnFree) safe_free);
   list_free(&list, NULL);
 }
 
@@ -682,7 +682,7 @@ Test(list_remove, multiple_head) {
   cr_assert_eq(p->y, 0);
   cr_assert_eq(n->next, NULL);
   cr_assert_eq(n->previous, NULL);
-  node_free(&n, (FreeFn) safe_free);
+  node_free(&n, (FnFree) safe_free);
 
   int sze = list_size(list);
   cr_assert_eq(sze, 2);
@@ -711,7 +711,7 @@ Test(list_remove, multiple_head) {
   }
   cr_assert_eq(i, 0);
 
-  list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FnFree) safe_free);
 }
 
 Test(list_remove, multiple_tail) {
@@ -740,7 +740,7 @@ Test(list_remove, multiple_tail) {
   cr_assert_eq(p != NULL, true);
   cr_assert_eq(p->x, 2);
   cr_assert_eq(p->y, 2);
-  node_free(&n, (FreeFn) safe_free);
+  node_free(&n, (FnFree) safe_free);
 
   int sze = list_size(list);
   cr_assert_eq(sze, 2);
@@ -769,7 +769,7 @@ Test(list_remove, multiple_tail) {
   }
   cr_assert_eq(i, 0);
 
-  list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FnFree) safe_free);
 }
 
 Test(list_remove, multiple_mid) {
@@ -798,7 +798,7 @@ Test(list_remove, multiple_mid) {
   cr_assert_eq(p != NULL, true);
   cr_assert_eq(p->x, 1);
   cr_assert_eq(p->y, 1);
-  node_free(&n, (FreeFn) safe_free);
+  node_free(&n, (FnFree) safe_free);
 
   int sze = list_size(list);
   cr_assert_eq(sze, 2);
@@ -827,7 +827,7 @@ Test(list_remove, multiple_mid) {
   }
   cr_assert_eq(i, 0);
 
-  list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FnFree) safe_free);
 }
 
 // ####################
@@ -841,7 +841,7 @@ bool node_fun(ListNode* n) {
 Test(list_find, not_found) {
   List* list = list_new().ok;
   
-  Result res = list_find(list, (PredicateFn) node_fun);
+  Result res = list_find(list, (FnPredicate) node_fun);
   cr_assert_eq(res.ok, NULL);
   cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
 
@@ -860,7 +860,7 @@ Test(list_find, found) {
   cr_assert_eq(e, 0);
 
   
-  Result res = list_find(list, (PredicateFn) node_fun);
+  Result res = list_find(list, (FnPredicate) node_fun);
   cr_assert_eq(res.ok != NULL, true);
   cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
 
@@ -870,7 +870,7 @@ Test(list_find, found) {
   cr_assert_eq(p->x, 69);
   cr_assert_eq(p->y, 420);
 
-  list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FnFree) safe_free);
 }
 
 // ####################
@@ -892,5 +892,5 @@ Test(list_to_string, _1) {
   cr_assert_eq(strcmp(result, expected), 0);
 
   safe_free((void**) &result);
-  list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FnFree) safe_free);
 }

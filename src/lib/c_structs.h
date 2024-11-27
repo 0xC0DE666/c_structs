@@ -10,9 +10,10 @@
 // COMMON
 //####################
 
-typedef void (*const FreeFn)(void** const);
-typedef bool (*const PredicateFn)(void* const);
+typedef void (*const FnFree)(void** const);
 typedef char* (*const ToStringFn)(void* const);
+typedef bool (*const FnPredicate)(void* const);
+typedef int (*const FnComparator)(void* const); // -1 0 1
 
 //####################
 // ARRAY
@@ -32,8 +33,8 @@ bool array_index_valid(const Array* array, unsigned int index);
 bool array_has_capacity(const Array* array);
 
 Result array_new(uint capacity);
-int array_clear(Array* const array, FreeFn const free_element);
-int array_free(Array** const array, FreeFn const free_element);
+int array_clear(Array* const array, FnFree const free_element);
+int array_free(Array** const array, FnFree const free_element);
 
 int array_append(Array* const array, void* const element);
 int array_prepend(Array* const array, void* const element);
@@ -78,8 +79,8 @@ bool grid_position_valid(Grid* const grid, Position* const position);
 bool grid_has_capacity(Grid* const grid);
 
 Result grid_new(unsigned int rows, unsigned int columns);
-int grid_clear(Grid* const grid, FreeFn const free_element);
-int grid_free(Grid** const grid, FreeFn const free_element);
+int grid_clear(Grid* const grid, FnFree const free_element);
+int grid_free(Grid** const grid, FnFree const free_element);
 
 int grid_set(Grid* const grid, Position* const position, void* const element);
 
@@ -105,7 +106,7 @@ typedef struct ListNode {
 } ListNode;
 
 Result node_new(void* const value);
-int node_free(ListNode** const node, FreeFn const free_value);
+int node_free(ListNode** const node, FnFree const free_value);
 
 typedef struct List {
   pthread_rwlock_t lock;
@@ -116,8 +117,8 @@ typedef struct List {
 int list_size(List* const list);
 
 Result list_new();
-int list_clear(List* const list, FreeFn const free_value);
-int list_free(List** const list, FreeFn const free_value);
+int list_clear(List* const list, FnFree const free_value);
+int list_free(List** const list, FnFree const free_value);
 
 int list_append(List* const list, void* const value);
 int list_prepend(List* const list, void* const value);
@@ -129,7 +130,7 @@ Result list_remove_head(List* const list);
 Result list_remove_tail(List* const list);
 Result list_remove(List* const list, ListNode* node);
 
-Result list_find(List* const list, PredicateFn const predicate);
+Result list_find(List* const list, FnPredicate const predicate);
 
 Result list_to_string(List* const list, ToStringFn const to_string);
 
@@ -142,5 +143,21 @@ typedef struct MapNode {
   struct MapNode* left_child;
   struct MapNode* right_child;
 } MapNode;
+
+typedef struct Map {
+  pthread_rwlock_t lock;
+  struct MapNode* root;
+} Map;
+
+int map_size(Map* const map);
+
+Result map_new();
+int map_clear(Map* const map, FnFree const free_value);
+int map_free(Map** const map, FnFree const free_value);
+
+int map_insert(Map* const map, void* const value, FnComparator compare);
+
+Result map_get(Map* const map, MapNode* node);
+Result map_remove(Map* const map, MapNode* node);
 
 #endif
