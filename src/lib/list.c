@@ -4,7 +4,7 @@
 
 #include "c_structs.h"
 
-Result node_new(void* const value) {
+Result list_node_new(void* const value) {
   ListNode* node = malloc(sizeof(ListNode));
 
   if (node == NULL) {
@@ -18,7 +18,7 @@ Result node_new(void* const value) {
   return result_ok(node);
 }
 
-int node_free(ListNode** node, FnFree const free_value) {
+int list_node_free(ListNode** node, FnFree const free_value) {
   free_value(&(*node)->value); 
 
   (*node)->value = NULL;
@@ -69,7 +69,7 @@ int list_clear(List* const list, FnFree const free_value) {
 
   // sinlge node
   if (list->head == list->tail) {
-    e = node_free(&list->head, free_value);
+    e = list_node_free(&list->head, free_value);
     if (e) return e;
 
     list->head = NULL;
@@ -87,7 +87,7 @@ int list_clear(List* const list, FnFree const free_value) {
     list->head->next ? list->head->next->previous = NULL : 0;
     list->head->previous ? list->head->previous->next = NULL : 0;
 
-    e = node_free(&list->head, free_value);
+    e = list_node_free(&list->head, free_value);
     if (e) return e;
 
     list->head = next;
@@ -116,7 +116,7 @@ int list_append(List* list, void* value) {
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return e;
 
-  ListNode* node = node_new(value).ok;
+  ListNode* node = list_node_new(value).ok;
   if (list->head == NULL && list->tail == NULL) {
     list->head = node;
     list->tail = node;
@@ -141,7 +141,7 @@ int list_prepend(List* list, void* value) {
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return e;
 
-  ListNode* node = node_new(value).ok;
+  ListNode* node = list_node_new(value).ok;
   if (list->head == NULL && list->tail == NULL) {
     list->head = node;
     list->tail = node;
@@ -166,7 +166,7 @@ int list_insert_before(List* const list, ListNode* const node, void* const value
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return e;
   
-  ListNode* new_node = node_new(value).ok;
+  ListNode* new_node = list_node_new(value).ok;
   // insert before head
   if (node == list->head) {
     list->head->previous = new_node;
@@ -196,7 +196,7 @@ int list_insert_before(List* const list, ListNode* const node, void* const value
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return e;
   
-  ListNode* new_node = node_new(value).ok;
+  ListNode* new_node = list_node_new(value).ok;
   // insert after tail
   if (node == list->tail) {
     new_node->previous = list->tail;

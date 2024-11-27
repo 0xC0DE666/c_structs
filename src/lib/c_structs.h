@@ -105,8 +105,8 @@ typedef struct ListNode {
   struct ListNode* previous;
 } ListNode;
 
-Result node_new(void* const value);
-int node_free(ListNode** const node, FnFree const free_value);
+Result list_node_new(void* const value);
+int list_node_free(ListNode** const node, FnFree const free_value);
 
 typedef struct List {
   pthread_rwlock_t lock;
@@ -144,6 +144,9 @@ typedef struct MapNode {
   struct MapNode* right_child;
 } MapNode;
 
+Result map_node_new(void* const value);
+int map_node_free(MapNode** const node, FnFree const free_value);
+
 typedef struct Map {
   pthread_rwlock_t lock;
   struct MapNode* root;
@@ -158,6 +161,7 @@ int map_free(Map** const map, FnFree const free_value);
 int map_insert(Map* const map, void* const value, FnComparator compare);
 
 Result map_get(Map* const map, MapNode* node);
+
 Result map_remove(Map* const map, MapNode* node);
 
 #endif
