@@ -5,7 +5,7 @@
 #include "c_structs.h"
 
 Result node_new(void* const value) {
-  Node* node = malloc(sizeof(Node));
+  ListNode* node = malloc(sizeof(ListNode));
 
   if (node == NULL) {
     return result_std_error();
@@ -18,7 +18,7 @@ Result node_new(void* const value) {
   return result_ok(node);
 }
 
-int node_free(Node** node, FreeFn const free_value) {
+int node_free(ListNode** node, FreeFn const free_value) {
   free_value(&(*node)->value); 
 
   (*node)->value = NULL;
@@ -30,9 +30,9 @@ int node_free(Node** node, FreeFn const free_value) {
   return 0;
 }
 
-int linked_list_size(LinkedList* list) {
+int list_size(List* list) {
   int sze = 0;
-  Node* n = list->head;
+  ListNode* n = list->head;
   while(n) {
     ++sze;
     n = n->next;
@@ -40,8 +40,8 @@ int linked_list_size(LinkedList* list) {
   return sze;
 }
 
-Result linked_list_new() {
-  LinkedList* list = malloc(sizeof(LinkedList));
+Result list_new() {
+  List* list = malloc(sizeof(List));
 
   if (list == NULL) {
     return result_std_error();
@@ -55,7 +55,7 @@ Result linked_list_new() {
 }
 
 
-int linked_list_clear(LinkedList* const list, FreeFn const free_value) {
+int list_clear(List* const list, FreeFn const free_value) {
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return e;
 
@@ -83,7 +83,7 @@ int linked_list_clear(LinkedList* const list, FreeFn const free_value) {
 
   // multiple nodes
   while(list->head) {
-    Node* next = list->head->next;
+    ListNode* next = list->head->next;
     list->head->next ? list->head->next->previous = NULL : 0;
     list->head->previous ? list->head->previous->next = NULL : 0;
 
@@ -101,8 +101,8 @@ int linked_list_clear(LinkedList* const list, FreeFn const free_value) {
   return 0;
 }
 
-int linked_list_free(LinkedList** const list, FreeFn const free_value) {
-  int e = linked_list_clear(*list, free_value);
+int list_free(List** const list, FreeFn const free_value) {
+  int e = list_clear(*list, free_value);
   if (e) return e;
 
   pthread_rwlock_destroy(&(*list)->lock);
@@ -112,11 +112,11 @@ int linked_list_free(LinkedList** const list, FreeFn const free_value) {
   return 0;
 }
 
-int linked_list_append(LinkedList* list, void* value) {
+int list_append(List* list, void* value) {
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return e;
 
-  Node* node = node_new(value).ok;
+  ListNode* node = node_new(value).ok;
   if (list->head == NULL && list->tail == NULL) {
     list->head = node;
     list->tail = node;
@@ -137,11 +137,11 @@ int linked_list_append(LinkedList* list, void* value) {
   return 0;
 }
 
-int linked_list_prepend(LinkedList* list, void* value) {
+int list_prepend(List* list, void* value) {
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return e;
 
-  Node* node = node_new(value).ok;
+  ListNode* node = node_new(value).ok;
   if (list->head == NULL && list->tail == NULL) {
     list->head = node;
     list->tail = node;
@@ -162,11 +162,11 @@ int linked_list_prepend(LinkedList* list, void* value) {
   return 0;
 }
 
-int linked_list_insert_before(LinkedList* const list, Node* const node, void* const value) {
+int list_insert_before(List* const list, ListNode* const node, void* const value) {
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return e;
   
-  Node* new_node = node_new(value).ok;
+  ListNode* new_node = node_new(value).ok;
   // insert before head
   if (node == list->head) {
     list->head->previous = new_node;
@@ -192,11 +192,11 @@ int linked_list_insert_before(LinkedList* const list, Node* const node, void* co
 }
 
 
-  int linked_list_insert_after(LinkedList* const list, Node* const node, void* const value) {
+  int list_insert_after(List* const list, ListNode* const node, void* const value) {
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return e;
   
-  Node* new_node = node_new(value).ok;
+  ListNode* new_node = node_new(value).ok;
   // insert after tail
   if (node == list->tail) {
     new_node->previous = list->tail;
@@ -221,7 +221,7 @@ int linked_list_insert_before(LinkedList* const list, Node* const node, void* co
   return 0;
 }
 
-Result linked_list_remove_head(LinkedList* const list) {
+Result list_remove_head(List* const list) {
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return result_std_error();
 
@@ -235,7 +235,7 @@ Result linked_list_remove_head(LinkedList* const list) {
 
   // sinlge node
   if (list->head == list->tail) {
-    Node* n = list->head;
+    ListNode* n = list->head;
     list->head = NULL;
     list->tail = NULL;
 
@@ -246,7 +246,7 @@ Result linked_list_remove_head(LinkedList* const list) {
   }
 
   // multiple mid
-  Node* n = list->head;
+  ListNode* n = list->head;
   list->head = list->head->next;
   list->head->previous = NULL;
   n->next = NULL;
@@ -258,7 +258,7 @@ Result linked_list_remove_head(LinkedList* const list) {
   return result_ok(n);
 }
 
-Result linked_list_remove_tail(LinkedList* const list) {
+Result list_remove_tail(List* const list) {
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return result_std_error();
 
@@ -272,7 +272,7 @@ Result linked_list_remove_tail(LinkedList* const list) {
 
   // sinlge node
   if (list->head == list->tail) {
-    Node* n = list->head;
+    ListNode* n = list->head;
     list->head = NULL;
     list->tail = NULL;
 
@@ -283,7 +283,7 @@ Result linked_list_remove_tail(LinkedList* const list) {
   }
 
   // multiple mid
-  Node* n = list->tail;
+  ListNode* n = list->tail;
   list->tail = list->tail->previous;
   list->tail->next = NULL;
   n->next = NULL;
@@ -295,7 +295,7 @@ Result linked_list_remove_tail(LinkedList* const list) {
   return result_ok(n);
 }
 
-Result linked_list_remove(LinkedList* const list, Node* node) {
+Result list_remove(List* const list, ListNode* node) {
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return result_std_error();
 
@@ -304,7 +304,7 @@ Result linked_list_remove(LinkedList* const list, Node* node) {
     e = pthread_rwlock_unlock(&list->lock);
     if (e) return result_std_error();
 
-    return linked_list_remove_head(list);
+    return list_remove_head(list);
   }
 
   // head
@@ -312,7 +312,7 @@ Result linked_list_remove(LinkedList* const list, Node* node) {
     e = pthread_rwlock_unlock(&list->lock);
     if (e) return result_std_error();
 
-    return linked_list_remove_head(list);
+    return list_remove_head(list);
   }
 
   // tail
@@ -320,7 +320,7 @@ Result linked_list_remove(LinkedList* const list, Node* node) {
     e = pthread_rwlock_unlock(&list->lock);
     if (e) return result_std_error();
 
-    return linked_list_remove_tail(list);
+    return list_remove_tail(list);
   }
 
   // mid
@@ -336,11 +336,11 @@ Result linked_list_remove(LinkedList* const list, Node* node) {
 }
 
 
-Result linked_list_find(LinkedList* const list, PredicateFn const predicate) {
+Result list_find(List* const list, PredicateFn const predicate) {
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return result_std_error();
 
-  Node* n = list->head;
+  ListNode* n = list->head;
   while (n) {
     if (predicate(n)) {
       e = pthread_rwlock_unlock(&list->lock);
@@ -357,12 +357,12 @@ Result linked_list_find(LinkedList* const list, PredicateFn const predicate) {
   return result_ok(NULL);
 }
 
-Result linked_list_to_string(LinkedList* const list, ToStringFn const to_string) {
+Result list_to_string(List* const list, ToStringFn const to_string) {
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return result_std_error();
 
-  int list_size = linked_list_size(list);
-  if (list_size == 0) {
+  int sze = list_size(list);
+  if (sze == 0) {
     char* buffer = malloc(sizeof(char) * 3);
     sprintf(buffer, "{}");
 
@@ -375,11 +375,11 @@ Result linked_list_to_string(LinkedList* const list, ToStringFn const to_string)
     return result_ok(buffer);
   }
 
-  char* values[list_size] = {};
-  int lengths[list_size] = {};
+  char* values[sze] = {};
+  int lengths[sze] = {};
   int sum_lengths = 0;
 
-  Node* n = list->head;
+  ListNode* n = list->head;
   int i = 0;
   while(n != NULL) {
     void* value = n->value;
@@ -390,7 +390,7 @@ Result linked_list_to_string(LinkedList* const list, ToStringFn const to_string)
     n = n->next;
   }
 
-  int total_length = sum_lengths + (list_size * 2) + 4;
+  int total_length = sum_lengths + (sze * 2) + 4;
   char* buffer = malloc(sizeof(char) * total_length);
 
   if (buffer == NULL) {
@@ -401,9 +401,9 @@ Result linked_list_to_string(LinkedList* const list, ToStringFn const to_string)
   }
 
   sprintf(buffer, "{");
-  for (int i = 0; i < list_size; ++i) {
+  for (int i = 0; i < sze; ++i) {
     strcat(buffer, values[i]);
-    if (i < list_size - 1) {
+    if (i < sze - 1) {
       strcat(buffer, ", ");
     }
   }

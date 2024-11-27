@@ -14,7 +14,7 @@
 // node_new
 // ####################
 Test(node_new, _1) {
-  Node* node = node_new(point_new(0, 1)).ok;
+  ListNode* node = node_new(point_new(0, 1)).ok;
 
   cr_assert_eq(node != NULL, true);
   cr_assert_eq(node->value != NULL, true);
@@ -32,7 +32,7 @@ Test(node_new, _1) {
 // node_free
 // ####################
 Test(node_free, _1) {
-  Node* node = node_new(point_new(0, 1)).ok;
+  ListNode* node = node_new(point_new(0, 1)).ok;
 
   cr_assert_eq(node != NULL, true);
   cr_assert_eq(node->value != NULL, true);
@@ -43,70 +43,70 @@ Test(node_free, _1) {
 }
 
 // ####################
-// linked_list_size
+// list_size
 // ####################
-Test(linked_list_size, _1) {
-  LinkedList* list = linked_list_new().ok;
-  int sze = linked_list_size(list);
+Test(list_size, _1) {
+  List* list = list_new().ok;
+  int sze = list_size(list);
   cr_assert_eq(sze, 0);
 
   for (int i = 0; i < 3; ++i) {
-    linked_list_append(list, point_new(i, i));
-    sze = linked_list_size(list);
+    list_append(list, point_new(i, i));
+    sze = list_size(list);
     cr_assert_eq(sze, i + 1);
   }
 
-  linked_list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FreeFn) safe_free);
 }
 
 // ####################
-// linked_list_new
+// list_new
 // ####################
-Test(linked_list_new, _1) {
-  LinkedList* list = linked_list_new().ok;
+Test(list_new, _1) {
+  List* list = list_new().ok;
 
   cr_assert_eq(list != NULL, true);
   cr_assert_eq(list->head, NULL);
   cr_assert_eq(list->tail, NULL);
 
-  linked_list_free(&list, NULL);
+  list_free(&list, NULL);
 }
 
 // ####################
-// linked_list_clear
+// list_clear
 // ####################
-Test(linked_list_clear, empty) {
-  LinkedList* list = linked_list_new().ok;
-  int e = linked_list_clear(list, NULL);
+Test(list_clear, empty) {
+  List* list = list_new().ok;
+  int e = list_clear(list, NULL);
 
   cr_assert_eq(e, 0);
   cr_assert_eq(list != NULL, true);
   cr_assert_eq(list->head, NULL);
   cr_assert_eq(list->tail, NULL);
 
-  linked_list_free(&list, NULL);
+  list_free(&list, NULL);
 }
 
-Test(linked_list_clear, single) {
-  LinkedList* list = linked_list_new().ok;
+Test(list_clear, single) {
+  List* list = list_new().ok;
   list->head = node_new(point_new(0, 0)).ok;
   list->tail = list->head;
 
-  int e = linked_list_clear(list, (FreeFn) safe_free);
+  int e = list_clear(list, (FreeFn) safe_free);
   cr_assert_eq(e, 0);
   cr_assert_eq(list != NULL, true);
   cr_assert_eq(list->head, NULL);
   cr_assert_eq(list->tail, NULL);
 
-  linked_list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FreeFn) safe_free);
 }
 
 // TODO: check this, check a b c is freed
-Test(linked_list_clear, multiple) {
-  LinkedList* list = linked_list_new().ok;
-  Node* a = node_new(point_new(0, 0)).ok;
-  Node* b = node_new(point_new(1, 1)).ok;
-  Node* c = node_new(point_new(2, 2)).ok;
+Test(list_clear, multiple) {
+  List* list = list_new().ok;
+  ListNode* a = node_new(point_new(0, 0)).ok;
+  ListNode* b = node_new(point_new(1, 1)).ok;
+  ListNode* c = node_new(point_new(2, 2)).ok;
 
   a->next = b;
   b->previous = a;
@@ -115,24 +115,24 @@ Test(linked_list_clear, multiple) {
   list->head = a;
   list->tail = c;
 
-  int e = linked_list_clear(list, (FreeFn) safe_free);
+  int e = list_clear(list, (FreeFn) safe_free);
   cr_assert_eq(e, 0);
   cr_assert_eq(list != NULL, true);
   cr_assert_eq(list->head, NULL);
   cr_assert_eq(list->tail, NULL);
 
-  linked_list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FreeFn) safe_free);
 }
 
 
 // ####################
-// linked_list_free
+// list_free
 // ####################
-Test(linked_list_free, _1) {
-  LinkedList* list = linked_list_new().ok;
-  Node* a = node_new(point_new(0, 0)).ok;
-  Node* b = node_new(point_new(1, 1)).ok;
-  Node* c = node_new(point_new(1, 1)).ok;
+Test(list_free, _1) {
+  List* list = list_new().ok;
+  ListNode* a = node_new(point_new(0, 0)).ok;
+  ListNode* b = node_new(point_new(1, 1)).ok;
+  ListNode* c = node_new(point_new(1, 1)).ok;
 
   a->next = b;
   b->previous = a;
@@ -145,17 +145,17 @@ Test(linked_list_free, _1) {
   cr_assert_eq(list->head, a);
   cr_assert_eq(list->tail, c);
 
-  linked_list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FreeFn) safe_free);
   cr_assert_eq(list, NULL);
 }
 
 // ####################
-// linked_list_append
+// list_append
 // ####################
-Test(linked_list_append, empty) {
-  LinkedList* list = linked_list_new().ok;
+Test(list_append, empty) {
+  List* list = list_new().ok;
 
-  int e = linked_list_append(list, point_new(0, 0));
+  int e = list_append(list, point_new(0, 0));
   cr_assert_eq(e, 0);
   cr_assert_eq(list->head != NULL, true);
   cr_assert_eq(list->tail != NULL, true);
@@ -166,25 +166,25 @@ Test(linked_list_append, empty) {
   cr_assert_eq(p->x, 0);
   cr_assert_eq(p->y, 0);
 
-  linked_list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FreeFn) safe_free);
 }
 
-Test(linked_list_append, not_empty) {
-  LinkedList* list = linked_list_new().ok;
+Test(list_append, not_empty) {
+  List* list = list_new().ok;
 
-  int e = linked_list_append(list, point_new(0, 0));
+  int e = list_append(list, point_new(0, 0));
   cr_assert_eq(e, 0);
 
-  e = linked_list_append(list, point_new(1, 1));
+  e = list_append(list, point_new(1, 1));
   cr_assert_eq(e, 0);
 
-  e = linked_list_append(list, point_new(2, 2));
+  e = list_append(list, point_new(2, 2));
   cr_assert_eq(e, 0);
 
-  int sze = linked_list_size(list);
+  int sze = list_size(list);
   cr_assert_eq(sze, 3);
 
-  Node* n = list->head;
+  ListNode* n = list->head;
   int i = 0;
   while (n) {
     cr_assert_eq(n != NULL, true);
@@ -208,16 +208,16 @@ Test(linked_list_append, not_empty) {
   }
   cr_assert_eq(i, 0);
 
-  linked_list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FreeFn) safe_free);
 }
 
 // ####################
-// linked_list_prepend
+// list_prepend
 // ####################
-Test(linked_list_prepend, empty) {
-  LinkedList* list = linked_list_new().ok;
+Test(list_prepend, empty) {
+  List* list = list_new().ok;
 
-  int e = linked_list_prepend(list, point_new(0, 0));
+  int e = list_prepend(list, point_new(0, 0));
   cr_assert_eq(e, 0);
   cr_assert_eq(list->head != NULL, true);
   cr_assert_eq(list->tail != NULL, true);
@@ -228,25 +228,25 @@ Test(linked_list_prepend, empty) {
   cr_assert_eq(p->x, 0);
   cr_assert_eq(p->y, 0);
 
-  linked_list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FreeFn) safe_free);
 }
 
-Test(linked_list_prepend, not_empty) {
-  LinkedList* list = linked_list_new().ok;
+Test(list_prepend, not_empty) {
+  List* list = list_new().ok;
 
-  int e = linked_list_prepend(list, point_new(2, 2));
+  int e = list_prepend(list, point_new(2, 2));
   cr_assert_eq(e, 0);
 
-  e = linked_list_prepend(list, point_new(1, 1));
+  e = list_prepend(list, point_new(1, 1));
   cr_assert_eq(e, 0);
 
-  e = linked_list_prepend(list, point_new(0, 0));
+  e = list_prepend(list, point_new(0, 0));
   cr_assert_eq(e, 0);
 
-  int sze = linked_list_size(list);
+  int sze = list_size(list);
   cr_assert_eq(sze, 3);
 
-  Node* n = list->head;
+  ListNode* n = list->head;
   int i = 0;
   while (n) {
     cr_assert_eq(n != NULL, true);
@@ -270,24 +270,24 @@ Test(linked_list_prepend, not_empty) {
   }
   cr_assert_eq(i, 0);
 
-  linked_list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FreeFn) safe_free);
 }
 
 // ####################
-// linked_list_insert_before
+// list_insert_before
 // ####################
-Test(linked_list_insert_before, before_head) {
-  LinkedList* list = linked_list_new().ok;
+Test(list_insert_before, before_head) {
+  List* list = list_new().ok;
 
-  int e = linked_list_append(list, point_new(1, 1));
-  e = linked_list_insert_before(list, list->head, point_new(0, 0));
+  int e = list_append(list, point_new(1, 1));
+  e = list_insert_before(list, list->head, point_new(0, 0));
   cr_assert_eq(e, 0);
-  e = linked_list_append(list, point_new(2, 2));
+  e = list_append(list, point_new(2, 2));
 
-  int sze = linked_list_size(list);
+  int sze = list_size(list);
   cr_assert_eq(sze, 3);
 
-  Node* n = list->head;
+  ListNode* n = list->head;
   int i = 0;
   while (n) {
     cr_assert_eq(n != NULL, true);
@@ -311,22 +311,22 @@ Test(linked_list_insert_before, before_head) {
   }
   cr_assert_eq(i, 0);
 
-  linked_list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FreeFn) safe_free);
 }
 
-Test(linked_list_insert_before, before_mid_node) {
-  LinkedList* list = linked_list_new().ok;
+Test(list_insert_before, before_mid_node) {
+  List* list = list_new().ok;
 
-  int e = linked_list_append(list, point_new(0, 0));
-  e = linked_list_append(list, point_new(2, 2));
-  e = linked_list_insert_before(list, list->head->next, point_new(1, 1));
+  int e = list_append(list, point_new(0, 0));
+  e = list_append(list, point_new(2, 2));
+  e = list_insert_before(list, list->head->next, point_new(1, 1));
   cr_assert_eq(e, 0);
-  e = linked_list_append(list, point_new(3, 3));
+  e = list_append(list, point_new(3, 3));
 
-  int sze = linked_list_size(list);
+  int sze = list_size(list);
   cr_assert_eq(sze, 4);
 
-  Node* n = list->head;
+  ListNode* n = list->head;
   int i = 0;
   while (n) {
     cr_assert_eq(n != NULL, true);
@@ -350,24 +350,24 @@ Test(linked_list_insert_before, before_mid_node) {
   }
   cr_assert_eq(i, 0);
 
-  linked_list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FreeFn) safe_free);
 }
 
 // ####################
-// linked_list_insert_after
+// list_insert_after
 // ####################
-Test(linked_list_insert_after, after_tail) {
-  LinkedList* list = linked_list_new().ok;
+Test(list_insert_after, after_tail) {
+  List* list = list_new().ok;
 
-  int e = linked_list_append(list, point_new(0, 0));
-  e = linked_list_insert_after(list, list->tail, point_new(1, 1));
+  int e = list_append(list, point_new(0, 0));
+  e = list_insert_after(list, list->tail, point_new(1, 1));
   cr_assert_eq(e, 0);
-  e = linked_list_append(list, point_new(2, 2));
+  e = list_append(list, point_new(2, 2));
 
-  int sze = linked_list_size(list);
+  int sze = list_size(list);
   cr_assert_eq(sze, 3);
 
-  Node* n = list->head;
+  ListNode* n = list->head;
   int i = 0;
   while (n) {
     cr_assert_eq(n != NULL, true);
@@ -391,22 +391,22 @@ Test(linked_list_insert_after, after_tail) {
   }
   cr_assert_eq(i, 0);
 
-  linked_list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FreeFn) safe_free);
 }
 
-Test(linked_list_insert_after, after_mid_node) {
-  LinkedList* list = linked_list_new().ok;
+Test(list_insert_after, after_mid_node) {
+  List* list = list_new().ok;
 
-  int e = linked_list_append(list, point_new(0, 0));
-  e = linked_list_append(list, point_new(1, 1));
-  e = linked_list_insert_after(list, list->head->next, point_new(2, 2));
+  int e = list_append(list, point_new(0, 0));
+  e = list_append(list, point_new(1, 1));
+  e = list_insert_after(list, list->head->next, point_new(2, 2));
   cr_assert_eq(e, 0);
-  e = linked_list_append(list, point_new(3, 3));
+  e = list_append(list, point_new(3, 3));
 
-  int sze = linked_list_size(list);
+  int sze = list_size(list);
   cr_assert_eq(sze, 4);
 
-  Node* n = list->head;
+  ListNode* n = list->head;
   int i = 0;
   while (n) {
     cr_assert_eq(n != NULL, true);
@@ -430,34 +430,34 @@ Test(linked_list_insert_after, after_mid_node) {
   }
   cr_assert_eq(i, 0);
 
-  linked_list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FreeFn) safe_free);
 }
 
 // ####################
-// linked_list_remove_head
+// list_remove_head
 // ####################
-Test(linked_list_remove_head, empty) {
-  LinkedList* list = linked_list_new().ok;
-  Result res = linked_list_remove_head(list);
+Test(list_remove_head, empty) {
+  List* list = list_new().ok;
+  Result res = list_remove_head(list);
   cr_assert_eq(res.ok, NULL); 
   cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
 
-  linked_list_free(&list, NULL);
+  list_free(&list, NULL);
 }
 
-Test(linked_list_remove_head, single) {
-  LinkedList* list = linked_list_new().ok;
+Test(list_remove_head, single) {
+  List* list = list_new().ok;
 
-  int e = linked_list_prepend(list, point_new(0, 0));
+  int e = list_prepend(list, point_new(0, 0));
   cr_assert_eq(e, 0);
 
-  Result res = linked_list_remove_head(list);
+  Result res = list_remove_head(list);
   cr_assert_eq(res.ok != NULL, true);
   cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
   cr_assert_eq(list->head, NULL);
   cr_assert_eq(list->tail, NULL);
 
-  Node* n = res.ok;
+  ListNode* n = res.ok;
   cr_assert_eq(n->next, NULL);
   cr_assert_eq(n->previous, NULL);
 
@@ -467,28 +467,28 @@ Test(linked_list_remove_head, single) {
   cr_assert_eq(p->y, 0);
 
   node_free(&n, (FreeFn) safe_free);
-  linked_list_free(&list, NULL);
+  list_free(&list, NULL);
 }
 
-Test(linked_list_remove_head, multiple) {
-  LinkedList* list = linked_list_new().ok;
+Test(list_remove_head, multiple) {
+  List* list = list_new().ok;
 
-  int e = linked_list_append(list, point_new(0, 0));
+  int e = list_append(list, point_new(0, 0));
   cr_assert_eq(e, 0);
 
-  e = linked_list_append(list, point_new(1, 1));
+  e = list_append(list, point_new(1, 1));
   cr_assert_eq(e, 0);
 
-  e = linked_list_append(list, point_new(2, 2));
+  e = list_append(list, point_new(2, 2));
   cr_assert_eq(e, 0);
 
-  Result res = linked_list_remove_head(list);
+  Result res = list_remove_head(list);
   cr_assert_eq(res.ok != NULL, true);
   cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
   cr_assert_eq(list->head != NULL, true);
   cr_assert_eq(list->tail != NULL, true);
 
-  Node* n = res.ok;
+  ListNode* n = res.ok;
   cr_assert_eq(n->next, NULL);
   cr_assert_eq(n->previous, NULL);
 
@@ -498,7 +498,7 @@ Test(linked_list_remove_head, multiple) {
   cr_assert_eq(p->y, 0);
   node_free(&n, (FreeFn) safe_free);
 
-  int sze = linked_list_size(list);
+  int sze = list_size(list);
   cr_assert_eq(sze, 2);
 
   n = list->head;
@@ -525,34 +525,34 @@ Test(linked_list_remove_head, multiple) {
   }
   cr_assert_eq(i, 0);
 
-  linked_list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FreeFn) safe_free);
 }
 
 // ####################
-// linked_list_remove_tail
+// list_remove_tail
 // ####################
-Test(linked_list_remove_tail, empty) {
-  LinkedList* list = linked_list_new().ok;
-  Result res = linked_list_remove_tail(list);
+Test(list_remove_tail, empty) {
+  List* list = list_new().ok;
+  Result res = list_remove_tail(list);
   cr_assert_eq(res.ok, NULL); 
   cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
 
-  linked_list_free(&list, NULL);
+  list_free(&list, NULL);
 }
 
-Test(linked_list_remove_tail, single) {
-  LinkedList* list = linked_list_new().ok;
+Test(list_remove_tail, single) {
+  List* list = list_new().ok;
 
-  int e = linked_list_prepend(list, point_new(0, 0));
+  int e = list_prepend(list, point_new(0, 0));
   cr_assert_eq(e, 0);
 
-  Result res = linked_list_remove_tail(list);
+  Result res = list_remove_tail(list);
   cr_assert_eq(res.ok != NULL, true);
   cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
   cr_assert_eq(list->head, NULL);
   cr_assert_eq(list->tail, NULL);
 
-  Node* n = res.ok;
+  ListNode* n = res.ok;
   cr_assert_eq(n->next, NULL);
   cr_assert_eq(n->previous, NULL);
 
@@ -562,28 +562,28 @@ Test(linked_list_remove_tail, single) {
   cr_assert_eq(p->y, 0);
 
   node_free(&n, (FreeFn) safe_free);
-  linked_list_free(&list, NULL);
+  list_free(&list, NULL);
 }
 
-Test(linked_list_remove_tail, multiple) {
-  LinkedList* list = linked_list_new().ok;
+Test(list_remove_tail, multiple) {
+  List* list = list_new().ok;
 
-  int e = linked_list_append(list, point_new(0, 0));
+  int e = list_append(list, point_new(0, 0));
   cr_assert_eq(e, 0);
 
-  e = linked_list_append(list, point_new(1, 1));
+  e = list_append(list, point_new(1, 1));
   cr_assert_eq(e, 0);
 
-  e = linked_list_append(list, point_new(2, 2));
+  e = list_append(list, point_new(2, 2));
   cr_assert_eq(e, 0);
 
-  Result res = linked_list_remove_tail(list);
+  Result res = list_remove_tail(list);
   cr_assert_eq(res.ok != NULL, true);
   cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
   cr_assert_eq(list->head != NULL, true);
   cr_assert_eq(list->tail != NULL, true);
 
-  Node* n = res.ok;
+  ListNode* n = res.ok;
   cr_assert_eq(n->next, NULL);
   cr_assert_eq(n->previous, NULL);
 
@@ -594,7 +594,7 @@ Test(linked_list_remove_tail, multiple) {
 
   node_free(&n, (FreeFn) safe_free);
 
-  int sze = linked_list_size(list);
+  int sze = list_size(list);
   cr_assert_eq(sze, 2);
 
   n = list->head;
@@ -621,25 +621,25 @@ Test(linked_list_remove_tail, multiple) {
   }
   cr_assert_eq(i, 0);
 
-  linked_list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FreeFn) safe_free);
 }
 
 // ####################
-// linked_list_remove
+// list_remove
 // ####################
-Test(linked_list_remove, single) {
-  LinkedList* list = linked_list_new().ok;
+Test(list_remove, single) {
+  List* list = list_new().ok;
 
-  int e = linked_list_prepend(list, point_new(0, 0));
+  int e = list_prepend(list, point_new(0, 0));
   cr_assert_eq(e, 0);
 
-  Result res = linked_list_remove(list, list->head);
+  Result res = list_remove(list, list->head);
   cr_assert_eq(res.ok != NULL, true);
   cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
   cr_assert_eq(list->head, NULL);
   cr_assert_eq(list->tail, NULL);
 
-  Node* n = res.ok;
+  ListNode* n = res.ok;
   cr_assert_eq(n->next, NULL);
   cr_assert_eq(n->previous, NULL);
 
@@ -651,28 +651,28 @@ Test(linked_list_remove, single) {
   cr_assert_eq(n->previous, NULL);
 
   node_free(&n, (FreeFn) safe_free);
-  linked_list_free(&list, NULL);
+  list_free(&list, NULL);
 }
 
-Test(linked_list_remove, multiple_head) {
-  LinkedList* list = linked_list_new().ok;
+Test(list_remove, multiple_head) {
+  List* list = list_new().ok;
 
-  int e = linked_list_append(list, point_new(0, 0));
+  int e = list_append(list, point_new(0, 0));
   cr_assert_eq(e, 0);
 
-  e = linked_list_append(list, point_new(1, 1));
+  e = list_append(list, point_new(1, 1));
   cr_assert_eq(e, 0);
 
-  e = linked_list_append(list, point_new(2, 2));
+  e = list_append(list, point_new(2, 2));
   cr_assert_eq(e, 0);
 
-  Result res = linked_list_remove(list, list->head);
+  Result res = list_remove(list, list->head);
   cr_assert_eq(res.ok != NULL, true);
   cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
   cr_assert_eq(list->head != NULL, true);
   cr_assert_eq(list->tail != NULL, true);
 
-  Node* n = res.ok;
+  ListNode* n = res.ok;
   cr_assert_eq(n->next, NULL);
   cr_assert_eq(n->previous, NULL);
 
@@ -684,7 +684,7 @@ Test(linked_list_remove, multiple_head) {
   cr_assert_eq(n->previous, NULL);
   node_free(&n, (FreeFn) safe_free);
 
-  int sze = linked_list_size(list);
+  int sze = list_size(list);
   cr_assert_eq(sze, 2);
 
   n = list->head;
@@ -711,28 +711,28 @@ Test(linked_list_remove, multiple_head) {
   }
   cr_assert_eq(i, 0);
 
-  linked_list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FreeFn) safe_free);
 }
 
-Test(linked_list_remove, multiple_tail) {
-  LinkedList* list = linked_list_new().ok;
+Test(list_remove, multiple_tail) {
+  List* list = list_new().ok;
 
-  int e = linked_list_append(list, point_new(0, 0));
+  int e = list_append(list, point_new(0, 0));
   cr_assert_eq(e, 0);
 
-  e = linked_list_append(list, point_new(1, 1));
+  e = list_append(list, point_new(1, 1));
   cr_assert_eq(e, 0);
 
-  e = linked_list_append(list, point_new(2, 2));
+  e = list_append(list, point_new(2, 2));
   cr_assert_eq(e, 0);
 
-  Result res = linked_list_remove(list, list->tail);
+  Result res = list_remove(list, list->tail);
   cr_assert_eq(res.ok != NULL, true);
   cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
   cr_assert_eq(list->head != NULL, true);
   cr_assert_eq(list->tail != NULL, true);
 
-  Node* n = res.ok;
+  ListNode* n = res.ok;
   cr_assert_eq(n->next, NULL);
   cr_assert_eq(n->previous, NULL);
 
@@ -742,7 +742,7 @@ Test(linked_list_remove, multiple_tail) {
   cr_assert_eq(p->y, 2);
   node_free(&n, (FreeFn) safe_free);
 
-  int sze = linked_list_size(list);
+  int sze = list_size(list);
   cr_assert_eq(sze, 2);
 
   n = list->head;
@@ -769,28 +769,28 @@ Test(linked_list_remove, multiple_tail) {
   }
   cr_assert_eq(i, 0);
 
-  linked_list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FreeFn) safe_free);
 }
 
-Test(linked_list_remove, multiple_mid) {
-  LinkedList* list = linked_list_new().ok;
+Test(list_remove, multiple_mid) {
+  List* list = list_new().ok;
 
-  int e = linked_list_append(list, point_new(0, 0));
+  int e = list_append(list, point_new(0, 0));
   cr_assert_eq(e, 0);
 
-  e = linked_list_append(list, point_new(1, 1));
+  e = list_append(list, point_new(1, 1));
   cr_assert_eq(e, 0);
 
-  e = linked_list_append(list, point_new(2, 2));
+  e = list_append(list, point_new(2, 2));
   cr_assert_eq(e, 0);
 
-  Result res = linked_list_remove(list, list->head->next);
+  Result res = list_remove(list, list->head->next);
   cr_assert_eq(res.ok != NULL, true);
   cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
   cr_assert_eq(list->head != NULL, true);
   cr_assert_eq(list->tail != NULL, true);
 
-  Node* n = res.ok;
+  ListNode* n = res.ok;
   cr_assert_eq(n->next, NULL);
   cr_assert_eq(n->previous, NULL);
 
@@ -800,7 +800,7 @@ Test(linked_list_remove, multiple_mid) {
   cr_assert_eq(p->y, 1);
   node_free(&n, (FreeFn) safe_free);
 
-  int sze = linked_list_size(list);
+  int sze = list_size(list);
   cr_assert_eq(sze, 2);
 
   n = list->head;
@@ -827,70 +827,70 @@ Test(linked_list_remove, multiple_mid) {
   }
   cr_assert_eq(i, 0);
 
-  linked_list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FreeFn) safe_free);
 }
 
 // ####################
-// linked_list_find
+// list_find
 // ####################
-bool node_fun(Node* n) {
+bool node_fun(ListNode* n) {
   Point* p = n->value;
   return p->x == 69 && p->y == 420;
 }
 
-Test(linked_list_find, not_found) {
-  LinkedList* list = linked_list_new().ok;
+Test(list_find, not_found) {
+  List* list = list_new().ok;
   
-  Result res = linked_list_find(list, (PredicateFn) node_fun);
+  Result res = list_find(list, (PredicateFn) node_fun);
   cr_assert_eq(res.ok, NULL);
   cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
 
-  linked_list_free(&list, NULL);
+  list_free(&list, NULL);
 }
 
-Test(linked_list_find, found) {
-  LinkedList* list = linked_list_new().ok;
-  int e = linked_list_append(list, point_new(0, 0));
+Test(list_find, found) {
+  List* list = list_new().ok;
+  int e = list_append(list, point_new(0, 0));
   cr_assert_eq(e, 0);
 
-  e = linked_list_append(list, point_new(69, 420));
+  e = list_append(list, point_new(69, 420));
   cr_assert_eq(e, 0);
 
-  e = linked_list_append(list, point_new(2, 2));
+  e = list_append(list, point_new(2, 2));
   cr_assert_eq(e, 0);
 
   
-  Result res = linked_list_find(list, (PredicateFn) node_fun);
+  Result res = list_find(list, (PredicateFn) node_fun);
   cr_assert_eq(res.ok != NULL, true);
   cr_assert_eq(res.error.code, SUC_CODE_GENERAL);
 
-  Node* n = res.ok;
+  ListNode* n = res.ok;
   Point* p = n->value;
   cr_assert_eq(p != NULL, true);
   cr_assert_eq(p->x, 69);
   cr_assert_eq(p->y, 420);
 
-  linked_list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FreeFn) safe_free);
 }
 
 // ####################
-// linked_list_to_string
+// list_to_string
 // ####################
-Test(linked_list_to_string, _1) {
-  LinkedList* list = linked_list_new(3).ok;
+Test(list_to_string, _1) {
+  List* list = list_new(3).ok;
 
-  char* result = linked_list_to_string(list, (ToStringFn) NULL).ok;
+  char* result = list_to_string(list, (ToStringFn) NULL).ok;
   char* expected = "{}";
   cr_assert_eq(strcmp(result, expected), 0);
   safe_free((void**) &result);
 
-  linked_list_append(list, point_new(0, 0));
-  linked_list_append(list, point_new(1, 1));
+  list_append(list, point_new(0, 0));
+  list_append(list, point_new(1, 1));
 
-  result = linked_list_to_string(list, (ToStringFn) point_to_string).ok;
+  result = list_to_string(list, (ToStringFn) point_to_string).ok;
   expected = "{(0, 0), (1, 1)}";
   cr_assert_eq(strcmp(result, expected), 0);
 
   safe_free((void**) &result);
-  linked_list_free(&list, (FreeFn) safe_free);
+  list_free(&list, (FreeFn) safe_free);
 }

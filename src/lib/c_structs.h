@@ -23,8 +23,8 @@ typedef char* (*const ToStringFn)(void* const);
 
 typedef struct Array {
   pthread_rwlock_t lock;
- unsigned int capacity;
- unsigned int size;
+  unsigned int capacity;
+  unsigned int size;
   void* elements[];
 } Array;
 
@@ -67,10 +67,10 @@ char* position_to_string(Position* position);
 
 typedef struct Grid {
   pthread_rwlock_t lock;
- unsigned int rows;
- unsigned int columns;
- unsigned int capacity;
- unsigned int size;
+  unsigned int rows;
+  unsigned int columns;
+  unsigned int capacity;
+  unsigned int size;
   void* elements[];
 } Grid;
 
@@ -98,39 +98,49 @@ Result grid_to_string(Grid* const grid, ToStringFn const to_string);
 //####################
 // LINKED LIST
 //####################
-typedef struct Node {
+typedef struct ListNode {
   void* value;
-  struct Node* next;
-  struct Node* previous;
-} Node;
+  struct ListNode* next;
+  struct ListNode* previous;
+} ListNode;
 
 Result node_new(void* const value);
-int node_free(Node** const node, FreeFn const free_value);
+int node_free(ListNode** const node, FreeFn const free_value);
 
-typedef struct LinkedList {
+typedef struct List {
   pthread_rwlock_t lock;
-  struct Node* head;
-  struct Node* tail;
-} LinkedList;
+  struct ListNode* head;
+  struct ListNode* tail;
+} List;
 
-int linked_list_size(LinkedList* const list);
+int list_size(List* const list);
 
-Result linked_list_new();
-int linked_list_clear(LinkedList* const list, FreeFn const free_value);
-int linked_list_free(LinkedList** const list, FreeFn const free_value);
+Result list_new();
+int list_clear(List* const list, FreeFn const free_value);
+int list_free(List** const list, FreeFn const free_value);
 
-int linked_list_append(LinkedList* const list, void* const value);
-int linked_list_prepend(LinkedList* const list, void* const value);
+int list_append(List* const list, void* const value);
+int list_prepend(List* const list, void* const value);
 
-int linked_list_insert_before(LinkedList* const list, Node* const node, void* const value);
-int linked_list_insert_after(LinkedList* const list, Node* const node, void* const value);
+int list_insert_before(List* const list, ListNode* const node, void* const value);
+int list_insert_after(List* const list, ListNode* const node, void* const value);
 
-Result linked_list_remove_head(LinkedList* const list);
-Result linked_list_remove_tail(LinkedList* const list);
-Result linked_list_remove(LinkedList* const list, Node* node);
+Result list_remove_head(List* const list);
+Result list_remove_tail(List* const list);
+Result list_remove(List* const list, ListNode* node);
 
-Result linked_list_find(LinkedList* const list, PredicateFn const predicate);
+Result list_find(List* const list, PredicateFn const predicate);
 
-Result linked_list_to_string(LinkedList* const list, ToStringFn const to_string);
+Result list_to_string(List* const list, ToStringFn const to_string);
+
+//####################
+// Map
+//####################
+
+typedef struct MapNode {
+  void* value;
+  struct MapNode* left_child;
+  struct MapNode* right_child;
+} MapNode;
 
 #endif

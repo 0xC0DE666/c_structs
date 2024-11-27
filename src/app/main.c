@@ -111,9 +111,9 @@ void print(int* v) {
 }
 
 void prev() {
-  printf("mutex + node = %ld\n", sizeof(pthread_mutex_t) + sizeof(Node));
-  printf("node = %ld\n", sizeof(Node));
-  printf("linked_list = %ld\n", sizeof(LinkedList));
+  printf("mutex + node = %ld\n", sizeof(pthread_mutex_t) + sizeof(ListNode));
+  printf("node = %ld\n", sizeof(ListNode));
+  printf("list = %ld\n", sizeof(List));
   Array* arr = array_new(3).ok;
   int values[arr->capacity] = {};
   
