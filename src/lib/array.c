@@ -178,7 +178,7 @@ Result array_remove(Array* const array, unsigned int index) {
   return result_ok(removed);
 }
 
-int array_for_each(Array* const array, ArrayEachFn each) {
+int array_for_each(Array* const array, FnArrayEach each) {
   int e = pthread_rwlock_tryrdlock(&array->lock);
   if (e) return e;
 
@@ -208,7 +208,7 @@ int array_for_each(Array* const array, ArrayEachFn each) {
   return 0;
 }
 
-Result array_map(Array* const array, ArrayMapFn map) {
+Result array_map(Array* const array, FnArrayMap map) {
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return result_std_error();
 
@@ -246,7 +246,7 @@ Result array_map(Array* const array, ArrayMapFn map) {
   return result_ok(mapped);
 }
 
-Result array_to_string(Array* const array, ToStringFn const to_string) {
+Result array_to_string(Array* const array, FnToString const to_string) {
   int e = pthread_rwlock_trywrlock(&array->lock);
   if (e) return result_std_error();
 

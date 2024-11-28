@@ -289,7 +289,7 @@ Test(grid_remove, _1) {
 // ####################
 Test(grid_for_each, _1) {
   Grid* grid = grid_new(3, 3).ok;
-  int e = grid_for_each(grid, (ArrayEachFn) point_double);
+  int e = grid_for_each(grid, (FnArrayEach) point_double);
   cr_assert_eq(e, 0);
 
   for (unsigned int r = 0; r < grid->rows; ++r) {
@@ -299,7 +299,7 @@ Test(grid_for_each, _1) {
     }
   }
 
-  e = grid_for_each(grid, (GridEachFn) point_double);
+  e = grid_for_each(grid, (FnGridEach) point_double);
   cr_assert_eq(e, 0);
 
   for (unsigned int r = 0; r < grid->rows; ++r) {
@@ -319,7 +319,7 @@ Test(grid_for_each, _1) {
 // ####################
 Test(grid_map, _1) {
   Grid* points = grid_new(3, 3).ok;
-  Grid* empty = grid_map(points, (GridMapFn) NULL).ok;
+  Grid* empty = grid_map(points, (FnGridMap) NULL).ok;
 
   cr_assert_eq(empty != NULL, true);
   cr_assert_eq(empty->size, 0);
@@ -333,7 +333,7 @@ Test(grid_map, _1) {
     }
   }
 
-  Grid* strings = grid_map(points, (GridMapFn) point_to_string).ok;
+  Grid* strings = grid_map(points, (FnGridMap) point_to_string).ok;
 
   cr_assert_eq(strings->capacity, points->capacity);
   cr_assert_eq(strings->size, points->size);
@@ -358,7 +358,7 @@ Test(grid_map, _1) {
 Test(grid_to_string, empty) {
   Grid* grid = grid_new(2, 2).ok;
 
-  char* result = grid_to_string(grid, (ToStringFn) position_to_string).ok;
+  char* result = grid_to_string(grid, (FnToString) position_to_string).ok;
   char* expected = "[]";
   cr_assert_eq(strcmp(result, expected), 0);
 
@@ -372,7 +372,7 @@ Test(grid_to_string, single_element) {
 
   grid_set(grid, &pos, &pos);
 
-  char* result = grid_to_string(grid, (ToStringFn) position_to_string).ok;
+  char* result = grid_to_string(grid, (FnToString) position_to_string).ok;
   char* expected = "[(0, 0)]\n";
   cr_assert_eq(strcmp(result, expected), 0);
 
@@ -390,7 +390,7 @@ Test(grid_to_string, single_row) {
     }
   }
 
-  char* result = grid_to_string(grid, (ToStringFn) point_to_string).ok;
+  char* result = grid_to_string(grid, (FnToString) point_to_string).ok;
   char* expected = "[(0, 0), (0, 1)]\n";
   cr_assert_eq(strcmp(result, expected), 0);
 
@@ -408,7 +408,7 @@ Test(grid_to_string, single_column) {
     }
   }
 
-  char* result = grid_to_string(grid, (ToStringFn) point_to_string).ok;
+  char* result = grid_to_string(grid, (FnToString) point_to_string).ok;
   char* expected = "[(0, 0)]\n[(1, 0)]\n";
   cr_assert_eq(strcmp(result, expected), 0);
 
@@ -428,7 +428,7 @@ Test(grid_to_string, multi) {
     }
   }
 
-  char* result = grid_to_string(grid, (ToStringFn) position_to_string).ok;
+  char* result = grid_to_string(grid, (FnToString) position_to_string).ok;
   char* expected = "[NULL, (0, 1)]\n[NULL, (1, 1)]\n";
   cr_assert_eq(strcmp(result, expected), 0);
 

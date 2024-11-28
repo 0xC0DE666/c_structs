@@ -11,7 +11,7 @@
 //####################
 
 typedef void (*const FnFree)(void** const);
-typedef char* (*const ToStringFn)(void* const);
+typedef char* (*const FnToString)(void* const);
 typedef bool (*const FnPredicate)(void* const);
 typedef int (*const FnComparator)(void* const); // -1 0 1
 
@@ -43,13 +43,13 @@ int array_set(Array* const array, unsigned int index, void* const element);
 Result array_get(Array* const array, unsigned int index);
 Result array_remove(Array* const array, unsigned int index);
 
-typedef void (*ArrayEachFn)(void* const);
-int array_for_each(Array* const array, ArrayEachFn const each);
+typedef void (*FnArrayEach)(void* const);
+int array_for_each(Array* const array, FnArrayEach const each);
 
-typedef void* (*ArrayMapFn)(void* const);
-Result array_map(Array* const array, ArrayMapFn const map);
+typedef void* (*FnArrayMap)(void* const);
+Result array_map(Array* const array, FnArrayMap const map);
 
-Result array_to_string(Array* const array, ToStringFn const to_string);
+Result array_to_string(Array* const array, FnToString const to_string);
 
 
 //####################
@@ -87,13 +87,13 @@ int grid_set(Grid* const grid, Position* const position, void* const element);
 Result grid_get(Grid* const grid, Position* const position);
 Result grid_remove(Grid* const grid, Position* const position);
 
-typedef void (*GridEachFn)(void* const);
-int grid_for_each(Grid* const grid, GridEachFn const each);
+typedef void (*FnGridEach)(void* const);
+int grid_for_each(Grid* const grid, FnGridEach const each);
 
-typedef void* (*GridMapFn)(void* const);
-Result grid_map(Grid* const grid, GridMapFn const map);
+typedef void* (*FnGridMap)(void* const);
+Result grid_map(Grid* const grid, FnGridMap const map);
 
-Result grid_to_string(Grid* const grid, ToStringFn const to_string);
+Result grid_to_string(Grid* const grid, FnToString const to_string);
 
 
 //####################
@@ -132,36 +132,36 @@ Result list_remove(List* const list, ListNode* node);
 
 Result list_find(List* const list, FnPredicate const predicate);
 
-Result list_to_string(List* const list, ToStringFn const to_string);
+Result list_to_string(List* const list, FnToString const to_string);
 
 //####################
-// Map
+// Tree
 //####################
 
-typedef struct MapNode {
+typedef struct TreeNode {
   void* value;
-  struct MapNode* left_child;
-  struct MapNode* right_child;
-} MapNode;
+  struct TreeNode* left_child;
+  struct TreeNode* right_child;
+} TreeNode;
 
-Result map_node_new(void* const value);
-int map_node_free(MapNode** const node, FnFree const free_value);
+Result tree_node_new(void* const value);
+int tree_node_free(TreeNode** const node, FnFree const free_value);
 
-typedef struct Map {
+typedef struct Tree {
   pthread_rwlock_t lock;
-  struct MapNode* root;
-} Map;
+  struct TreeNode* root;
+} Tree;
 
-int map_size(Map* const map);
+int tree_size(Tree* const tree);
 
-Result map_new();
-int map_clear(Map* const map, FnFree const free_value);
-int map_free(Map** const map, FnFree const free_value);
+Result tree_new();
+int tree_clear(Tree* const tree, FnFree const free_value);
+int tree_free(Tree** const tree, FnFree const free_value);
 
-int map_insert(Map* const map, void* const value, FnComparator compare);
+int tree_insert(Tree* const tree, void* const value, FnComparator compare);
 
-Result map_remove(Map* const map, MapNode* node);
+Result tree_remove(Tree* const tree, TreeNode* node);
 
-Result map_get(Map* const map, MapNode* node);
+Result tree_find(Tree* const tree, TreeNode* node);
 
 #endif

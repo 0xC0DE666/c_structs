@@ -292,14 +292,14 @@ Test(array_remove, _1) {
 // ####################
 Test(array_for_each, _1) {
   Array* array = array_new(5).ok;
-  int e = array_for_each(array, (ArrayEachFn) point_double);
+  int e = array_for_each(array, (FnArrayEach) point_double);
   cr_assert_eq(e, 0);
   
   for (unsigned int i = 0; i < array->capacity; ++i) {
     array_append(array, point_new(i, i));
   }
 
-  e = array_for_each(array, (ArrayEachFn) point_double);
+  e = array_for_each(array, (FnArrayEach) point_double);
   cr_assert_eq(e, 0);
   
   for (unsigned int i = 0; i < array->capacity; ++i) {
@@ -317,7 +317,7 @@ Test(array_for_each, _1) {
 // ####################
 Test(array_map, _2) {
   Array* points = array_new(5).ok;
-  Array* empty = array_map(points, (ArrayMapFn) as_is).ok;
+  Array* empty = array_map(points, (FnArrayMap) as_is).ok;
 
   cr_assert_eq(empty != NULL, true);
   cr_assert_eq(empty->size, 0);
@@ -329,7 +329,7 @@ Test(array_map, _2) {
     cr_assert_eq(e, 0);
   }
 
-  Array* strings = array_map(points, (ArrayMapFn) point_to_string).ok;
+  Array* strings = array_map(points, (FnArrayMap) point_to_string).ok;
 
   cr_assert_eq(strings->capacity, points->capacity);
   cr_assert_eq(strings->size, points->size);
@@ -353,7 +353,7 @@ Test(array_map, _2) {
 Test(array_to_string, _1) {
   Array* array = array_new(3).ok;
 
-  char* result = array_to_string(array, (ToStringFn) point_to_string).ok;
+  char* result = array_to_string(array, (FnToString) point_to_string).ok;
   char* expected = "[]";
   cr_assert_eq(strcmp(result, expected), 0);
   safe_free((void**) &result);
@@ -361,7 +361,7 @@ Test(array_to_string, _1) {
   array_append(array, point_new(0, 0));
   array_set(array, 2, point_new(1, 1));
 
-  result = array_to_string(array, (ToStringFn) point_to_string).ok;
+  result = array_to_string(array, (FnToString) point_to_string).ok;
   expected = "[(0, 0), NULL, (1, 1)]";
   cr_assert_eq(strcmp(result, expected), 0);
 

@@ -166,7 +166,7 @@ Result grid_remove(Grid* const grid, Position* const position) {
 }
 
 
-int grid_for_each(Grid* const grid, GridEachFn const each) {
+int grid_for_each(Grid* const grid, FnGridEach const each) {
   int e = pthread_rwlock_tryrdlock(&grid->lock);
   if (e) return e;
 
@@ -199,7 +199,7 @@ int grid_for_each(Grid* const grid, GridEachFn const each) {
   return 0;
 }
 
-Result grid_map(Grid* const grid, GridMapFn const map) {
+Result grid_map(Grid* const grid, FnGridMap const map) {
   int e = pthread_rwlock_trywrlock(&grid->lock);
   if (e) return result_std_error();
 
@@ -242,7 +242,7 @@ Result grid_map(Grid* const grid, GridMapFn const map) {
   return result_ok(mapped);
 }
 
-Result grid_to_string(Grid* const grid, ToStringFn const to_string) {
+Result grid_to_string(Grid* const grid, FnToString const to_string) {
   int e = pthread_rwlock_trywrlock(&grid->lock);
   if (e) return result_std_error();
 

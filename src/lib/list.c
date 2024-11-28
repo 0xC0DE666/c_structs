@@ -361,7 +361,7 @@ Result list_find(List* const list, FnPredicate const predicate) {
   return result_ok(NULL);
 }
 
-Result list_to_string(List* const list, ToStringFn const to_string) {
+Result list_to_string(List* const list, FnToString const to_string) {
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return result_std_error();
 

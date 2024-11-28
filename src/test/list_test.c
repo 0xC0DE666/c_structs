@@ -881,7 +881,7 @@ Test(list_find, found) {
 Test(list_to_string, _1) {
   List* list = list_new(3).ok;
 
-  char* result = list_to_string(list, (ToStringFn) NULL).ok;
+  char* result = list_to_string(list, (FnToString) NULL).ok;
   char* expected = "{}";
   cr_assert_eq(strcmp(result, expected), 0);
   safe_free((void**) &result);
@@ -889,7 +889,7 @@ Test(list_to_string, _1) {
   list_append(list, point_new(0, 0));
   list_append(list, point_new(1, 1));
 
-  result = list_to_string(list, (ToStringFn) point_to_string).ok;
+  result = list_to_string(list, (FnToString) point_to_string).ok;
   expected = "{(0, 0), (1, 1)}";
   cr_assert_eq(strcmp(result, expected), 0);
 

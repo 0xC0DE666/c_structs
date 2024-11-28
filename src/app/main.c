@@ -82,7 +82,7 @@ void array_to_string_test() {
   array_append(array, &p1);
   array_set(array, 2, &p2);
 
-  char* str = array_to_string(array, (ToStringFn) position_to_string).ok;
+  char* str = array_to_string(array, (FnToString) position_to_string).ok;
   printf("%s\n", str);
 }
 
@@ -98,7 +98,7 @@ void grid_to_string_test() {
     }
   }
 
-  char* str = grid_to_string(grid, (ToStringFn) position_to_string).ok;
+  char* str = grid_to_string(grid, (FnToString) position_to_string).ok;
   printf("%s", str);
 }
 
@@ -122,10 +122,10 @@ void prev() {
     array_append(arr, &values[i]);
   }
 
-  array_for_each(arr, (ArrayEachFn) print);
+  array_for_each(arr, (FnArrayEach) print);
   printf("\n");
-  array_for_each(arr, (ArrayEachFn) add2);
-  array_for_each(arr, (ArrayEachFn) print);
+  array_for_each(arr, (FnArrayEach) add2);
+  array_for_each(arr, (FnArrayEach) print);
 }
 
 int main() {
