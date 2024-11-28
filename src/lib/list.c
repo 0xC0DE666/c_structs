@@ -63,29 +63,6 @@ int list_clear(List* const list, FnFree const free_value) {
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return e;
 
-  // empty
-  if (list->head == NULL && list->tail == NULL) {
-    e = pthread_rwlock_unlock(&list->lock);
-    if (e) return e;
-
-    return 0;
-  }
-
-  // sinlge node
-  if (list->head == list->tail) {
-    e = list_node_free(&list->head, free_value);
-    if (e) return e;
-
-    list->head = NULL;
-    list->tail = NULL;
-
-    e = pthread_rwlock_unlock(&list->lock);
-    if (e) return e;
-
-    return 0;
-  }
-
-  // multiple nodes
   while(list->head) {
     ListNode* next = list->head->next;
     list->head->next ? list->head->next->previous = NULL : 0;
@@ -303,7 +280,7 @@ Result list_remove(List* const list, ListNode* node) {
   int e = pthread_rwlock_trywrlock(&list->lock);
   if (e) return result_std_error();
 
-  // sinlge
+  // single
   if (list->head == list->tail) {
     e = pthread_rwlock_unlock(&list->lock);
     if (e) return result_std_error();
