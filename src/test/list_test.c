@@ -101,7 +101,6 @@ Test(list_clear, single) {
   list_free(&list, (FnFree) safe_free);
 }
 
-// TODO: check this, check a b c is freed
 Test(list_clear, multiple) {
   List* list = list_new().ok;
   ListNode* a = list_node_new(point_new(0, 0)).ok;
@@ -116,6 +115,9 @@ Test(list_clear, multiple) {
   list->tail = c;
 
   int e = list_clear(list, (FnFree) safe_free);
+  a = NULL;
+  b = NULL;
+  c = NULL;
   cr_assert_eq(e, 0);
   cr_assert_eq(list != NULL, true);
   cr_assert_eq(list->head, NULL);
