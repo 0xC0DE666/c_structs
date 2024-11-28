@@ -160,8 +160,8 @@ int map_free(Map** const map, FnFree const free_value);
 
 int map_insert(Map* const map, void* const value, FnComparator compare);
 
-Result map_get(Map* const map, MapNode* node);
-
 Result map_remove(Map* const map, MapNode* node);
+
+Result map_get(Map* const map, MapNode* node);
 
 #endif
