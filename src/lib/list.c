@@ -47,7 +47,11 @@ Result list_new() {
     return result_std_error();
   }
 
-  pthread_rwlock_init(&list->lock, NULL);
+  int e = pthread_rwlock_init(&list->lock, NULL);
+  if (e) {
+    free(list);
+    return result_std_error();
+  }
   list->head = NULL;
   list->tail = NULL;
   

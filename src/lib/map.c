@@ -39,79 +39,81 @@ int map_node_free(MapNode** node, FnFree const free_value) {
 //   }
 //   return sze;
 // }
-// 
-// Result map_new() {
-//   Map* map = malloc(sizeof(Map));
-// 
-//   if (map == NULL) {
-//     return result_std_error();
-//   }
-// 
-//   pthread_rwlock_init(&map->lock, NULL);
-//   map->head = NULL;
-//   map->tail = NULL;
-//   
-//   return result_ok(map);
-// }
-// 
-// 
-// int map_clear(Map* const map, FnFree const free_value) {
-//   int e = pthread_rwlock_trywrlock(&map->lock);
-//   if (e) return e;
-// 
-//   // empty
-//   if (map->head == NULL && map->tail == NULL) {
-//     e = pthread_rwlock_unlock(&map->lock);
-//     if (e) return e;
-// 
-//     return 0;
-//   }
-// 
-//   // sinlge node
-//   if (map->head == map->tail) {
-//     e = map_node_free(&map->head, free_value);
-//     if (e) return e;
-// 
-//     map->head = NULL;
-//     map->tail = NULL;
-// 
-//     e = pthread_rwlock_unlock(&map->lock);
-//     if (e) return e;
-// 
-//     return 0;
-//   }
-// 
-//   // multiple nodes
-//   while(map->head) {
-//     MapNode* next = map->head->next;
-//     map->head->next ? map->head->next->previous = NULL : 0;
-//     map->head->previous ? map->head->previous->next = NULL : 0;
-// 
-//     e = map_node_free(&map->head, free_value);
-//     if (e) return e;
-// 
-//     map->head = next;
-//   }
-//   map->head = NULL;
-//   map->tail = NULL;
-// 
-//   e = pthread_rwlock_unlock(&map->lock);
-//   if (e) return e;
-// 
-//   return 0;
-// }
-// 
-// int map_free(Map** const map, FnFree const free_value) {
-//   int e = map_clear(*map, free_value);
-//   if (e) return e;
-// 
-//   pthread_rwlock_destroy(&(*map)->lock);
-//   free(*map);
-//   *map = NULL;
-// 
-//   return 0;
-// }
-// 
+
+Result map_new() {
+  Map* map = malloc(sizeof(Map));
+
+  if (map == NULL) {
+    return result_std_error();
+  }
+
+  int e = pthread_rwlock_init(&map->lock, NULL);
+  if (e) {
+    free(map);
+    return result_std_error();
+  }
+  map->root = NULL;
+  
+  return result_ok(map);
+}
+
+
+int map_clear(Map* const map, FnFree const free_value) {
+  int e = pthread_rwlock_trywrlock(&map->lock);
+  if (e) return e;
+
+  // empty
+  if (map->root == NULL) {
+    e = pthread_rwlock_unlock(&map->lock);
+    if (e) return e;
+
+    return 0;
+  }
+
+  // sinlge node
+  if (map->root != NULL) {
+    e = map_node_free(&map->root, free_value);
+    if (e) return e;
+
+    map->root = NULL;
+
+    e = pthread_rwlock_unlock(&map->lock);
+    if (e) return e;
+
+    return 0;
+  }
+
+  // // multiple nodes
+  // while(map->head) {
+  //   MapNode* next = map->head->next;
+  //   map->head->next ? map->head->next->previous = NULL : 0;
+  //   map->head->previous ? map->head->previous->next = NULL : 0;
+
+  //   e = map_node_free(&map->head, free_value);
+  //   if (e) return e;
+
+  //   map->head = next;
+  // }
+  // map->head = NULL;
+  // map->tail = NULL;
+
+  e = pthread_rwlock_unlock(&map->lock);
+  if (e) return e;
+
+  return 0;
+}
+
+int map_free(Map** const map, FnFree const free_value) {
+  int e = map_clear(*map, free_value);
+  if (e) return e;
+
+  pthread_rwlock_destroy(&(*map)->lock);
+  free(*map);
+  *map = NULL;
+
+  return 0;
+}
+
 // int map_insert(Map* const map, void* const value, FnComparator compare) {
 //   int e = pthread_rwlock_trywrlock(&map->lock);
 //   if (e) return e;
