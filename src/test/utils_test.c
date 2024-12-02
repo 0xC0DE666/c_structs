@@ -68,3 +68,32 @@ Test(point_double, _1) {
 
   safe_free((void**) &point);
 }
+
+// ####################
+// generate_tree
+// ####################
+Test(generate_tree, _1) {
+  Tree* tree = generate_tree();
+
+  Point* p = (Point*) tree->root->value;
+  cr_assert_eq(p->x, 1);
+  cr_assert_eq(p->y, 1);
+
+  p = (Point*) tree->root->left_child->value;
+  cr_assert_eq(p->x, 0);
+  cr_assert_eq(p->y, 0);
+
+  p = (Point*) tree->root->left_child->right_child->value;
+  cr_assert_eq(p->x, 3);
+  cr_assert_eq(p->y, 3);
+
+  p = (Point*) tree->root->right_child->value;
+  cr_assert_eq(p->x, 2);
+  cr_assert_eq(p->y, 2);
+
+  p = (Point*) tree->root->right_child->left_child->value;
+  cr_assert_eq(p->x, 4);
+  cr_assert_eq(p->y, 4);
+
+  tree_free(&tree, (FnFree) safe_free);
+}

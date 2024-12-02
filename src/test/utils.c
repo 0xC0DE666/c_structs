@@ -3,6 +3,14 @@
 
 #include "utils.h"
 
+void* as_is(void* v) {
+  return v;
+}
+
+void print_str(char* str) {
+  printf("%s", str);
+}
+
 void safe_free(void** ptr) {
   if (ptr == NULL || *ptr == NULL) return;
 
@@ -46,10 +54,21 @@ void point_double(Point* point) {
   point->y = point->y * 2;
 }
 
-void print_str(char* str) {
-  printf("%s", str);
-}
+Tree* generate_tree() {
+  Tree* tree = tree_new().ok;
+  tree->root = tree_node_new(point_new(1, 1)).ok;
 
-void* as_is(void* v) {
-  return v;
+  tree->root->left_child = tree_node_new(point_new(0, 0)).ok;
+  tree->root->left_child->parent = tree->root;
+
+  tree->root->right_child = tree_node_new(point_new(2, 2)).ok;
+  tree->root->right_child->parent = tree->root;
+
+  tree->root->left_child->right_child = tree_node_new(point_new(3, 3)).ok;
+  tree->root->left_child->right_child->parent = tree->root->left_child;
+
+  tree->root->right_child->left_child = tree_node_new(point_new(4, 4)).ok;
+  tree->root->right_child->left_child->parent = tree->root->right_child;
+
+  return tree;
 }

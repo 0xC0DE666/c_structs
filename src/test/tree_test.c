@@ -81,20 +81,7 @@ Test(tree_clear, single) {
 }
 
 Test(tree_clear, multiple) {
-  Tree* tree = tree_new().ok;
-  tree->root = tree_node_new(point_new(1, 1)).ok;
-
-  tree->root->left_child = tree_node_new(point_new(0, 0)).ok;
-  tree->root->left_child->parent = tree->root;
-
-  tree->root->right_child = tree_node_new(point_new(2, 2)).ok;
-  tree->root->right_child->parent = tree->root;
-
-  tree->root->left_child->right_child = tree_node_new(point_new(3, 3)).ok;
-  tree->root->left_child->right_child->parent = tree->root->left_child;
-
-  tree->root->right_child->left_child = tree_node_new(point_new(4, 4)).ok;
-  tree->root->right_child->left_child->parent = tree->root->right_child;
+  Tree* tree = generate_tree();
 
   int e = tree_clear(tree, (FnFree) safe_free);
   cr_assert_eq(e, 0);
@@ -108,20 +95,7 @@ Test(tree_clear, multiple) {
 // tree_free
 // ####################
 Test(tree_free, _1) {
-  Tree* tree = tree_new().ok;
-  tree->root = tree_node_new(point_new(1, 1)).ok;
-
-  tree->root->left_child = tree_node_new(point_new(0, 0)).ok;
-  tree->root->left_child->parent = tree->root;
-
-  tree->root->right_child = tree_node_new(point_new(2, 2)).ok;
-  tree->root->right_child->parent = tree->root;
-
-  tree->root->left_child->right_child = tree_node_new(point_new(3, 3)).ok;
-  tree->root->left_child->right_child->parent = tree->root->left_child;
-
-  tree->root->right_child->left_child = tree_node_new(point_new(4, 4)).ok;
-  tree->root->right_child->left_child->parent = tree->root->right_child;
+  Tree* tree = generate_tree();
 
   int e = tree_free(&tree, (FnFree) safe_free);
   cr_assert_eq(e, 0);
