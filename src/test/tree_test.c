@@ -80,25 +80,50 @@ Test(tree_clear, single) {
   tree_free(&tree, (FnFree) safe_free);
 }
 
-// // TODO: check this, check a b c is freed
-// Test(tree_clear, multiple) {
-//   Tree* tree = tree_new().ok;
-//   TreeNode* a = tree_node_new(point_new(0, 0)).ok;
-//   TreeNode* b = tree_node_new(point_new(1, 1)).ok;
-//   TreeNode* c = tree_node_new(point_new(2, 2)).ok;
-// 
-//   a->next = b;
-//   b->previous = a;
-//   b->next = c;
-//   c->previous = b;
-//   tree->head = a;
-//   tree->tail = c;
-// 
-//   int e = tree_clear(tree, (FnFree) safe_free);
-//   cr_assert_eq(e, 0);
-//   cr_assert_eq(tree != NULL, true);
-//   cr_assert_eq(tree->head, NULL);
-//   cr_assert_eq(tree->tail, NULL);
-// 
-//   tree_free(&tree, (FnFree) safe_free);
-// }
+Test(tree_clear, multiple) {
+  Tree* tree = tree_new().ok;
+  tree->root = tree_node_new(point_new(1, 1)).ok;
+
+  tree->root->left_child = tree_node_new(point_new(0, 0)).ok;
+  tree->root->left_child->parent = tree->root;
+
+  tree->root->right_child = tree_node_new(point_new(2, 2)).ok;
+  tree->root->right_child->parent = tree->root;
+
+  tree->root->left_child->right_child = tree_node_new(point_new(3, 3)).ok;
+  tree->root->left_child->right_child->parent = tree->root->left_child;
+
+  tree->root->right_child->left_child = tree_node_new(point_new(4, 4)).ok;
+  tree->root->right_child->left_child->parent = tree->root->right_child;
+
+  int e = tree_clear(tree, (FnFree) safe_free);
+  cr_assert_eq(e, 0);
+  cr_assert_eq(tree != NULL, true);
+  cr_assert_eq(tree->root, NULL);
+
+  tree_free(&tree, (FnFree) safe_free);
+}
+
+// ####################
+// tree_free
+// ####################
+Test(tree_free, _1) {
+  Tree* tree = tree_new().ok;
+  tree->root = tree_node_new(point_new(1, 1)).ok;
+
+  tree->root->left_child = tree_node_new(point_new(0, 0)).ok;
+  tree->root->left_child->parent = tree->root;
+
+  tree->root->right_child = tree_node_new(point_new(2, 2)).ok;
+  tree->root->right_child->parent = tree->root;
+
+  tree->root->left_child->right_child = tree_node_new(point_new(3, 3)).ok;
+  tree->root->left_child->right_child->parent = tree->root->left_child;
+
+  tree->root->right_child->left_child = tree_node_new(point_new(4, 4)).ok;
+  tree->root->right_child->left_child->parent = tree->root->right_child;
+
+  int e = tree_free(&tree, (FnFree) safe_free);
+  cr_assert_eq(e, 0);
+  cr_assert_eq(tree, NULL);
+}

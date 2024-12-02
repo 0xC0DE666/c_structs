@@ -140,6 +140,7 @@ Result list_to_string(List* const list, FnToString const to_string);
 
 typedef struct TreeNode {
   void* value;
+  struct TreeNode* parent;
   struct TreeNode* left_child;
   struct TreeNode* right_child;
 } TreeNode;

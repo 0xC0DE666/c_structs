@@ -12,6 +12,7 @@ Result tree_node_new(void* const value) {
   }
 
   node->value = value;
+  node->parent = NULL;
   node->left_child = NULL;
   node->right_child = NULL;
   
@@ -21,9 +22,20 @@ Result tree_node_new(void* const value) {
 int tree_node_free(TreeNode** node, FnFree const free_value) {
   free_value(&(*node)->value); 
 
+  TreeNode* parent = (*node)->parent;
+  if (parent != NULL && *node == parent->left_child) {
+    parent->left_child = NULL;
+  } 
+
+  if (parent != NULL && *node == parent->right_child) {
+    parent->right_child = NULL;
+  }
+
   (*node)->value = NULL;
+  (*node)->parent = NULL;
   (*node)->left_child = NULL;
   (*node)->right_child = NULL;
+
   free(*node);
   *node = NULL;
 
@@ -57,45 +69,32 @@ Result tree_new() {
   return result_ok(tree);
 }
 
-
 int tree_clear(Tree* const tree, FnFree const free_value) {
   int e = pthread_rwlock_trywrlock(&tree->lock);
   if (e) return e;
 
-  // empty
-  if (tree->root == NULL) {
-    e = pthread_rwlock_unlock(&tree->lock);
-    if (e) return e;
+  TreeNode* node = tree->root;
+  TreeNode* parent = NULL;
+  while(node != NULL) {
+    if (node->left_child != NULL) {
+      node = node->left_child;
+      continue;
+    }
 
-    return 0;
+    if (node->right_child != NULL) {
+      node = node->right_child;
+      continue;
+    }
+
+    if (node->left_child == NULL && node->right_child == NULL) {
+      parent = node->parent;
+    }
+
+    int e = tree_node_free(&node, free_value);
+    if (e) return e;
+    node = parent;
   }
-
-  // sinlge node
-  if (tree->root != NULL) {
-    e = tree_node_free(&tree->root, free_value);
-    if (e) return e;
-
-    tree->root = NULL;
-
-    e = pthread_rwlock_unlock(&tree->lock);
-    if (e) return e;
-
-    return 0;
-  }
-
-  // // multiple nodes
-  // while(tree->head) {
-  //   TreeNode* next = tree->head->next;
-  //   tree->head->next ? tree->head->next->previous = NULL : 0;
-  //   tree->head->previous ? tree->head->previous->next = NULL : 0;
-
-  //   e = tree_node_free(&tree->head, free_value);
-  //   if (e) return e;
-
-  //   tree->head = next;
-  // }
-  // tree->head = NULL;
-  // tree->tail = NULL;
+  tree->root = NULL;
 
   e = pthread_rwlock_unlock(&tree->lock);
   if (e) return e;
