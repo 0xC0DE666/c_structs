@@ -20,7 +20,7 @@ typedef int (*const FnComparator)(void* const); // -1 0 1
 //####################
 
 #define ERR_MSG_ARRAY_AT_CAPACITY "Array is at capacity."
-#define ERR_MSG_ARRAY_INDEX_INVALID "Invalid array index."
+#define ERR_MSG_INVALID_ARRAY_INDEX "Invalid array index."
 
 typedef struct Array {
   pthread_rwlock_t lock;
@@ -56,7 +56,7 @@ Result array_to_string(Array* const array, FnToString const to_string);
 // GRID
 //####################
 
-#define ERR_MSG_GRID_POSITION_INVALID "Invalid grid position."
+#define ERR_MSG_INVALID_GRID_POSITION "Invalid grid position."
 
 typedef struct Position {
  unsigned int row;

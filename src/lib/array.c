@@ -141,7 +141,7 @@ Result array_get(Array* const array, unsigned int index) {
     e = pthread_rwlock_unlock(&array->lock);
     if (e) return result_std_error();
 
-    return result_error(ERR_CODE_GENERAL, ERR_MSG_ARRAY_INDEX_INVALID);
+    return result_error(ERR_CODE_GENERAL, ERR_MSG_INVALID_ARRAY_INDEX);
   }
 
   e = pthread_rwlock_unlock(&array->lock);
@@ -158,7 +158,7 @@ Result array_remove(Array* const array, unsigned int index) {
     e = pthread_rwlock_unlock(&array->lock);
     if (e) return result_std_error();
 
-    return result_error(ERR_CODE_GENERAL, ERR_MSG_ARRAY_INDEX_INVALID);
+    return result_error(ERR_CODE_GENERAL, ERR_MSG_INVALID_ARRAY_INDEX);
   }
 
   void* removed = array->elements[index];

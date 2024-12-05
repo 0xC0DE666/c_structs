@@ -189,7 +189,7 @@ Test(array_set, _1) {
       Error err = res.error;
       cr_assert_eq(ok, NULL);
       cr_assert_eq(err.code, ERR_CODE_GENERAL);
-      cr_assert_eq(strcmp(err.message, ERR_MSG_ARRAY_INDEX_INVALID), 0);
+      cr_assert_eq(strcmp(err.message, ERR_MSG_INVALID_ARRAY_INDEX), 0);
     }
   }
   cr_assert_eq(sze, array->capacity);
@@ -243,7 +243,7 @@ Test(array_get, _1) {
       Error err = res.error;
       cr_assert_eq(ok, NULL);
       cr_assert_eq(err.code, ERR_CODE_GENERAL);
-      cr_assert_eq(strcmp(err.message, ERR_MSG_ARRAY_INDEX_INVALID), 0);
+      cr_assert_eq(strcmp(err.message, ERR_MSG_INVALID_ARRAY_INDEX), 0);
     }
   }
   cr_assert_eq(sze, array->capacity);
@@ -279,7 +279,7 @@ Test(array_remove, _1) {
       Error err = res.error;
       cr_assert_eq(ok, NULL);
       cr_assert_eq(err.code, ERR_CODE_GENERAL);
-      cr_assert_eq(strcmp(err.message, ERR_MSG_ARRAY_INDEX_INVALID), 0);
+      cr_assert_eq(strcmp(err.message, ERR_MSG_INVALID_ARRAY_INDEX), 0);
     }
   }
 
