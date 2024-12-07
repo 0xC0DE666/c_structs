@@ -1,7 +1,4 @@
 #include <stdbool.h>
-//#include <stdio.h>
-//#include <stdlib.h>
-
 #include <string.h>
 
 #include <criterion/criterion.h>
@@ -81,7 +78,7 @@ Test(tree_clear, single) {
 }
 
 Test(tree_clear, multiple) {
-  Tree* tree = generate_tree();
+  Tree* tree = point_tree();
 
   int e = tree_clear(tree, (FnFree) safe_free);
   cr_assert_eq(e, 0);
@@ -95,9 +92,27 @@ Test(tree_clear, multiple) {
 // tree_free
 // ####################
 Test(tree_free, _1) {
-  Tree* tree = generate_tree();
+  Tree* tree = point_tree();
 
   int e = tree_free(&tree, (FnFree) safe_free);
   cr_assert_eq(e, 0);
   cr_assert_eq(tree, NULL);
 }
+
+// ####################
+// tree_insert
+// ####################
+// Test(tree_insert, _1) {
+//   Tree* tree = point_tree();
+//
+//   int e = tree_insert(tree, "B", (FnComparator) strcmp);
+//
+//   cr_assert_eq(e, 0);
+//   char* val = (char*) tree->root->right_child->value;
+//   cr_assert_eq(strcmp(root_rc_val, "B"), true);
+//
+//   val = (char*) tree->root->right_child->right_child->value;
+//   cr_assert_eq(strcmp(root_rc_val, "B"), true);
+//
+//   tree_free(&tree, (FnFree) safe_free);
+// }

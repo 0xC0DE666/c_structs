@@ -70,10 +70,39 @@ Test(point_double, _1) {
 }
 
 // ####################
-// generate_tree
+// point_compare
 // ####################
-Test(generate_tree, _1) {
-  Tree* tree = generate_tree();
+Test(point_compare, _1) {
+  Point* a = point_new(0, 0);
+  Point* b = point_new(1, 1);
+
+  // a before b
+  int v = point_compare(a, b);
+  cr_assert_eq(v <= -1, true);
+
+  a->x = 1; a->y = 1;
+  b->x = 1; b->y = 1;
+
+  // a equal b
+  v = point_compare(a, b);
+  cr_assert_eq(v == 0, true);
+
+  a->x = 2; a->y = 2;
+  b->x = 1; b->y = 1;
+  // b before a
+  v = point_compare(a, b);
+  cr_assert_eq(v >= 1, true);
+
+
+  safe_free((void**) &a);
+  safe_free((void**) &b);
+}
+
+// ####################
+// point_tree
+// ####################
+Test(point_tree, _1) {
+  Tree* tree = point_tree();
 
   Point* p = (Point*) tree->root->value;
   cr_assert_eq(p->x, 1);
@@ -83,17 +112,18 @@ Test(generate_tree, _1) {
   cr_assert_eq(p->x, 0);
   cr_assert_eq(p->y, 0);
 
-  p = (Point*) tree->root->left_child->right_child->value;
-  cr_assert_eq(p->x, 3);
-  cr_assert_eq(p->y, 3);
-
   p = (Point*) tree->root->right_child->value;
   cr_assert_eq(p->x, 2);
   cr_assert_eq(p->y, 2);
 
+
+  p = (Point*) tree->root->left_child->right_child->value;
+  cr_assert_eq(p->x, 3);
+  cr_assert_eq(p->y, 3);
+
   p = (Point*) tree->root->right_child->left_child->value;
-  cr_assert_eq(p->x, 4);
-  cr_assert_eq(p->y, 4);
+  cr_assert_eq(p->x, 1);
+  cr_assert_eq(p->y, 1);
 
   tree_free(&tree, (FnFree) safe_free);
 }

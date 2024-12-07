@@ -54,7 +54,11 @@ void point_double(Point* point) {
   point->y = point->y * 2;
 }
 
-Tree* generate_tree() {
+int point_compare(Point* a, Point* b) {
+  return (a->x + a->y) - (b->x + b->y);
+}
+
+Tree* point_tree() {
   Tree* tree = tree_new().ok;
   tree->root = tree_node_new(point_new(1, 1)).ok;
 
@@ -67,7 +71,7 @@ Tree* generate_tree() {
   tree->root->left_child->right_child = tree_node_new(point_new(3, 3)).ok;
   tree->root->left_child->right_child->parent = tree->root->left_child;
 
-  tree->root->right_child->left_child = tree_node_new(point_new(4, 4)).ok;
+  tree->root->right_child->left_child = tree_node_new(point_new(1, 1)).ok;
   tree->root->right_child->left_child->parent = tree->root->right_child;
 
   return tree;

@@ -13,7 +13,7 @@
 typedef void (*const FnFree)(void** const);
 typedef char* (*const FnToString)(void* const);
 typedef bool (*const FnPredicate)(void* const);
-typedef int (*const FnComparator)(void* const); // -1 0 1
+typedef int (*const FnComparator)(void* const, void* const); // -1 0 1
 
 //####################
 // ARRAY

@@ -17,7 +17,8 @@
   Point* point_new(int x, int y);
   char* point_to_string(Point* const point);
   void point_double(Point* const point);
+  int point_compare(Point* const a, Point* const b);
 
-  Tree* generate_tree();
+  Tree* point_tree();
 
 #endif
