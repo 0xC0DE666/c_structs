@@ -102,17 +102,53 @@ Test(tree_free, _1) {
 // ####################
 // tree_insert
 // ####################
-// Test(tree_insert, _1) {
-//   Tree* tree = point_tree();
-//
-//   int e = tree_insert(tree, "B", (FnComparator) strcmp);
-//
-//   cr_assert_eq(e, 0);
-//   char* val = (char*) tree->root->right_child->value;
-//   cr_assert_eq(strcmp(root_rc_val, "B"), true);
-//
-//   val = (char*) tree->root->right_child->right_child->value;
-//   cr_assert_eq(strcmp(root_rc_val, "B"), true);
-//
-//   tree_free(&tree, (FnFree) safe_free);
-// }
+Test(tree_insert, _1) {
+  Tree* tree = tree_new().ok;
+
+  // root
+  int e = tree_insert(tree, point_new(1, 1), (FnComparator) point_compare);
+  cr_assert_eq(e, 0);
+
+  Point* p = (Point*) tree->root->value;
+  cr_assert_eq(p != NULL, true);
+  cr_assert_eq(p->x, 1);
+  cr_assert_eq(p->y, 1);
+
+  // left_child
+  e = tree_insert(tree, point_new(0, 0), (FnComparator) point_compare);
+  cr_assert_eq(e, 0);
+
+  p = (Point*) tree->root->left_child->value;
+  cr_assert_eq(p != NULL, true);
+  cr_assert_eq(p->x, 0);
+  cr_assert_eq(p->y, 0);
+
+  // 2nd left_child
+  e = tree_insert(tree, point_new(-1, -1), (FnComparator) point_compare);
+  cr_assert_eq(e, 0);
+
+  p = (Point*) tree->root->left_child->left_child->value;
+  cr_assert_eq(p != NULL, true);
+  cr_assert_eq(p->x, -1);
+  cr_assert_eq(p->y, -1);
+
+  // right_child
+  e = tree_insert(tree, point_new(2, 2), (FnComparator) point_compare);
+  cr_assert_eq(e, 0);
+
+  p = (Point*) tree->root->right_child->value;
+  cr_assert_eq(p != NULL, true);
+  cr_assert_eq(p->x, 2);
+  cr_assert_eq(p->y, 2);
+
+  // 2nd right_child
+  e = tree_insert(tree, point_new(2, 2), (FnComparator) point_compare);
+  cr_assert_eq(e, 0);
+
+  p = (Point*) tree->root->right_child->right_child->value;
+  cr_assert_eq(p != NULL, true);
+  cr_assert_eq(p->x, 2);
+  cr_assert_eq(p->y, 2);
+
+  tree_free(&tree, (FnFree) safe_free);
+}

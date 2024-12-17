@@ -99,6 +99,27 @@ Test(point_compare, _1) {
 }
 
 // ####################
+// point_equal
+// ####################
+Test(point_equal, _1) {
+  Point* a = point_new(0, 0);
+  Point* b = point_new(1, 1);
+
+  // no
+  bool v = point_equal(a, b);
+  cr_assert_eq(v, false);
+
+  b->x = 0; b->y = 0;
+
+  // yes
+  v = point_equal(a, b);
+  cr_assert_eq(v, true);
+
+  safe_free((void**) &a);
+  safe_free((void**) &b);
+}
+
+// ####################
 // point_tree
 // ####################
 Test(point_tree, _1) {

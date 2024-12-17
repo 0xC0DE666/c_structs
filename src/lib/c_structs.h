@@ -99,6 +99,7 @@ Result grid_to_string(Grid* const grid, FnToString const to_string);
 //####################
 // LINKED LIST
 //####################
+
 typedef struct ListNode {
   void* value;
   struct ListNode* next;
@@ -139,6 +140,7 @@ Result list_to_string(List* const list, FnToString const to_string);
 //####################
 
 typedef struct TreeNode {
+  int rank;
   void* value;
   struct TreeNode* parent;
   struct TreeNode* left_child;

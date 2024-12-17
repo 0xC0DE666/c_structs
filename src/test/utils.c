@@ -58,6 +58,10 @@ int point_compare(Point* a, Point* b) {
   return (a->x + a->y) - (b->x + b->y);
 }
 
+bool point_equal(Point* a, Point* b) {
+  return (a->x == b->x) && (a->y == b->y);
+}
+
 Tree* point_tree() {
   Tree* tree = tree_new().ok;
   tree->root = tree_node_new(point_new(1, 1)).ok;

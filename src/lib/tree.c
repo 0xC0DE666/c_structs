@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "../test/utils.h"
 #include "c_structs.h"
 
 Result tree_node_new(void* const value) {
@@ -113,31 +114,51 @@ int tree_free(Tree** const tree, FnFree const free_value) {
   return 0;
 }
 
-// int tree_insert(Tree* const tree, void* const value, FnComparator compare) {
-//   int e = pthread_rwlock_trywrlock(&tree->lock);
-//   if (e) return e;
-// 
-//   TreeNode* node = tree_node_new(value).ok;
-//   if (tree->head == NULL && tree->tail == NULL) {
-//     tree->head = node;
-//     tree->tail = node;
-// 
-//     e = pthread_rwlock_unlock(&tree->lock);
-//     if (e) return e;
-//     
-//     return 0;
-//   }
-//   
-//   tree->tail->next = node;
-//   node->previous = tree->tail;
-//   tree->tail = node;
-// 
-//   e = pthread_rwlock_unlock(&tree->lock);
-//   if (e) return e;
-// 
-//   return 0;
-// }
-// 
+int tree_insert(Tree* const tree, void* const value, FnComparator compare) {
+  int e = pthread_rwlock_trywrlock(&tree->lock);
+  if (e) return e;
+
+  TreeNode* new_node = tree_node_new(value).ok;
+  if (tree->root == NULL) {
+    tree->root = new_node;
+
+    e = pthread_rwlock_unlock(&tree->lock);
+    if (e) return e;
+
+    return SUC_CODE_GENERAL;
+  }
+
+  TreeNode* cur_node = tree->root;
+  bool inserted = false;
+  while (true) {
+printf("inserting --> %d %s\n",compare(value, cur_node->value), point_to_string((Point*)value));
+    if (compare(value, cur_node->value) < 0) {
+      if (cur_node->left_child != NULL) {
+        cur_node = cur_node->left_child;
+        continue;
+      }
+      cur_node->left_child = new_node;
+      inserted = true;
+    } else {
+      if (cur_node->right_child != NULL) {
+        cur_node = cur_node->right_child;
+        continue;
+      }
+      cur_node->right_child = new_node;
+      inserted = true;
+    }
+
+    if (inserted) {
+      e = pthread_rwlock_unlock(&tree->lock);
+      if (e) return e;
+
+      return SUC_CODE_GENERAL;
+    }
+  }
+
+  return ERR_CODE_GENERAL;
+}
+
 // Result tree_remove(Tree* const tree, TreeNode* node) {
 //   int e = pthread_rwlock_trywrlock(&tree->lock);
 //   if (e) return result_std_error();
