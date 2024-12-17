@@ -155,16 +155,15 @@ typedef struct Tree {
   struct TreeNode* root;
 } Tree;
 
-int tree_size(Tree* const tree);
 
 Result tree_new();
 int tree_clear(Tree* const tree, FnFree const free_value);
 int tree_free(Tree** const tree, FnFree const free_value);
 
+int tree_height(Tree* const tree);
 int tree_insert(Tree* const tree, void* const value, FnComparator compare);
-
+int tree_balance(Tree* const tree);
 Result tree_remove(Tree* const tree, TreeNode* node);
-
 Result tree_find(Tree* const tree, TreeNode* node);
 
 #endif

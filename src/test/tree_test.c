@@ -109,7 +109,10 @@ Test(tree_insert, _1) {
   int e = tree_insert(tree, point_new(1, 1), (FnComparator) point_compare);
   cr_assert_eq(e, 0);
 
-  Point* p = (Point*) tree->root->value;
+  TreeNode* n = tree->root;
+  cr_assert_eq(n->parent == NULL, true);
+
+  Point* p = (Point*) n->value;
   cr_assert_eq(p != NULL, true);
   cr_assert_eq(p->x, 1);
   cr_assert_eq(p->y, 1);
@@ -118,7 +121,10 @@ Test(tree_insert, _1) {
   e = tree_insert(tree, point_new(0, 0), (FnComparator) point_compare);
   cr_assert_eq(e, 0);
 
-  p = (Point*) tree->root->left_child->value;
+  n = tree->root->left_child;
+  cr_assert_eq(n->parent, tree->root);
+
+  p = (Point*) n->value;
   cr_assert_eq(p != NULL, true);
   cr_assert_eq(p->x, 0);
   cr_assert_eq(p->y, 0);
@@ -127,7 +133,10 @@ Test(tree_insert, _1) {
   e = tree_insert(tree, point_new(-1, -1), (FnComparator) point_compare);
   cr_assert_eq(e, 0);
 
-  p = (Point*) tree->root->left_child->left_child->value;
+  n = tree->root->left_child->left_child;
+  cr_assert_eq(n->parent, tree->root->left_child);
+
+  p = (Point*) n->value;
   cr_assert_eq(p != NULL, true);
   cr_assert_eq(p->x, -1);
   cr_assert_eq(p->y, -1);
@@ -136,7 +145,10 @@ Test(tree_insert, _1) {
   e = tree_insert(tree, point_new(2, 2), (FnComparator) point_compare);
   cr_assert_eq(e, 0);
 
-  p = (Point*) tree->root->right_child->value;
+  n = tree->root->right_child;
+  cr_assert_eq(n->parent, tree->root);
+
+  p = (Point*) n->value;
   cr_assert_eq(p != NULL, true);
   cr_assert_eq(p->x, 2);
   cr_assert_eq(p->y, 2);
@@ -145,7 +157,10 @@ Test(tree_insert, _1) {
   e = tree_insert(tree, point_new(2, 2), (FnComparator) point_compare);
   cr_assert_eq(e, 0);
 
-  p = (Point*) tree->root->right_child->right_child->value;
+  n = tree->root->right_child->right_child;
+  cr_assert_eq(n->parent, tree->root->right_child);
+
+  p = (Point*) n->value;
   cr_assert_eq(p != NULL, true);
   cr_assert_eq(p->x, 2);
   cr_assert_eq(p->y, 2);
