@@ -51,7 +51,6 @@ Result array_map(Array* const array, FnArrayMap const map);
 
 Result array_to_string(Array* const array, FnToString const to_string);
 
-
 //####################
 // GRID
 //####################
@@ -101,9 +100,9 @@ Result grid_to_string(Grid* const grid, FnToString const to_string);
 //####################
 
 typedef struct ListNode {
-  void* value;
   struct ListNode* next;
   struct ListNode* previous;
+  void* value;
 } ListNode;
 
 Result list_node_new(void* const value);
@@ -140,10 +139,10 @@ Result list_to_string(List* const list, FnToString const to_string);
 //####################
 
 typedef struct TreeNode {
-  void* value;
   struct TreeNode* parent;
   struct TreeNode* left_child;
   struct TreeNode* right_child;
+  void* value;
   int rank;
   bool passed;
 } TreeNode;

@@ -117,6 +117,38 @@ Test(tree_free, _1) {
 }
 
 // ####################
+// tree_height
+// ####################
+Test(tree_height, root) {
+  Tree* tree = tree_new().ok;
+  tree->root = tree_node_new(point_new(1,1)).ok;
+  int h = tree_height(tree);
+  cr_assert_eq(h, 1);
+
+  tree_free(&tree, (FnFree) safe_free);
+}
+
+Test(tree_height, higher_left_tree) {
+  Tree* tree = point_tree();
+  tree_insert(tree, point_new(-4,-4), (FnComparator) point_compare);
+  tree_insert(tree, point_new(-5,-5), (FnComparator) point_compare);
+  int h = tree_height(tree);
+  cr_assert_eq(h, 5);
+
+  tree_free(&tree, (FnFree) safe_free);
+}
+
+Test(tree_height, higher_right_tree) {
+  Tree* tree = point_tree();
+  tree_insert(tree, point_new(4,4), (FnComparator) point_compare);
+  tree_insert(tree, point_new(5,5), (FnComparator) point_compare);
+  int h = tree_height(tree);
+  cr_assert_eq(h, 5);
+
+  tree_free(&tree, (FnFree) safe_free);
+}
+
+// ####################
 // tree_insert
 // ####################
 Test(tree_insert, _1) {

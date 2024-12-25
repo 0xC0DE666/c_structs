@@ -118,29 +118,47 @@ int tree_free(Tree** const tree, FnFree const free_value) {
   return 0;
 }
 
+// TODO: add func tree_set_passed();
 int tree_height(Tree* tree) {
   int e = pthread_rwlock_trywrlock(&tree->lock);
   if (e) return e;
 
+  int root_count = -1;
   int left_tree = 0;
   int right_tree = 0;
+  char side[10] = "left";
 
   TreeNode* node = tree->root;
   while(node != NULL) {
-    if (!node->passed && node->left_child != NULL) {
+    if (node == tree->root) {
+      ++root_count;
+      if (root_count == 1) {
+        strcpy(side, "right");
+      }
+    }
+    node->passed = true;
+
+    if (node->left_child != NULL && node->left_child->passed == false) {
+      if (strcmp(side, "left") == 0) {
+        ++left_tree;
+      } else {
+        ++right_tree;
+      }
       node = node->left_child;
-      ++left_tree;
       continue;
     }
 
-    if (!node->passed && node->right_child != NULL) {
+    if (node->right_child != NULL && node->right_child->passed == false) {
+      if (strcmp(side, "left") == 0) {
+        ++left_tree;
+      } else {
+        ++right_tree;
+      }
       node = node->right_child;
-      ++right_tree;
       continue;
     }
 
-    if (tree_node_leaf(node)) {
-      node->passed = true;
+    if (node->passed || tree_node_leaf(node)) {
       node = node->parent;
     }
   }
@@ -148,7 +166,7 @@ int tree_height(Tree* tree) {
   e = pthread_rwlock_unlock(&tree->lock);
   if (e) return e;
 
-  return left_tree > right_tree ? left_tree : right_tree;
+  return (left_tree > right_tree ? left_tree : right_tree) + 1;
 }
 
 int tree_insert(Tree* const tree, void* const value, FnComparator compare) {
