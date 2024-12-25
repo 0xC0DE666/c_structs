@@ -126,7 +126,7 @@ int tree_height(Tree* tree) {
   int root_count = -1;
   int left_tree = 0;
   int right_tree = 0;
-  char side[10] = "left";
+  char side[6] = "left";
 
   TreeNode* node = tree->root;
   while(node != NULL) {
@@ -139,21 +139,13 @@ int tree_height(Tree* tree) {
     node->passed = true;
 
     if (node->left_child != NULL && node->left_child->passed == false) {
-      if (strcmp(side, "left") == 0) {
-        ++left_tree;
-      } else {
-        ++right_tree;
-      }
+      strcmp(side, "left") == 0 ? ++left_tree : ++right_tree;
       node = node->left_child;
       continue;
     }
 
     if (node->right_child != NULL && node->right_child->passed == false) {
-      if (strcmp(side, "left") == 0) {
-        ++left_tree;
-      } else {
-        ++right_tree;
-      }
+      strcmp(side, "left") == 0 ? ++left_tree : ++right_tree;
       node = node->right_child;
       continue;
     }
