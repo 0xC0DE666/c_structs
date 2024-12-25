@@ -40,6 +40,23 @@ Test(tree_node_free, _1) {
 }
 
 // ####################
+// tree_node_leaf
+// ####################
+Test(tree_node_leaf, _1) {
+  TreeNode* node = tree_node_new(point_new(0, 1)).ok;
+  cr_assert_eq(tree_node_leaf(node), true);
+
+  node->left_child = tree_node_new(point_new(0, 0)).ok;
+  cr_assert_eq(tree_node_leaf(node), false);
+
+  int e = tree_node_free(&(node->left_child), (FnFree) safe_free);
+  cr_assert_eq(e, 0);
+  e = tree_node_free(&node, (FnFree) safe_free);
+  cr_assert_eq(e, 0);
+  cr_assert_eq(node, NULL);
+}
+
+// ####################
 // tree_new
 // ####################
 Test(tree_new, _1) {

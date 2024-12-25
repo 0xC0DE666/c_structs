@@ -140,15 +140,17 @@ Result list_to_string(List* const list, FnToString const to_string);
 //####################
 
 typedef struct TreeNode {
-  int rank;
   void* value;
   struct TreeNode* parent;
   struct TreeNode* left_child;
   struct TreeNode* right_child;
+  int rank;
+  bool passed;
 } TreeNode;
 
 Result tree_node_new(void* const value);
 int tree_node_free(TreeNode** const node, FnFree const free_value);
+bool tree_node_leaf(TreeNode* const node);
 
 typedef struct Tree {
   pthread_rwlock_t lock;

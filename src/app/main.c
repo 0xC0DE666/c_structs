@@ -129,6 +129,15 @@ void prev() {
 }
 
 int main() {
-  prev();
+  // prev();
+  if (-1) {
+    printf("-1\n");
+  }
+  if (0) {
+    printf("0\n");
+  }
+  if (1) {
+    printf("1\n");
+  }
   return 0;
 }

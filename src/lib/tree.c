@@ -20,6 +20,8 @@ Result tree_node_new(void* const value) {
   node->parent = NULL;
   node->left_child = NULL;
   node->right_child = NULL;
+  node->rank = 0;
+  node->passed = false;
   
   return result_ok(node);
 }
@@ -45,6 +47,10 @@ int tree_node_free(TreeNode** node, FnFree const free_value) {
   *node = NULL;
 
   return 0;
+}
+
+bool tree_node_leaf(TreeNode* node) {
+  return node->left_child == NULL && node->right_child == NULL;
 }
 
 // ####################
@@ -85,7 +91,7 @@ int tree_clear(Tree* const tree, FnFree const free_value) {
       continue;
     }
 
-    if (node->left_child == NULL && node->right_child == NULL) {
+    if (tree_node_leaf(node)) {
       parent = node->parent;
     }
 
@@ -101,7 +107,6 @@ int tree_clear(Tree* const tree, FnFree const free_value) {
   return 0;
 }
 
-// TODO: return number of nodes freed/cleared
 int tree_free(Tree** const tree, FnFree const free_value) {
   int e = tree_clear(*tree, free_value);
   if (e) return e;
@@ -113,33 +118,31 @@ int tree_free(Tree** const tree, FnFree const free_value) {
   return 0;
 }
 
-int tree_size(Tree* tree) {
+int tree_height(Tree* tree) {
   int e = pthread_rwlock_trywrlock(&tree->lock);
   if (e) return e;
 
   int left_tree = 0;
   int right_tree = 0;
 
-  TreeNode* cur_node = tree->root;
-  TreeNode* parent = NULL;
-  while(cur_node != NULL) {
-    if (cur_node->left_child != NULL) {
+  TreeNode* node = tree->root;
+  while(node != NULL) {
+    if (!node->passed && node->left_child != NULL) {
+      node = node->left_child;
       ++left_tree;
-      cur_node = cur_node->left_child;
       continue;
     }
 
-    if (cur_node->right_child != NULL) {
+    if (!node->passed && node->right_child != NULL) {
+      node = node->right_child;
       ++right_tree;
-      cur_node = cur_node->right_child;
       continue;
     }
 
-    if (cur_node->left_child == NULL && cur_node->right_child == NULL) {
-      parent = cur_node->parent;
+    if (tree_node_leaf(node)) {
+      node->passed = true;
+      node = node->parent;
     }
-
-    cur_node = parent;
   }
 
   e = pthread_rwlock_unlock(&tree->lock);
